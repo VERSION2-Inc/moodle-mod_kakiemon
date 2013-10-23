@@ -17,11 +17,42 @@ class page_view extends page {
 	}
 
 	private function view() {
-		global $DB;
+		global $DB, $USER;
+
+		$userid = $USER->id;
 
 		echo $this->output->header();
 
 		echo $this->output->action_link(new \moodle_url($this->url, array('action' => 'addpage')), 'Add page');
+
+		echo $this->output->heading('マイページ');
+
+		$pages = $DB->get_records(kakiemon::TABLE_PAGES, array(
+				'kakiemon' => $this->kakiemon->instance,
+				'userid' => $userid
+		), 'timecreated DESC');
+		$table = new \flexible_table('pages');
+		$table->define_baseurl($this->url);
+		$columns = array('name', 'user', 'timecreated');
+		$headers = array('Name', 'user', kakiemon::str('timecreated'));
+		$table->define_columns($columns);
+		$table->define_headers($headers);
+		$table->sortable(true, 'timecreated', SORT_DESC);
+		$table->setup();
+		foreach ($pages as $page) {
+			$name = $this->output->action_link(new \moodle_url($this->url, array(
+					'page' => $page->id
+			)), $page->name);
+			$row = array(
+					$name,
+					$page->userid,
+					userdate($page->timecreated)
+			);
+			$table->add_data($row);
+		}
+		$table->finish_output();
+
+		echo $this->output->heading('全ページ');
 
 		$pages = $DB->get_records(kakiemon::TABLE_PAGES, array('kakiemon' => $this->kakiemon->instance));
 		$table = new \flexible_table('pages');
@@ -30,10 +61,14 @@ class page_view extends page {
 		$headers = array('Name', 'user', kakiemon::str('timecreated'));
 		$table->define_columns($columns);
 		$table->define_headers($headers);
+		$table->sortable(true, 'timecreated', SORT_DESC);
 		$table->setup();
 		foreach ($pages as $page) {
+			$name = $this->output->action_link(new \moodle_url($this->url, array(
+					'page' => $page->id
+			)), $page->name);
 			$row = array(
-					$page->name,
+					$name,
 					$page->userid,
 					userdate($page->timecreated)
 			);

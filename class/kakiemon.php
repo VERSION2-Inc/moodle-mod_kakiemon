@@ -83,14 +83,15 @@ class kakiemon {
 	/**
 	 *
 	 * @param string[] $arr
+	 * @return boolean
 	 */
 	public static function asort(array &$arr) {
 		if (class_exists('core_collator')) {
-			\core_collator::asort($arr);
+			return \core_collator::asort($arr);
 		} else if (class_exists('collatorlib')) {
-			\collatorlib::asort($arr);
+			return \collatorlib::asort($arr);
 		} else {
-			asort($arr);
+			return asort($arr);
 		}
 	}
 }
