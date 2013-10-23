@@ -7,7 +7,9 @@ class kakiemon {
 	const COMPONENT = 'mod_kakiemon';
 
 	const TABLE_MOD = 'kakiemon';
-	const TABLE_BLOCK = 'kakiemon_blocks';
+	const TABLE_PAGES = 'kakiemon_pages';
+	const TABLE_BLOCKS = 'kakiemon_blocks';
+	const TABLE_LIKES = 'kakiemon_likes';
 
 	/**
 	 *

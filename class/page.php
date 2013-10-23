@@ -9,6 +9,10 @@ abstract class page {
 	 * @var \core_renderer
 	 */
 	protected $output;
+	/**
+	 *
+	 * @var int
+	 */
 	public $cmid;
 	/**
 	 *

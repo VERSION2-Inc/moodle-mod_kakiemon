@@ -15,7 +15,7 @@ class block_video extends block {
 			'content' => $formdata->content
 		);
 
-		$DB->set_field(kakiemon::TABLE_BLOCK, 'data', serialize($data), array('id' => $block->id));
+		$DB->set_field(kakiemon::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
 	}
 
 	public function get_content($block) {

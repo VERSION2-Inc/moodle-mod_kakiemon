@@ -12,3 +12,4 @@ $string['modulenameplural'] = 'カキえもん';
 $string['page'] = 'ウェブページ';
 $string['pluginadministration'] = 'カキえもん管理';
 $string['video'] = 'ビデオ';
+$string['timecreated'] = '作成日時';
