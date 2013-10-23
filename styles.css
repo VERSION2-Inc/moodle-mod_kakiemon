@@ -1,0 +1,8 @@
+@charset "UTF-8";
+
+.path-mod-kakiemon .kaki-block {
+	border: 1px solid #AAA;
+	width: 30%;
+	float: left;
+	margin: 0 1em 1em 0;
+}
