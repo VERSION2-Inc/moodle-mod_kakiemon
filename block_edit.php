@@ -32,8 +32,10 @@ class page_block_edit extends page {
 
 		$oblock = $this->kakiemon->get_block($data->type);
 
+		$pageid=required_param('page', PARAM_INT);
 		$block = (object)array(
 			'kakiemon' => $this->kakiemon->instance,
+				'page'=>$pageid,
 			'type' => $data->type,
 			'title' => $data->title,
 // 			'data' => $oblock->get_data($this->form)
@@ -42,8 +44,7 @@ class page_block_edit extends page {
 
 		$oblock->update_data($this->form, $block);
 
-		$url = new \moodle_url('/mod/kakiemon/view.php', array('id' => $this->kakiemon->cm->id));
-		redirect($url);
+		redirect($this->ke->url('page_view', array('page'=>$pageid)));
 	}
 }
 
@@ -58,6 +59,8 @@ class form_block_edit extends \moodleform {
 
 		$f->addElement('hidden', 'id', $kakiemon->cm->id);
 		$f->setType('id', PARAM_INT);
+		$f->addElement('hidden', 'page', required_param('page', PARAM_INT));
+		$f->setType('page', PARAM_INT);
 		$f->addElement('hidden', 'type', $blocktype);
 		$f->setType('type', PARAM_ALPHA);
 

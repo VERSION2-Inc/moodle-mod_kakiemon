@@ -22,3 +22,5 @@ $string['like'] = 'イイネ！';
 $string['dislike'] = 'ワルイネ！';
 $string['addblock'] = '新規ブロックを追加';
 $string['pagesettings'] = 'ページ設定';
+$string['editpage'] = 'ページの編集';
+$string['reallydeletepage'] = 'ページを削除してよろしいですか？';

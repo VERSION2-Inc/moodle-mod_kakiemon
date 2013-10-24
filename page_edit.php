@@ -1,4 +1,5 @@
 <?php
+
 namespace ver2\kakiemon;
 
 use ver2\kakiemon\kakiemon as ke;
@@ -15,7 +16,7 @@ class page_page_edit extends page {
 
 	public function execute() {
 		$this->form = new form_page_edit(null, (object)array(
-			'ke' => $this->ke
+				'ke' => $this->ke
 		));
 
 		switch (optional_param('action', null, PARAM_ALPHA)) {
@@ -27,15 +28,32 @@ class page_page_edit extends page {
 	private function view() {
 		global $DB;
 
-		$pageid = required_param('page', PARAM_INT);
+		if ($this->form->is_submitted()) {
+			$this->update();
+			return;
+		}
 
-		$page = $DB->get_record(ke::TABLE_PAGES, array('id' => $pageid));
-		$page->page = $page->id;
-		unset($page->id);
+		// if (optional_param('add', 0, PARAM_BOOL)) {
 
-		$this->form->set_data($page);
+		// } else {
+		// $pageid = required_param('page', PARAM_INT);
+		$pageid = optional_param('page', 0, PARAM_INT);
+		if ($pageid) {
+			$page = $DB->get_record(ke::TABLE_PAGES, array(
+					'id' => $pageid
+			));
+			$page->page = $page->id;
+			unset($page->id);
+			$this->form->set_data($page);
+		}
+		// }
+
+		$title = ke::str('editpage');
+
+		$this->add_navbar($title);
 
 		echo $this->output->header();
+		echo $this->output->heading($title);
 
 		$this->form->display();
 
@@ -43,11 +61,37 @@ class page_page_edit extends page {
 	}
 
 	private function update() {
+		global $DB, $USER;
 
+		$userid = $USER->id;
+
+		$data = $this->form->get_data();
+		// var_dump($data);
+
+		$now = time();
+
+		$page = new \stdClass();
+		$page->name = $data->name;
+		$page->timemodified = $now;
+
+		if ($data->page) {
+			$page->id = $data->page;
+
+			$DB->update_record(ke::TABLE_PAGES, $page);
+		} else {
+			$page->kakiemon = $this->ke->instance;
+			$page->userid = $userid;
+			$page->timecreated = $now;
+
+			$DB->insert_record(ke::TABLE_PAGES, $page);
+		}
+
+		redirect($this->ke->url('view'));
 	}
 }
 
 class form_page_edit extends \moodleform {
+
 	protected function definition() {
 		$f = $this->_form;
 
@@ -61,10 +105,14 @@ class form_page_edit extends \moodleform {
 
 		$f->addElement('header', 'pagesettings', ke::str('pagesettings'));
 
-		$f->addElement('text', 'name', ke::str('pagename'), array('size' => 40));
+		$f->addElement('text', 'name', ke::str('pagename'), array(
+				'size' => 40,
+				'maxlength' => 255
+		));
 		$f->setType('name', PARAM_TEXT);
+		$f->addRule('name', null, 'required', null, 'client');
 
-		$this->add_action_buttons();
+		$this->add_action_buttons(false);
 	}
 }
 

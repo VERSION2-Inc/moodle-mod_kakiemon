@@ -47,4 +47,14 @@ abstract class page {
 	}
 
 	public abstract function execute();
+
+	public function add_navbar($text) {
+		global $PAGE;
+
+		$PAGE->navbar->add($text);
+	}
+
+	public static function execute_new($file) {
+		global $CFG;
+	}
 }
