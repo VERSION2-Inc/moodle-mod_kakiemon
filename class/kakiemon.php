@@ -31,6 +31,11 @@ class kakiemon {
 	 * @var \context_module
 	 */
 	public $context;
+	/**
+	 *
+	 * @var int
+	 */
+	public $cmid;
 
 	/**
 	 *
@@ -40,6 +45,7 @@ class kakiemon {
 		global $DB;
 
 		$this->cm = get_coursemodule_from_id(self::TABLE_MOD, $cmid);
+		$this->cmid = $this->cm->id;
 		$this->instance = $this->cm->instance;
 		$this->context = \context_module::instance($this->cm->id);
 
@@ -93,5 +99,21 @@ class kakiemon {
 		} else {
 			return asort($arr);
 		}
+	}
+
+	/**
+	 *
+	 * @param string $url
+	 * @param array $params
+	 * @return \moodle_url
+	 */
+	public function url($url, array $params = null) {
+		if (!preg_match(',/$,', $url) && strpos(basename($url), '.') === false) {
+			$url .= '.php';
+		}
+
+		$params['id'] = $this->cm->id;
+
+		return new \moodle_url('/mod/kakiemon/'.$url, $params);
 	}
 }

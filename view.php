@@ -1,6 +1,9 @@
 <?php
 namespace ver2\kakiemon;
 
+use ver2\kakiemon\kakiemon as ke;
+use editor_tinymce;
+
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 require_once $CFG->libdir . '/tablelib.php';
@@ -23,9 +26,10 @@ class page_view extends page {
 
 		echo $this->output->header();
 
-		echo $this->output->action_link(new \moodle_url($this->url, array('action' => 'addpage')), 'Add page');
+		echo $this->output->action_link(new \moodle_url($this->url, array('action' => 'addpage')),
+			ke::str('addpage'));
 
-		echo $this->output->heading('マイページ');
+		echo $this->output->heading(ke::str('mypages'));
 
 		$pages = $DB->get_records(kakiemon::TABLE_PAGES, array(
 				'kakiemon' => $this->kakiemon->instance,
@@ -33,32 +37,63 @@ class page_view extends page {
 		), 'timecreated DESC');
 		$table = new \flexible_table('pages');
 		$table->define_baseurl($this->url);
-		$columns = array('name', 'user', 'timecreated');
-		$headers = array('Name', 'user', kakiemon::str('timecreated'));
+		$columns = array(
+				'name',
+				'timecreated',
+				'buttons'
+		);
+		$headers = array(
+				ke::str('pagename'),
+				ke::str('timecreated'),
+				''
+		);
 		$table->define_columns($columns);
 		$table->define_headers($headers);
 		$table->sortable(true, 'timecreated', SORT_DESC);
 		$table->setup();
+		$editicon = new \pix_icon('t/edit', get_string('edit'));
+		$deleteicon = new \pix_icon('t/delete', get_string('delete'));
 		foreach ($pages as $page) {
 			$name = $this->output->action_link(new \moodle_url($this->url, array(
 					'page' => $page->id
 			)), $page->name);
+			$params = array('page' => $page->id);
+			$buttons =
+				$this->output->action_icon($this->ke->url('page_edit', $params), $editicon)
+				.$this->output->action_icon($this->ke->url('page_edit', $params), $deleteicon);
 			$row = array(
 					$name,
-					$page->userid,
-					userdate($page->timecreated)
+					userdate($page->timecreated),
+					$buttons
 			);
 			$table->add_data($row);
 		}
 		$table->finish_output();
 
-		echo $this->output->heading('全ページ');
+		echo $this->output->heading(ke::str('allpages'));
 
-		$pages = $DB->get_records(kakiemon::TABLE_PAGES, array('kakiemon' => $this->kakiemon->instance));
+		$pages = $DB->get_records_sql('
+				SELECT p.id, p.name, p.timecreated,
+					u.lastname, u.firstname
+				FROM {'.ke::TABLE_PAGES.'} p
+					JOIN {user} u ON p.userid = u.id
+				WHERE p.kakiemon = :ke
+				', array(
+						'ke' => $this->ke->instance
+				)
+		);
 		$table = new \flexible_table('pages');
 		$table->define_baseurl($this->url);
-		$columns = array('name', 'user', 'timecreated');
-		$headers = array('Name', 'user', kakiemon::str('timecreated'));
+		$columns = array(
+				'name',
+				'user',
+				'timecreated'
+		);
+		$headers = array(
+				ke::str('pagename'),
+				ke::str('author'),
+				ke::str('timecreated')
+		);
 		$table->define_columns($columns);
 		$table->define_headers($headers);
 		$table->sortable(true, 'timecreated', SORT_DESC);
@@ -69,14 +104,14 @@ class page_view extends page {
 			)), $page->name);
 			$row = array(
 					$name,
-					$page->userid,
+					fullname($page),
 					userdate($page->timecreated)
 			);
 			$table->add_data($row);
 		}
 		$table->finish_output();
 
-		echo $this->output->container('新規ブロックの追加');
+		echo $this->output->container(ke::str('addblock'));
 		echo $this->output->single_select(
 				new \moodle_url('/mod/kakiemon/blockedit.php', array('id' => $this->cmid)),
 				'type', $this->kakiemon->blocks);

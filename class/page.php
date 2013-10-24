@@ -19,6 +19,11 @@ abstract class page {
 	 * @var kakiemon
 	 */
 	public $kakiemon;
+	/**
+	 *
+	 * @var kakiemon
+	 */
+	public $ke;
 
 	public function __construct($url) {
 		global $PAGE, $OUTPUT;
@@ -31,6 +36,7 @@ abstract class page {
 
 		$kakiemon = new kakiemon($id);
 		$this->kakiemon = $kakiemon;
+		$this->ke = $kakiemon;
 
 		require_login($kakiemon->cm->course, true, $kakiemon->cm);
 
