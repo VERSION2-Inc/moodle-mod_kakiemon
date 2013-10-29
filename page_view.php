@@ -26,6 +26,8 @@ class page_page_view extends page {
 
 		// $PAGE->set_pagelayout('embedded');
 
+		$PAGE->requires->css('/mod/kakiemon/lib/lightbox/css/lightbox.css');
+
 		$pageid = required_param('page', PARAM_INT);
 		$page = $DB->get_record(ke::TABLE_PAGES, array(
 				'id' => $pageid
