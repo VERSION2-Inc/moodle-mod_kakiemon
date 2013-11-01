@@ -6,7 +6,7 @@ class block_html extends block {
 		$f->addElement('editor', 'content', 'コンテンツ');
 	}
 
-	public function update_data($form, $block) {
+	public function update_data(form_block_edit $form, \stdClass $block) {
 		global $DB;
 
 		$formdata = $form->get_data();
@@ -18,7 +18,7 @@ class block_html extends block {
 		$DB->set_field(kakiemon::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
 	}
 
-	public function get_content($block) {
+	public function get_content(\stdClass $block) {
 		$data = unserialize($block->data);
 
 		$o = $data->content;

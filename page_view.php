@@ -40,6 +40,12 @@ class page_page_view extends page {
 		echo $this->output->header();
 		echo $this->output->heading($title);
 
+		echo $this->output->container(
+				$this->output->single_button(
+						new \moodle_url($this->url, array('edit' => 'on')), ke::str('editthispage')),
+				'editbutton');
+		echo $this->output->container('', 'clearer');
+
 		$blocks = $DB->get_records(ke::TABLE_BLOCKS, array(
 				'page' => $pageid
 		));
@@ -48,7 +54,22 @@ class page_page_view extends page {
 
 			$ob .= \html_writer::tag('h3', $block->title);
 
-			$oblock = $this->kakiemon->get_block($block->type);
+			$buttons = '';
+			$buttons .= util::button(util::BUTTON_EDIT,
+					new \moodle_url($this->ke->url('block_edit', array(
+							'block' => $block->id,
+							'action' => 'edit',
+							'editmode' => 'update'
+					))));
+			$buttons .= util::button(util::BUTTON_DELETE,
+					new \moodle_url($this->ke->url('block_edit', array(
+							'action' => 'delete',
+							'block' => $block->id
+					))),
+					new \confirm_action(ke::str('reallydeleteblock')));
+			$ob .= $this->output->container($buttons, 'blockeditbuttons');
+
+			$oblock = $this->kakiemon->get_block_type($block->type);
 			$ob .= $oblock->get_content($block);
 
 			echo $this->output->box($ob, 'kaki-block');
@@ -58,7 +79,8 @@ class page_page_view extends page {
 		echo $this->output->single_select(
 				$this->ke->url('block_edit',
 						array(
-								'id' => $this->cmid,
+								'action' => 'edit',
+								'editmode' => 'add',
 								'page' => $pageid
 						)), 'type', $this->kakiemon->blocks);
 

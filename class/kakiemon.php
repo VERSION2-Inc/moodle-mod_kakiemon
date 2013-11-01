@@ -80,7 +80,7 @@ class kakiemon {
 	 * @param string $type
 	 * @return block
 	 */
-	public function get_block($type) {
+	public function get_block_type($type) {
 		$classname = __NAMESPACE__.'\block_'.$type;
 
 		return new $classname($this);

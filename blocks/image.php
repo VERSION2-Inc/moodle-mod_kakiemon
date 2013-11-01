@@ -17,7 +17,7 @@ class block_image extends block {
 	 * @param \moodleform $form
 	 * @return string
 	 */
-	public function update_data($form, $block) {
+	public function update_data(form_block_edit $form, \stdClass $block) {
 		$data = $form->get_data();
 		file_save_draft_area_files($data->file, $this->kakiemon->context->id, kakiemon::COMPONENT,
 				'blockfile', $block->id);
@@ -32,7 +32,7 @@ class block_image extends block {
 	 * @param string $data
 	 * @return string
 	 */
-	public function get_content($block) {
+	public function get_content(\stdClass $block) {
 		util::load_lightbox();
 
 		$data = unserialize($block->data);

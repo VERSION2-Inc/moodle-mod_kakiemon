@@ -24,3 +24,5 @@ $string['addblock'] = '新規ブロックを追加';
 $string['pagesettings'] = 'ページ設定';
 $string['editpage'] = 'ページの編集';
 $string['reallydeletepage'] = 'ページを削除してよろしいですか？';
+$string['editthispage'] = 'このページを編集する';
+$string['reallydeleteblock'] = 'ブロックを削除してよろしいですか？';

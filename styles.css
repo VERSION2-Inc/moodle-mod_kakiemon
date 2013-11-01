@@ -6,3 +6,8 @@
 	float: left;
 	margin: 0 1em 1em 0;
 }
+
+.path-mod-kakiemon .editbutton,
+.path-mod-kakiemon .blockeditbutton {
+	float: right;
+}

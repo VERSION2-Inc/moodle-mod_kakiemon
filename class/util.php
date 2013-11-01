@@ -1,16 +1,31 @@
 <?php
 namespace ver2\kakiemon;
 
-use editor_tinymce;
 defined('MOODLE_INTERNAL') || die();
 
 class util {
-	const ICON_EDIT = 0;
-	const ICON_DELETE = 1;
 	const BUTTON_EDIT = 0;
 	const BUTTON_DELETE = 1;
 
 	private static $icons = array();
+
+	/**
+	 *
+	 * @param string $table
+	 * @param int $id
+	 * @param string $keyfield
+	 * @return \stdClass
+	 */
+	public static function get_record_for_form($table, $id, $keyfield) {
+		global $DB;
+
+		$row = $DB->get_record($table, array('id' => $id), '*', MUST_EXIST);
+
+		$row->$keyfield = $row->id;
+		unset($row->id);
+
+		return $row;
+	}
 
 	public static function load_lightbox() {
 		global $PAGE;
@@ -21,20 +36,26 @@ class util {
 // 		$PAGE->requires->css(new \moodle_url('/mod/kakiemon/lib/lightbox/css/lightbox.css'));
 	}
 
-	public static function icon($type) {
-		switch ($type) {
-			case self::ICON_EDIT:
-				break;
-			case self::ICON_DELETE:
-				break;
-		}
-	}
+	/**
+	 *
+	 * @param int $type
+	 * @param string|\moodle_url $url
+	 * @param \component_action $action
+	 * @return string
+	 */
+	public static function button($type, $url, \component_action $action = null) {
+		global $OUTPUT;
 
-	public static function button($type, $url) {
+		$icon = null;
 		switch ($type) {
 			case self::BUTTON_EDIT:
-				$icon = new \pix_icon('t/delete', get_st);
+				$icon = new \pix_icon('t/edit', get_string('edit'));
+				break;
+			case self::BUTTON_DELETE:
+				$icon = new \pix_icon('t/delete', get_string('delete'));
 				break;
 		}
+
+		return $OUTPUT->action_icon($url, $icon, $action);
 	}
 }
