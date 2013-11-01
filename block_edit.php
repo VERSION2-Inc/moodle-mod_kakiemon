@@ -41,8 +41,8 @@ class page_block_edit extends page {
 			$this->form = new form_block_edit(null, $customdata);
 			$this->form->set_data($block);
 
-			$data = unserialize($block->data);
-			$this->form->set_data($data);
+			$blocktype = $this->ke->get_block_type($block->type);
+			$blocktype->set_form_data($this->form, $block);
 		} else {
 			$customdata->blocktype = required_param('type', PARAM_ALPHA);
 			$this->form = new form_block_edit(null, $customdata);

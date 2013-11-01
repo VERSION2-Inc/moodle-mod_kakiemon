@@ -23,10 +23,10 @@ class block {
 	public function add_form_elements(\MoodleQuickForm $f) {
 	}
 
-	public function set_form_data(\MoodleQuickForm $f, \stdClass $block) {
+	public function set_form_data(form_block_edit $form, \stdClass $block) {
 		$data = (array)unserialize($block->data);
-var_dump($data);
-		$f->setDefaults($data);
+
+		$form->set_data($data);
 	}
 
 	/**

@@ -6,6 +6,17 @@ class block_html extends block {
 		$f->addElement('editor', 'content', 'コンテンツ');
 	}
 
+	public function set_form_data(form_block_edit $form, \stdClass $block) {
+		$data = unserialize($block->data);
+
+		$data->content = array(
+				'text' => $data->content,
+				'format' => FORMAT_HTML
+		);
+
+		$form->set_data($data);
+	}
+
 	public function update_data(form_block_edit $form, \stdClass $block) {
 		global $DB;
 
