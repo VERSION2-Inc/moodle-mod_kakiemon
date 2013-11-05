@@ -1,11 +1,24 @@
 @charset "UTF-8";
 
+.path-mod-kakiemon .block-column {
+	float: left;
+	width: 30%;
+	border:1px solid gray;
+}
+
+.path-mod-kakiemon .kaki-block {
+	border: 1px solid #AAA;
+	margin: 0 1em 1em 0;
+}
+
+/*
 .path-mod-kakiemon .kaki-block {
 	border: 1px solid #AAA;
 	width: 30%;
 	float: left;
 	margin: 0 1em 1em 0;
 }
+*/
 
 .path-mod-kakiemon .editbutton,
 .path-mod-kakiemon .blockeditbutton {

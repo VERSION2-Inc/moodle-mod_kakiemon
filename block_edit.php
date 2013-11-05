@@ -8,6 +8,9 @@ require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 require_once $CFG->libdir . '/formslib.php';
 
 class page_block_edit extends page {
+	const MOVE_UP = -1;
+	const MOVE_DOWN = 1;
+
 	/**
 	 *
 	 * @var form_page_edit
@@ -24,8 +27,9 @@ class page_block_edit extends page {
 			case 'edit':
 				$this->edit();
 				break;
+			case 'moveup':
+				break;
 		}
-
 	}
 
 	private function edit() {
@@ -77,10 +81,10 @@ class page_block_edit extends page {
 			$pageid=required_param('page', PARAM_INT);
 			$block = (object)array(
 					'kakiemon' => $this->kakiemon->instance,
-					'page'=>$pageid,
+					'page' => $pageid,
+					'blockcolumn' => $data->blockcolumn,
 					'type' => $data->type,
 					'title' => $data->title,
-					// 				'data' => $oblock->get_data($this->form)
 			);
 			$block->id = $DB->insert_record(kakiemon::TABLE_BLOCKS, $block);
 		}
@@ -88,6 +92,21 @@ class page_block_edit extends page {
 		$oblock->update_data($this->form, $block);
 
 		redirect($this->ke->url('page_view', array('page'=>$block->page)));
+	}
+
+	private function move($value) {
+		global $DB;
+
+		$block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('block', PARAM_INT)));
+
+		if ($nextblock = $DB->get_record(ke::TABLE_BLOCKS,
+				array('blockorder' => $block->blockorder + $value))) {
+			$nextblock->blockorder -= $value;
+			$DB->update_record(ke::TABLE_BLOCKS, $nextblock);
+		}
+
+		$block->blockorder += $value;
+		$DB->update_record(ke::TABLE_BLOCKS, $block);
 	}
 
 	private function view() {
@@ -113,7 +132,7 @@ class form_block_edit extends \moodleform {
 		$f->setType('action', PARAM_ALPHA);
 		$f->addElement('hidden', 'editmode', required_param('editmode', PARAM_ALPHA));
 		$f->setType('editmode', PARAM_ALPHA);
-		$f->addElement('hidden', 'block' );
+		$f->addElement('hidden', 'block');
 		$f->setType('block', PARAM_INT);
 
 		$oblock = $kakiemon->get_block_type($blocktype);
@@ -122,6 +141,8 @@ class form_block_edit extends \moodleform {
 		$f->setType('id', PARAM_INT);
 		$f->addElement('hidden', 'page', optional_param('page', 0,PARAM_INT));
 		$f->setType('page', PARAM_INT);
+		$f->addElement('hidden', 'blockcolumn', required_param('blockcolumn', PARAM_INT));
+		$f->setType('blockcolumn', PARAM_INT);
 		$f->addElement('hidden', 'type', $blocktype);
 		$f->setType('type', PARAM_ALPHA);
 

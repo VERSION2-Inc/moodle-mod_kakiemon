@@ -46,43 +46,62 @@ class page_page_view extends page {
 				'editbutton');
 		echo $this->output->container('', 'clearer');
 
-		$blocks = $DB->get_records(ke::TABLE_BLOCKS, array(
-				'page' => $pageid
-		));
-		foreach ($blocks as $block) {
-			$ob = '';
+		for ($column = 0; $column < 3; $column++) {
+			echo $this->output->container_start('block-column');
 
-			$ob .= \html_writer::tag('h3', $block->title);
+			$blocks = $DB->get_records(ke::TABLE_BLOCKS, array(
+					'page' => $pageid,
+					'blockcolumn' => $column
+			), 'blockorder');
+			foreach ($blocks as $block) {
+				$ob = '';
 
-			$buttons = '';
-			$buttons .= util::button(util::BUTTON_EDIT,
-					new \moodle_url($this->ke->url('block_edit', array(
-							'block' => $block->id,
-							'action' => 'edit',
-							'editmode' => 'update'
-					))));
-			$buttons .= util::button(util::BUTTON_DELETE,
-					new \moodle_url($this->ke->url('block_edit', array(
-							'action' => 'delete',
-							'block' => $block->id
-					))),
-					new \confirm_action(ke::str('reallydeleteblock')));
-			$ob .= $this->output->container($buttons, 'blockeditbuttons');
+				$ob .= \html_writer::tag('h3', $block->title);
 
-			$oblock = $this->kakiemon->get_block_type($block->type);
-			$ob .= $oblock->get_content($block);
+				$buttons = '';
+				$buttons .= util::button(util::BUTTON_EDIT,
+						new \moodle_url($this->ke->url('block_edit', array(
+								'block' => $block->id,
+								'action' => 'edit',
+								'editmode' => 'update'
+						))));
+				$buttons .= util::button(util::BUTTON_DELETE,
+						new \moodle_url($this->ke->url('block_edit', array(
+								'action' => 'delete',
+								'block' => $block->id
+						))),
+						new \confirm_action(ke::str('reallydeleteblock')));
+				$buttons .= util::button(util::BUTTON_UP,
+						new \moodle_url($this->ke->url('block_edit', array(
+								'action' => 'moveup',
+								'block' => $block->id
+						))));
+				$buttons .= util::button(util::BUTTON_DOWN,
+						new \moodle_url($this->ke->url('block_edit', array(
+								'action' => 'movedown',
+								'block' => $block->id
+						))));
+				$ob .= $this->output->container($buttons, 'blockeditbuttons');
 
-			echo $this->output->box($ob, 'kaki-block');
+				$oblock = $this->kakiemon->get_block_type($block->type);
+				$ob .= $oblock->get_content($block);
+
+				echo $this->output->box($ob, 'kaki-block');
+			}
+
+			echo $this->output->container(ke::str('addblock'));
+			echo $this->output->single_select(
+					$this->ke->url('block_edit',
+							array(
+									'action' => 'edit',
+									'editmode' => 'add',
+									'page' => $pageid,
+									'blockcolumn' => $column
+							)), 'type', $this->ke->blocks);
+
+			echo $this->output->container_end();
 		}
 
-		echo $this->output->container(ke::str('addblock'));
-		echo $this->output->single_select(
-				$this->ke->url('block_edit',
-						array(
-								'action' => 'edit',
-								'editmode' => 'add',
-								'page' => $pageid
-						)), 'type', $this->kakiemon->blocks);
 
 		echo $this->output->footer();
 	}

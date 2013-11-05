@@ -6,6 +6,10 @@ defined('MOODLE_INTERNAL') || die();
 class util {
 	const BUTTON_EDIT = 0;
 	const BUTTON_DELETE = 1;
+	const BUTTON_UP = 2;
+	const BUTTON_DOWN = 3;
+	const BUTTON_LEFT = 4;
+	const BUTTON_RIGHT = 5;
 
 	private static $icons = array();
 
@@ -53,6 +57,18 @@ class util {
 				break;
 			case self::BUTTON_DELETE:
 				$icon = new \pix_icon('t/delete', get_string('delete'));
+				break;
+			case self::BUTTON_UP:
+				$icon = new \pix_icon('t/up', get_string('up'));
+				break;
+			case self::BUTTON_DOWN:
+				$icon = new \pix_icon('t/down', get_string('down'));
+				break;
+			case self::BUTTON_LEFT:
+				$icon = new \pix_icon('t/left', get_string('left'));
+				break;
+			case self::BUTTON_RIGHT:
+				$icon = new \pix_icon('t/right', get_string('right'));
 				break;
 		}
 
