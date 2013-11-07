@@ -227,9 +227,11 @@ class page_page_view extends page {
 				'page' => $pageid,
 				'userid' => $userid
 		));
-		if ($like && $like->type != $type) {
-			$like->type = $type;
-			$DB->update_record(ke::TABLE_LIKES, $like);
+		if ($like) {
+			if ($like->type != $type) {
+				$like->type = $type;
+				$DB->update_record(ke::TABLE_LIKES, $like);
+			}
 		} else {
 			$like = (object)array(
 					'kakiemon' => $this->ke->instance,
