@@ -65,10 +65,10 @@ class util {
 				$icon = new \pix_icon('t/down', get_string('down'));
 				break;
 			case self::BUTTON_LEFT:
-				$icon = new \pix_icon('t/left', get_string('left'));
+				$icon = new \pix_icon('t/left', get_string('moveleft'));
 				break;
 			case self::BUTTON_RIGHT:
-				$icon = new \pix_icon('t/right', get_string('right'));
+				$icon = new \pix_icon('t/right', get_string('moveright'));
 				break;
 		}
 

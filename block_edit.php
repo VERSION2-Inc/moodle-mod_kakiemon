@@ -8,9 +8,6 @@ require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 require_once $CFG->libdir . '/formslib.php';
 
 class page_block_edit extends page {
-	const MOVE_UP = -1;
-	const MOVE_DOWN = 1;
-
 	/**
 	 *
 	 * @var form_page_edit
@@ -27,7 +24,9 @@ class page_block_edit extends page {
 			case 'edit':
 				$this->edit();
 				break;
-			case 'moveup':
+			case 'changeorder':
+				break;
+			case 'changecolumn':
 				break;
 		}
 	}

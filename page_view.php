@@ -26,6 +26,18 @@ class page_page_view extends page {
 
 		// $PAGE->set_pagelayout('embedded');
 
+		$jsparams = (object)array(
+				'cmid' => $this->cmid
+		);
+		$PAGE->requires->js_init_call('M.mod_kakiemon.page_view_init', array($jsparams), false,
+				array(
+						'name' => 'mod_kakiemon',
+						'fullpath' => '/mod/kakiemon/module.js',
+						'requires' => array('dd', 'io')
+				));
+		$PAGE->requires->yui_module('moodle-mod_kakiemon-dragdrop', 'M.mod_kakiemon.init_dragdrop',
+				array(array('cmid' => $this->cmid)));
+
 		$PAGE->requires->css('/mod/kakiemon/lib/lightbox/css/lightbox.css');
 
 		$pageid = required_param('page', PARAM_INT);
@@ -47,7 +59,7 @@ class page_page_view extends page {
 		echo $this->output->container('', 'clearer');
 
 		for ($column = 0; $column < 3; $column++) {
-			echo $this->output->container_start('block-column');
+			echo $this->output->container_start('block-column', 'column'.$column);
 
 			$blocks = $DB->get_records(ke::TABLE_BLOCKS, array(
 					'page' => $pageid,
@@ -71,22 +83,40 @@ class page_page_view extends page {
 								'block' => $block->id
 						))),
 						new \confirm_action(ke::str('reallydeleteblock')));
-				$buttons .= util::button(util::BUTTON_UP,
-						new \moodle_url($this->ke->url('block_edit', array(
-								'action' => 'moveup',
-								'block' => $block->id
-						))));
-				$buttons .= util::button(util::BUTTON_DOWN,
-						new \moodle_url($this->ke->url('block_edit', array(
-								'action' => 'movedown',
-								'block' => $block->id
-						))));
+
+// 				$buttons .= util::button(util::BUTTON_UP,
+// 						new \moodle_url($this->ke->url('block_edit', array(
+// 								'action' => 'changeorder',
+// 								'value' => -1,
+// 								'block' => $block->id
+// 						))));
+// 				$buttons .= util::button(util::BUTTON_DOWN,
+// 						new \moodle_url($this->ke->url('block_edit', array(
+// 								'action' => 'changeorder',
+// 								'value' => 1,
+// 								'block' => $block->id
+// 						))));
+// 				$buttons .= util::button(util::BUTTON_LEFT,
+// 						new \moodle_url($this->ke->url('block_edit', array(
+// 								'action' => 'changecolumn',
+// 								'value' => -1,
+// 								'block' => $block->id
+// 						))));
+// 				$buttons .= util::button(util::BUTTON_RIGHT,
+// 						new \moodle_url($this->ke->url('block_edit', array(
+// 								'action' => 'changecolumn',
+// 								'value' => 1,
+// 								'block' => $block->id
+// 						))));
 				$ob .= $this->output->container($buttons, 'blockeditbuttons');
 
 				$oblock = $this->kakiemon->get_block_type($block->type);
 				$ob .= $oblock->get_content($block);
 
-				echo $this->output->box($ob, 'kaki-block');
+				echo \html_writer::tag('div', $ob, array(
+						'class' => 'kaki-block',
+						'data-id' => $block->id
+				));
 			}
 
 			echo $this->output->container(ke::str('addblock'));
