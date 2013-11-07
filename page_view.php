@@ -8,6 +8,9 @@ require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 
 class page_page_view extends page {
+	const LIKE = 'like';
+	const DISLIKE = 'dislike';
+
 	/**
 	 *
 	 * @var form_page_edit
@@ -19,13 +22,16 @@ class page_page_view extends page {
 			case 'setediting':
 				$this->set_editing();
 				break;
+			case 'like':
+				$this->like();
+				break;
 			default:
 				$this->view();
 		}
 	}
 
 	private function view() {
-		global $DB, $PAGE, $SESSION;
+		global $DB, $PAGE, $SESSION, $USER;
 
 		$PAGE->set_pagelayout('embedded');
 
@@ -68,6 +74,30 @@ class page_page_view extends page {
 		$user = $DB->get_record('user', array('id' => $page->userid));
 		echo \html_writer::tag('div',
 				$user->idnumber.' '.fullname($user), array('style'=>'text-align:right'));
+
+		echo $this->output->container_start('likebuttons');
+		$likeelement = 'span';
+		$likecount = $DB->count_records(ke::TABLE_LIKES, array(
+				'page' => $pageid,
+				'type' => self::LIKE
+		));
+		echo $this->output->action_link(new \moodle_url($this->url, array(
+				'page' => $pageid,
+				'action' => 'like',
+				'type' => self::LIKE
+		)), ke::str('like'), null, array('class' => 'likebutton'));
+		echo \html_writer::tag($likeelement, $likecount, array('class' => 'likecount'));
+		$dislikecount = $DB->count_records(ke::TABLE_LIKES, array(
+				'page' => $pageid,
+				'type' => self::DISLIKE
+		));
+		echo $this->output->action_link(new \moodle_url($this->url, array(
+				'page' => $pageid,
+				'action' => 'like',
+				'type' => self::DISLIKE
+		)), ke::str('dislike'), null, array('class' => 'likebutton'));
+		echo \html_writer::tag($likeelement, $dislikecount, array('class' => 'likecount'));
+		echo $this->output->container_end();
 
 		if ($editing) {
 			echo $this->output->container(
@@ -181,12 +211,36 @@ class page_page_view extends page {
 			$SESSION->kakiemon_editing = false;
 		}
 
-		$u=$this->ke->url($this->url, array(
-				'page' => required_param('page', PARAM_INT)
-		));
 		redirect($this->ke->url('page_view.php', array(
 				'page' => required_param('page', PARAM_INT)
 		)));
+	}
+
+	private function like() {
+		global $DB, $USER;
+
+		$userid = $USER->id;
+		$pageid = required_param('page', PARAM_INT);
+		$type = required_param('type', PARAM_ALPHA);
+
+		$like = $DB->get_record(ke::TABLE_LIKES, array(
+				'page' => $pageid,
+				'userid' => $userid
+		));
+		if ($like && $like->type != $type) {
+			$like->type = $type;
+			$DB->update_record(ke::TABLE_LIKES, $like);
+		} else {
+			$like = (object)array(
+					'kakiemon' => $this->ke->instance,
+					'page' => $pageid,
+					'userid' => $userid,
+					'type' => $type
+			);
+			$DB->insert_record(ke::TABLE_LIKES, $like);
+		}
+
+		redirect(new \moodle_url($this->url, array('page' => $pageid)));
 	}
 }
 

@@ -51,6 +51,9 @@ class page_block_edit extends page {
 			$this->form = new form_block_edit(null, $customdata);
 		}
 
+		if ($this->form->is_cancelled()) {
+			redirect($this->ke->url('page_view', array('page' => required_param('page', PARAM_INT))));
+		}
 		if ($this->form->is_submitted()) {
 			$this->edit_update();
 		}
@@ -140,8 +143,10 @@ class form_block_edit extends \moodleform {
 		$f->setType('id', PARAM_INT);
 		$f->addElement('hidden', 'page', optional_param('page', 0,PARAM_INT));
 		$f->setType('page', PARAM_INT);
+		if (optional_param('blockcolumn','',PARAM_INT)){
 		$f->addElement('hidden', 'blockcolumn', required_param('blockcolumn', PARAM_INT));
 		$f->setType('blockcolumn', PARAM_INT);
+		}
 		$f->addElement('hidden', 'type', $blocktype);
 		$f->setType('type', PARAM_ALPHA);
 

@@ -90,8 +90,10 @@ class page_view extends page {
 				FROM {' . ke::TABLE_PAGES . '} p
 					JOIN {user} u ON p.userid = u.id
 				WHERE p.kakiemon = :ke
+					AND p.userid <> :userid
 				', array(
-						'ke' => $this->ke->instance
+						'ke' => $this->ke->instance,
+						'userid' => $userid
 				));
 		$table = new \flexible_table('pages');
 		$table->define_baseurl($this->url);
@@ -124,10 +126,10 @@ class page_view extends page {
 		$table->finish_output();
 
 
-		echo '<div style=margin:1em;text-align:center>
-				<input type=radio checked>イイネ！
-				<input type=radio>ワルイネ！
-				</div>';
+// 		echo '<div style=margin:1em;text-align:center>
+// 				<input type=radio checked>イイネ！
+// 				<input type=radio>ワルイネ！
+// 				</div>';
 
 // 		$blocks = $DB->get_records(kakiemon::TABLE_BLOCKS,
 // 				array(
