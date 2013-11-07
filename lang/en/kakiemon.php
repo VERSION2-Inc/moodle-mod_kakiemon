@@ -27,3 +27,4 @@ $string['reallydeletepage'] = 'ページを削除してよろしいですか？'
 $string['editthispage'] = 'このページを編集する';
 $string['reallydeleteblock'] = 'ブロックを削除してよろしいですか？';
 $string['pluginname'] = 'カキえもん';
+$string['finisheditingthispage'] = 'ページの編集を終了する';
