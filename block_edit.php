@@ -48,6 +48,9 @@ class page_block_edit extends page {
 			$blocktype->set_form_data($this->form, $block);
 		} else {
 			$customdata->blocktype = required_param('type', PARAM_ALPHA);
+			if (!$customdata->blocktype) {
+				redirect($this->ke->url('page_view', array('page' => required_param('page', PARAM_INT))));
+			}
 			$this->form = new form_block_edit(null, $customdata);
 		}
 
@@ -143,9 +146,9 @@ class form_block_edit extends \moodleform {
 		$f->setType('id', PARAM_INT);
 		$f->addElement('hidden', 'page', optional_param('page', 0,PARAM_INT));
 		$f->setType('page', PARAM_INT);
-		if (optional_param('blockcolumn','',PARAM_INT)){
-		$f->addElement('hidden', 'blockcolumn', required_param('blockcolumn', PARAM_INT));
-		$f->setType('blockcolumn', PARAM_INT);
+		if (required_param('editmode', PARAM_ALPHA)=='add'){
+			$f->addElement('hidden', 'blockcolumn', required_param('blockcolumn', PARAM_INT));
+			$f->setType('blockcolumn', PARAM_INT);
 		}
 		$f->addElement('hidden', 'type', $blocktype);
 		$f->setType('type', PARAM_ALPHA);
