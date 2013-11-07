@@ -67,6 +67,19 @@ class kakiemon {
 
 	/**
 	 *
+	 * @param int $pageid
+	 * @return boolean
+	 */
+	public static function is_page_editable($pageid) {
+		global $DB, $USER;
+
+		$page = $DB->get_record(self::TABLE_PAGES, array('id' => $pageid));
+
+		return $page->userid == $USER->id;
+	}
+
+	/**
+	 *
 	 * @param string $identifier
 	 * @param string|\stdClass $a
 	 * @return string

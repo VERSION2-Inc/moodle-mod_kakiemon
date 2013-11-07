@@ -29,6 +29,11 @@ class page_page_view extends page {
 
 		$PAGE->set_pagelayout('embedded');
 
+		$pageid = required_param('page', PARAM_INT);
+
+		if (!ke::is_page_editable($pageid)) {
+			$SESSION->kakiemon_editing = false;
+		}
 		$editing = false;
 		if (!empty($SESSION->kakiemon_editing)) {
 			$editing = true;
@@ -49,7 +54,6 @@ class page_page_view extends page {
 
 		$PAGE->requires->css('/mod/kakiemon/lib/lightbox/css/lightbox.css');
 
-		$pageid = required_param('page', PARAM_INT);
 		$page = $DB->get_record(ke::TABLE_PAGES, array(
 				'id' => $pageid
 		));
@@ -61,6 +65,10 @@ class page_page_view extends page {
 		echo $this->output->header();
 		echo $this->output->heading($title);
 
+		$user = $DB->get_record('user', array('id' => $page->userid));
+		echo \html_writer::tag('div',
+				$user->idnumber.' '.fullname($user), array('style'=>'text-align:right'));
+
 		if ($editing) {
 			echo $this->output->container(
 					$this->output->single_button(
@@ -71,14 +79,16 @@ class page_page_view extends page {
 							)), ke::str('finisheditingthispage')),
 					'editbutton');
 		} else {
-			echo $this->output->container(
-					$this->output->single_button(
-							new \moodle_url($this->url, array(
-									'page' => $pageid,
-									'action' => 'setediting',
-									'editing' => 'on'
-							)), ke::str('editthispage')),
-					'editbutton');
+			if (ke::is_page_editable($pageid)) {
+				echo $this->output->container(
+						$this->output->single_button(
+								new \moodle_url($this->url, array(
+										'page' => $pageid,
+										'action' => 'setediting',
+										'editing' => 'on'
+								)), ke::str('editthispage')),
+						'editbutton');
+			}
 		}
 		echo $this->output->container('', 'clearer');
 
