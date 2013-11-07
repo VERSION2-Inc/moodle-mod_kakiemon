@@ -27,7 +27,7 @@ class page_page_view extends page {
 	private function view() {
 		global $DB, $PAGE, $SESSION;
 
-		// $PAGE->set_pagelayout('embedded');
+		$PAGE->set_pagelayout('embedded');
 
 		$editing = false;
 		if (!empty($SESSION->kakiemon_editing)) {

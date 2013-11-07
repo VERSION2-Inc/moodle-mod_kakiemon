@@ -61,7 +61,11 @@ class page_view extends page {
 			$url = new \moodle_url($this->ke->url('page_view'), array(
 					'page' => $page->id
 			));
-			$name = $this->output->action_link($url, $page->name/*, new \popup_action('click', $url)*/);
+			$popup = new \popup_action('click', $url, 'popup', array(
+					'width' => 1000,
+					'height' => 800
+			));
+			$name = $this->output->action_link($url, $page->name, $popup);
 			$params = array(
 					'page' => $page->id
 			);
