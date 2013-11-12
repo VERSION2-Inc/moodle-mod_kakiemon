@@ -2,18 +2,30 @@
 namespace ver2\kakiemon;
 
 class block {
+	const FILE_AREA = 'blockfile';
+
+	protected $ke;
 	/**
 	 *
 	 * @var kakiemon
 	 */
 	protected $kakiemon;
+	/**
+	 *
+	 * @var \core_renderer
+	 */
+	protected $output;
 
 	/**
 	 *
 	 * @param kakiemon $kakiemon
 	 */
 	public function __construct(kakiemon $kakiemon) {
+		global $OUTPUT;
+
+		$this->ke = $kakiemon;
 		$this->kakiemon = $kakiemon;
+		$this->output = $OUTPUT;
 	}
 
 	/**

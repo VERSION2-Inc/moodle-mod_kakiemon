@@ -61,11 +61,7 @@ class page_view extends page {
 			$url = new \moodle_url($this->ke->url('page_view'), array(
 					'page' => $page->id
 			));
-			$popup = new \popup_action('click', $url, 'popup', array(
-					'width' => 1000,
-					'height' => 800
-			));
-			$name = $this->output->action_link($url, $page->name, $popup);
+			$name = $this->output->action_link($url, $page->name);
 			$params = array(
 					'page' => $page->id
 			);
@@ -125,44 +121,7 @@ class page_view extends page {
 		}
 		$table->finish_output();
 
-
-// 		echo '<div style=margin:1em;text-align:center>
-// 				<input type=radio checked>イイネ！
-// 				<input type=radio>ワルイネ！
-// 				</div>';
-
-// 		$blocks = $DB->get_records(kakiemon::TABLE_BLOCKS,
-// 				array(
-// 						'kakiemon' => $this->kakiemon->instance
-// 				));
-// 		foreach ($blocks as $block) {
-// 			$ob = '';
-
-// 			$ob .= \html_writer::tag('h3', $block->title);
-
-// 			$oblock = $this->kakiemon->get_block($block->type);
-// 			$ob .= $oblock->get_content($block);
-
-// 			echo $this->output->box($ob, 'kaki-block');
-// 		}
-		// var_dump($blocks);
-
 		echo $this->output->footer();
-	}
-
-	private function stub_add_page() {
-		global $DB, $USER;
-
-		$userid = $USER->id;
-		$page = (object)array(
-				'kakiemon' => $this->kakiemon->instance,
-				'userid' => $userid,
-				'name' => 'ページ',
-				'timecreated' => time()
-		);
-		$DB->insert_record(kakiemon::TABLE_PAGES, $page);
-
-		redirect($this->url);
 	}
 }
 

@@ -33,7 +33,7 @@ class page_page_view extends page {
 	private function view() {
 		global $DB, $PAGE, $SESSION, $USER;
 
-		$PAGE->set_pagelayout('embedded');
+		$PAGE->blocks->show_only_fake_blocks();
 
 		$pageid = required_param('page', PARAM_INT);
 

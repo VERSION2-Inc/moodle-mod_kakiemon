@@ -11,6 +11,8 @@ class kakiemon {
 	const TABLE_BLOCKS = 'kakiemon_blocks';
 	const TABLE_LIKES = 'kakiemon_likes';
 
+	const FILE_ICON_SIZE = 24;
+
 	/**
 	 *
 	 * @var \stdClass
@@ -116,17 +118,24 @@ class kakiemon {
 
 	/**
 	 *
-	 * @param string $url
+	 * @param string|\moodle_url $url
 	 * @param array $params
 	 * @return \moodle_url
 	 */
 	public function url($url, array $params = null) {
+		if ($url instanceof \moodle_url) {
+			return new \moodle_url($url, $params);
+		}
+
 		if (!preg_match(',/$,', $url) && strpos(basename($url), '.') === false) {
 			$url .= '.php';
+		}
+		if ($url[0] != '/') {
+			$url = '/mod/kakiemon/'.$url;
 		}
 
 		$params['id'] = $this->cm->id;
 
-		return new \moodle_url('/mod/kakiemon/'.$url, $params);
+		return new \moodle_url($url, $params);
 	}
 }
