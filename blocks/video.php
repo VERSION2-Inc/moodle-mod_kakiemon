@@ -1,9 +1,12 @@
 <?php
 namespace ver2\kakiemon;
 
+use ver2\kakiemon\kakiemon as ke;
+
 class block_video extends block {
 	public function add_form_elements(\MoodleQuickForm $f) {
-		$f->addElement('textarea', 'content', '埋め込みコード');
+		$f->addElement('textarea', 'content', ke::str('embedcode'),
+				array('cols' => 40, 'rows' => 5));
 	}
 
 	public function update_data(form_block_edit $form, \stdClass $block) {

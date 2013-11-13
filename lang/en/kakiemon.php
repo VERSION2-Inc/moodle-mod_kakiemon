@@ -3,7 +3,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['blog'] = 'ブログ';
 $string['file'] = 'ファイル';
-$string['html'] = 'HTML';
+$string['html'] = 'HTMLテキスト';
 $string['image'] = '画像';
 $string['kakiemonname'] = 'カキえもん名';
 $string['link'] = 'リンク';
@@ -28,3 +28,5 @@ $string['editthispage'] = 'このページを編集する';
 $string['reallydeleteblock'] = 'ブロックを削除してよろしいですか？';
 $string['pluginname'] = 'カキえもん';
 $string['finisheditingthispage'] = 'ページの編集を終了する';
+$string['editblock'] = 'ブロックの編集';
+$string['embedcode'] = '埋め込みコード';

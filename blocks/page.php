@@ -13,8 +13,9 @@ class block_page extends block {
 	 * @param \MoodleQuickForm $f
 	 */
 	public function add_form_elements(\MoodleQuickForm $f) {
-		$f->addElement('text', 'url', 'URL');
+		$f->addElement('text', 'url', 'URL', array('size' => 50));
 		$f->setType('url', PARAM_TEXT);
+		$f->addRule('url', null, 'required', null, 'client');
 	}
 
 	/**
@@ -69,7 +70,7 @@ class block_page extends block {
 // 			));
 // 		}
 		$o .= $this->get_thumbnail_code($data->url);
-		$o .= \html_writer::tag('a', 'リンクを開く', array(
+		$o .= \html_writer::tag('a', $data->url, array(
 				'href' => $data->url,
 				'target' => '_blank'
 		));
@@ -79,6 +80,7 @@ class block_page extends block {
 
 	private function get_thumbnail_code($url) {
 		return $this->get_thumbnail_code_thumbnail_web($url);
+// 		return $this->get_thumbnail_code_thumbalizr($url);
 	}
 
 	private function get_thumbnail_code_thumbnail_web($url) {
@@ -87,9 +89,19 @@ class block_page extends block {
 				'guest',
 				$url
 		);
-		$jsurl = 'http://free.thumbnail-web.com/p2?' . implode('&', $params);
+		$jsurl = 'http://free.thumbnail-web.com/p2?'.implode('&', $params);
 
 		return \html_writer::script('', $jsurl);
+	}
+
+	private function get_thumbnail_code_thumbalizr($url) {
+		$url = rtrim($url, '/');
+
+		$imgurl = 'http://api1.thumbalizr.com/?url='.$url.'&width=250';
+
+		return \html_writer::empty_tag('img', array(
+				'src' => $imgurl
+		));
 	}
 
 	private function make_thumbnail($url) {

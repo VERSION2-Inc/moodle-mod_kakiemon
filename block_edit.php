@@ -14,6 +14,7 @@ class page_block_edit extends page {
 	 */
 	private $form;
 	private $editmode;
+	private $pageid;
 
 	public function execute() {
 		global $DB;
@@ -46,15 +47,20 @@ class page_block_edit extends page {
 
 			$blocktype = $this->ke->get_block_type($block->type);
 			$blocktype->set_form_data($this->form, $block);
+
+			$this->pageid = $block->page;
 		} else {
+			$this->pageid = required_param('page', PARAM_INT);
+
 			$customdata->blocktype = required_param('type', PARAM_ALPHA);
 			if (!$customdata->blocktype) {
-				redirect($this->ke->url('page_view', array('page' => required_param('page', PARAM_INT))));
+				redirect($this->ke->url('page_view', array('page' => $this->pageid)));
 			}
 			$this->form = new form_block_edit(null, $customdata);
 		}
 
 		if ($this->form->is_cancelled()) {
+			//FIXME pageid
 			redirect($this->ke->url('page_view', array('page' => required_param('page', PARAM_INT))));
 		}
 		if ($this->form->is_submitted()) {
@@ -64,6 +70,12 @@ class page_block_edit extends page {
 	}
 
 	private function edit_form() {
+		global $DB;
+
+		$page = $DB->get_record(ke::TABLE_PAGES, array('id' => $this->pageid));
+		$this->add_navbar($page->name, $this->ke->url('page_view', array('page' => $this->pageid)));
+		$this->add_navbar(ke::str('editblock'));
+
 		echo $this->output->header();
 
 		$this->form->display();

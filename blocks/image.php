@@ -9,7 +9,9 @@ class block_image extends block {
 	 * @param \MoodleQuickForm $f
 	 */
 	public function add_form_elements(\MoodleQuickForm $f) {
-		$f->addElement('filemanager', 'file', '画像ファイル');
+		$f->addElement('filemanager', 'file', '画像ファイル', array(
+				'maxfiles' => 1
+		));
 	}
 
 	/**

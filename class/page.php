@@ -54,10 +54,10 @@ abstract class page {
 
 	public abstract function execute();
 
-	public function add_navbar($text) {
+	public function add_navbar($text, $action = null) {
 		global $PAGE;
 
-		$PAGE->navbar->add($text);
+		$PAGE->navbar->add($text, $action);
 	}
 
 	public static function execute_new($file) {

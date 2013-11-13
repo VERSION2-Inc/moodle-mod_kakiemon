@@ -132,21 +132,23 @@ class page_page_view extends page {
 			foreach ($blocks as $block) {
 				$ob = '';
 
-				$ob .= \html_writer::tag('h3', $block->title);
+// 				$ob .= \html_writer::tag('h3', $block->title);
 
 				$buttons = '';
-				$buttons .= util::button(util::BUTTON_EDIT,
-						new \moodle_url($this->ke->url('block_edit', array(
-								'block' => $block->id,
-								'action' => 'edit',
-								'editmode' => 'update'
-						))));
-				$buttons .= util::button(util::BUTTON_DELETE,
-						new \moodle_url($this->ke->url('block_edit', array(
-								'action' => 'delete',
-								'block' => $block->id
-						))),
-						new \confirm_action(ke::str('reallydeleteblock')));
+				if ($editing) {
+					$buttons .= util::button(util::BUTTON_EDIT,
+							new \moodle_url($this->ke->url('block_edit', array(
+									'block' => $block->id,
+									'action' => 'edit',
+									'editmode' => 'update'
+							))));
+					$buttons .= util::button(util::BUTTON_DELETE,
+							new \moodle_url($this->ke->url('block_edit', array(
+									'action' => 'delete',
+									'block' => $block->id
+							))),
+							new \confirm_action(ke::str('reallydeleteblock')));
+				}
 
 // 				$buttons .= util::button(util::BUTTON_UP,
 // 						new \moodle_url($this->ke->url('block_edit', array(
