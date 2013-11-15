@@ -1,8 +1,6 @@
 <?php
 namespace ver2\kakiemon;
 
-use ver2\kakiemon\kakiemon as ke;
-
 class block_file extends block {
 	public function add_form_elements(\MoodleQuickForm $f) {
 		$f->addElement('filemanager', 'file', 'ファイル');
@@ -10,7 +8,7 @@ class block_file extends block {
 
 	public function update_data(form_block_edit $form,\stdClass $block) {
 		$data = $form->get_data();
-		file_save_draft_area_files($data->file, $this->kakiemon->context->id, kakiemon::COMPONENT,
+		file_save_draft_area_files($data->file, $this->ke->context->id, ke::COMPONENT,
 				'blockfile', $block->id);
 
 		$data = (object)[];
@@ -24,7 +22,7 @@ class block_file extends block {
 		$o = '';
 
 		$fs = get_file_storage();
-		$files = $fs->get_area_files($this->kakiemon->context->id, kakiemon::COMPONENT, 'blockfile',
+		$files = $fs->get_area_files($this->ke->context->id, ke::COMPONENT, 'blockfile',
 				$block->id, 'itemid, filepath, filename', false);
 		if (!$files) {
 			return '';
@@ -32,7 +30,7 @@ class block_file extends block {
 		/* @var $file \stored_file */
 		$file = reset($files);
 
-		$path = '/' . $this->kakiemon->context->id . '/mod_kakiemon/blockfile/' . $block->id .
+		$path = '/' . $this->ke->context->id . '/mod_kakiemon/blockfile/' . $block->id .
 		$file->get_filepath() . $file->get_filename();
 		$fileurl = \moodle_url::make_file_url('/pluginfile.php', $path, true);
 

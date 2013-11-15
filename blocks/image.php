@@ -42,7 +42,7 @@ class block_image extends block {
 		$o = '';
 
 		$fs = get_file_storage();
-		$files = $fs->get_area_files($this->kakiemon->context->id, kakiemon::COMPONENT, 'blockfile',
+		$files = $fs->get_area_files($this->ke->context->id, ke::COMPONENT, 'blockfile',
 				$block->id, 'itemid, filepath, filename', false);
 		if (!$files) {
 			return '';
@@ -50,7 +50,7 @@ class block_image extends block {
 		/* @var $file \stored_file */
 		$file = reset($files);
 
-		$path = '/' . $this->kakiemon->context->id . '/mod_kakiemon/blockfile/' . $block->id .
+		$path = '/' . $this->ke->context->id . '/mod_kakiemon/blockfile/' . $block->id .
 				 $file->get_filepath() . $file->get_filename();
 		$fileurl = \moodle_url::make_file_url('/pluginfile.php', $path);
 

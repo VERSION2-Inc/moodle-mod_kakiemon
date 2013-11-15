@@ -2,9 +2,6 @@
 
 namespace ver2\kakiemon;
 
-use ver2\kakiemon\kakiemon as ke;
-use editor_tinymce;
-
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 require_once $CFG->libdir . '/tablelib.php';
@@ -34,9 +31,9 @@ class page_view extends page {
 
 		echo $this->output->heading(ke::str('mypages'));
 
-		$pages = $DB->get_records(kakiemon::TABLE_PAGES,
+		$pages = $DB->get_records(ke::TABLE_PAGES,
 				array(
-						'kakiemon' => $this->kakiemon->instance,
+						'kakiemon' => $this->ke->instance,
 						'userid' => $userid
 				), 'timecreated DESC');
 		$table = new \flexible_table('pages');

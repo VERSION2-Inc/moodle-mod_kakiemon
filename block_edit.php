@@ -25,9 +25,14 @@ class page_block_edit extends page {
 			case 'edit':
 				$this->edit();
 				break;
-			case 'changeorder':
+			case 'delete':
+				$this->delete();
 				break;
 			case 'changecolumn':
+				$this->change_column();
+				break;
+			case 'changeorder':
+				$this->change_order();
 				break;
 		}
 	}
@@ -111,10 +116,39 @@ class page_block_edit extends page {
 		redirect($this->ke->url('page_view', array('page'=>$block->page)));
 	}
 
-	private function move($value) {
+	private function delete() {
 		global $DB;
 
-		$block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('block', PARAM_INT)));
+		$blockid = required_param('block', PARAM_INT);
+		$block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => $blockid), '*', MUST_EXIST);
+
+		$DB->delete_records(ke::TABLE_BLOCKS, array('id' => $blockid));
+
+		redirect($this->ke->url('page_view', array('page' => $block->page)));
+	}
+
+	private function change_column() {
+		global $DB;
+
+		$block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('block', PARAM_INT)),
+				'*', MUST_EXIST);
+		$value = required_param('value', PARAM_INT);
+
+		$block->blockcolumn += $value;
+		$block->blockorder = 0;
+		$DB->update_record(ke::TABLE_BLOCKS, $block);
+
+		$this->reorder_blocks($block);
+
+		redirect($this->ke->url('page_view', array('page' => $block->page)));
+	}
+
+	private function change_order() {
+		global $DB;
+
+		$block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('block', PARAM_INT)),
+				'*', MUST_EXIST);
+		$value = required_param('value', PARAM_INT);
 
 		if ($nextblock = $DB->get_record(ke::TABLE_BLOCKS,
 				array('blockorder' => $block->blockorder + $value))) {
@@ -124,18 +158,27 @@ class page_block_edit extends page {
 
 		$block->blockorder += $value;
 		$DB->update_record(ke::TABLE_BLOCKS, $block);
+
+		$this->reorder_blocks($block);
+
+		redirect($this->ke->url('page_view', array('page' => $block->page)));
 	}
 
-	private function view() {
+	private function reorder_blocks(\stdClass $block) {
 		global $DB;
 
-		echo $this->output->header();
+		$columnblocks = $DB->get_records(ke::TABLE_BLOCKS, array(
+				'page' => $block->page,
+				'blockcolumn' => $block->blockcolumn
+		), 'blockorder');
 
-		$this->form->display();
+		$ids = array_keys($columnblocks);
 
-		echo $this->output->footer();
+		$order = 1;
+		foreach ($ids as $id) {
+			$DB->set_field(ke::TABLE_BLOCKS, 'blockorder', $order++, array('id' => $id));
+		}
 	}
-
 }
 
 class form_block_edit extends \moodleform {

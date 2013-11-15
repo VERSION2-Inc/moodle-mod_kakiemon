@@ -1,8 +1,6 @@
 <?php
 namespace ver2\kakiemon;
 
-use ver2\kakiemon\kakiemon as ke;
-
 defined('MOODLE_INTERNAL') || die();
 
 class ke_page extends model {
@@ -34,14 +32,40 @@ class ke_page extends model {
 	}
 
 	public function most_liked($limitnum = 5) {
-		return $this->db->get_records_select(self::TABLE,
-				'likes > 0', null,
-				'likes DESC, timemodified DESC');
+// 		return $this->db->get_records_select(self::TABLE,
+// 				'likes > 0', null,
+// 				'likes DESC, timemodified DESC');
+		$sql = '
+				SELECT p.*,
+					(
+						SELECT COUNT(*)  FROM {'.ke::TABLE_LIKES.'} l
+						WHERE l.page = p.id AND l.type = :type
+					) cnt
+				FROM {'.self::TABLE.'} p
+				HAVING cnt > 0
+				';
+		$params = array(
+				'type' => 'like'
+		);
+		return $this->db->get_records_sql($sql, $params);
 	}
 
 	public function most_disliked($limitnum = 5) {
-		return $this->db->get_records_select(self::TABLE,
-				'dislikes > 0', null,
-				'dislikes DESC, timemodified DESC');
+// 		return $this->db->get_records_select(self::TABLE,
+// 				'dislikes > 0', null,
+// 				'dislikes DESC, timemodified DESC');
+		$sql = '
+				SELECT p.*,
+					(
+						SELECT COUNT(*)  FROM {'.ke::TABLE_LIKES.'} l
+						WHERE l.page = p.id AND l.type = :type
+					) cnt
+				FROM {'.self::TABLE.'} p
+				HAVING cnt > 0
+				';
+		$params = array(
+				'type' => 'dislike'
+		);
+		return $this->db->get_records_sql($sql, $params);
 	}
 }

@@ -18,11 +18,6 @@ abstract class page {
 	 *
 	 * @var kakiemon
 	 */
-	public $kakiemon;
-	/**
-	 *
-	 * @var kakiemon
-	 */
 	public $ke;
 	/**
 	 *
@@ -39,12 +34,10 @@ abstract class page {
 
 		$this->cmid = $id;
 
-		$kakiemon = new kakiemon($id);
-		$this->kakiemon = $kakiemon;
-		$this->ke = $kakiemon;
+		$this->ke = new ke($id);
 		$this->action = optional_param('action', null, PARAM_ALPHA);
 
-		require_login($kakiemon->cm->course, true, $kakiemon->cm);
+		require_login($this->ke->cm->course, true, $this->ke->cm);
 
 		$PAGE->set_title('title');
 		$PAGE->set_heading('heading');

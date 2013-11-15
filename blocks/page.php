@@ -1,8 +1,6 @@
 <?php
 namespace ver2\kakiemon;
 
-use ver2\kakiemon\kakiemon as ke;
-
 class block_page extends block {
 	const THUMBNAIL_WIDTH = 250;
 	const THUMBNAIL_NAME = 'thumb.jpg';

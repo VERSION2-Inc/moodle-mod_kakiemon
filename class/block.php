@@ -7,11 +7,6 @@ class block {
 	protected $ke;
 	/**
 	 *
-	 * @var kakiemon
-	 */
-	protected $kakiemon;
-	/**
-	 *
 	 * @var \core_renderer
 	 */
 	protected $output;
@@ -20,11 +15,10 @@ class block {
 	 *
 	 * @param kakiemon $kakiemon
 	 */
-	public function __construct(kakiemon $kakiemon) {
+	public function __construct(ke $kakiemon) {
 		global $OUTPUT;
 
 		$this->ke = $kakiemon;
-		$this->kakiemon = $kakiemon;
 		$this->output = $OUTPUT;
 	}
 

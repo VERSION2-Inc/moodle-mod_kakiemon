@@ -3,7 +3,7 @@ namespace ver2\kakiemon;
 
 defined('MOODLE_INTERNAL') || die();
 
-class kakiemon {
+class ke {
 	const COMPONENT = 'mod_kakiemon';
 
 	const TABLE_MOD = 'kakiemon';
