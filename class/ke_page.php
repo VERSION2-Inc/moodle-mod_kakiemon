@@ -63,11 +63,12 @@ class ke_page extends model {
 					) cnt
 				FROM {'.self::TABLE.'} p
 				HAVING cnt > 0
+				ORDER BY cnt DESC
 				';
 		$params = array(
 				'type' => 'like'
 		);
-		return $this->db->get_records_sql($sql, $params);
+		return $this->db->get_records_sql($sql, $params, 0, $limitnum);
 	}
 
 	public function most_disliked($limitnum = 5) {
@@ -79,10 +80,11 @@ class ke_page extends model {
 					) cnt
 				FROM {'.self::TABLE.'} p
 				HAVING cnt > 0
+				ORDER BY cnt DESC
 				';
 		$params = array(
 				'type' => 'dislike'
 		);
-		return $this->db->get_records_sql($sql, $params);
+		return $this->db->get_records_sql($sql, $params, 0, $limitnum);
 	}
 }
