@@ -79,8 +79,15 @@ class page_view extends page {
 			$params = array(
 					'page' => $page->id
 			);
-			$buttons = $this->output->action_icon($this->ke->url('page_edit', $params), $editicon) . $this->output->action_icon(
-					$this->ke->url('page_edit', $params), $deleteicon,
+			$buttons = $this->output->action_icon(
+					$this->ke->url('page_edit', array('page' => $page->id)), $editicon);
+			$buttons .= $this->output->action_icon(
+					$this->ke->url('page_edit',
+							array(
+									'page' => $page->id,
+									'action' => 'delete'
+							)
+					), $deleteicon,
 					new \confirm_action(ke::str('reallydeletepage')));
 			$row = array(
 					$name,

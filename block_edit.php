@@ -1,8 +1,6 @@
 <?php
 namespace ver2\kakiemon;
 
-use ver2\kakiemon\kakiemon as ke;
-
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 require_once $CFG->libdir . '/formslib.php';

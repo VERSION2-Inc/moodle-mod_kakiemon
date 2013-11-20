@@ -18,6 +18,9 @@ class page_page_edit extends page {
 		));
 
 		switch (optional_param('action', null, PARAM_ALPHA)) {
+			case 'delete':
+				$this->delete();
+				break;
 			default:
 				$this->view();
 		}
@@ -98,6 +101,11 @@ class page_page_edit extends page {
 			}
 		}
 
+		redirect($this->ke->url('view'));
+	}
+
+	private function delete() {
+		$this->db->delete_records(ke::TABLE_PAGES, array('id' => required_param('page', PARAM_INT)));
 		redirect($this->ke->url('view'));
 	}
 }
