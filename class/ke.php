@@ -6,10 +6,15 @@ defined('MOODLE_INTERNAL') || die();
 class ke {
 	const COMPONENT = 'mod_kakiemon';
 
+	const KEY = 'kakiemon';
 	const TABLE_MOD = 'kakiemon';
 	const TABLE_PAGES = 'kakiemon_pages';
 	const TABLE_BLOCKS = 'kakiemon_blocks';
 	const TABLE_LIKES = 'kakiemon_likes';
+	const TABLE_ACCESSES = 'kakiemon_accesses';
+
+	const CAP_VIEW = 'mod/kakiemon:view';
+	const CAP_CREATE_TEMPLATE = 'mod/kakiemon:createtemplate';
 
 	const FILE_ICON_SIZE = 24;
 
@@ -38,6 +43,16 @@ class ke {
 	 * @var int
 	 */
 	public $cmid;
+	/**
+	 *
+	 * @var \moodle_database
+	 */
+	private $db;
+	/**
+	 *
+	 * @var \stdClass
+	 */
+	public $options;
 
 	/**
 	 *
@@ -50,6 +65,8 @@ class ke {
 		$this->cmid = $this->cm->id;
 		$this->instance = $this->cm->instance;
 		$this->context = \context_module::instance($this->cm->id);
+		$this->db = $DB;
+		$this->options = $this->db->get_record(self::TABLE_MOD, array('id' => $this->instance));
 
 		$this->load_block_plugins();
 	}
@@ -65,6 +82,15 @@ class ke {
 			$this->blocks[$blockname] = self::str($blockname);
 		}
 		self::asort($this->blocks);
+	}
+
+	/**
+	 *
+	 * @param string $capability
+	 * @return boolean
+	 */
+	public function has_capability($capability) {
+		return has_capability($capability, $this->context);
 	}
 
 	/**
@@ -137,5 +163,106 @@ class ke {
 		$params['id'] = $this->cm->id;
 
 		return new \moodle_url($url, $params);
+	}
+
+	public function get_template_page() {
+		return $this->db->get_record(self::TABLE_PAGES, array(
+				'kakiemon' => $this->instance,
+				'template' => 1
+		));
+	}
+
+	public function copy_page($srcpage, $dstpage) {
+		global $USER;
+
+		$blocks = $this->db->get_records(self::TABLE_BLOCKS, array(
+				'page' => $srcpage->id
+		), 'blockcolumn, blockorder');
+		$userid = $USER->id;
+		$fs = get_file_storage();
+
+		foreach ($blocks as $block) {
+			$oldid = $block->id;
+			unset($block->id);
+			$block->page = $dstpage->id;
+			$newid = $this->db->insert_record(self::TABLE_BLOCKS, $block);
+
+			if ($files = $fs->get_area_files($this->context->id, self::COMPONENT, 'blockfile', $oldid,
+					'filepath, filename', false)) {
+				foreach ($files as $file) {
+					$fs->create_file_from_storedfile(array(
+							'itemid' => $newid
+					), $file);
+				}
+			}
+		}
+	}
+
+	public function update_access($page) {
+		global $USER;
+
+		$userid = $USER->id;
+
+		if (!$this->options->showtracks || $page->userid == $userid) {
+			return;
+		}
+
+		$pageid = $page->id;
+		$daystart = strtotime('00:00');
+		if ($access = $this->db->get_record_select(self::TABLE_ACCESSES,
+					'page = :page AND userid = :userid AND timeaccessed >= :daystart',
+					array(
+							'page' => $pageid,
+							'userid' => $userid,
+							'daystart' => $daystart
+					)
+		)) {
+			$access->timeaccessed = time();
+			$this->db->update_record(self::TABLE_ACCESSES, $access);
+		} else {
+			$access = (object)array(
+					'kakiemon' => $this->instance,
+					'page' => $pageid,
+					'userid' => $userid,
+					'timeaccessed' => time()
+			);
+			$this->db->insert_record(self::TABLE_ACCESSES, $access);
+		}
+	}
+
+	/**
+	 *
+	 * @param string $action
+	 */
+	public function log($action) {
+		add_to_log($this->cm->course, self::COMPONENT, $action);
+	}
+
+	/**
+	 *
+	 * @return boolean
+	 */
+	public function can_create_page() {
+		return $this->is_in_period($this->options->createstartdate, $this->options->createenddate);
+	}
+
+	/**
+	 *
+	 * @return boolean
+	 */
+	public function can_view_page() {
+		return $this->is_in_period($this->options->viewstartdate, $this->options->viewenddate);
+	}
+
+	/**
+	 *
+	 * @param int $start
+	 * @param int $end
+	 * @return boolean
+	 */
+	private function is_in_period($start, $end) {
+		$now = time();
+
+		return (!$start || $now >= $start) && (!$end || $now < $end);
 	}
 }

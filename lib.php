@@ -22,6 +22,7 @@ function kakiemon_add_instance($kakiemon, $form) {
 function kakiemon_update_instance($kakiemon, $form) {
 	global $DB;
 
+	$kakiemon->id = $kakiemon->instance;
 	$DB->update_record('kakiemon', $kakiemon);
 
 	return true;
@@ -39,6 +40,7 @@ function kakiemon_delete_instance($id) {
 	$DB->delete_records('kakiemon_pages', array('kakiemon' => $id));
 	$DB->delete_records('kakiemon_blocks', array('kakiemon' => $id));
 	$DB->delete_records('kakiemon_likes', array('kakiemon' => $id));
+	$DB->delete_records('kakiemon_accesses', array('kakiemon' => $id));
 
 	return true;
 }

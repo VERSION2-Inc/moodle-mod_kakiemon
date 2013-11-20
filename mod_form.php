@@ -32,7 +32,7 @@ class mod_kakiemon_mod_form extends moodleform_mod {
 		//公開範囲
 
 		$f->addElement('header', 'features', ke::str('features'));
-		$f->addElement('selectyesno', 'usefootmark', ke::str('usefootmark'));
+		$f->addElement('selectyesno', 'showtracks', ke::str('usefootmark'));
 		$f->addElement('selectyesno', 'uselike', ke::str('uselike'));
 		$f->addElement('selectyesno', 'usedislike', ke::str('usedislike'));
 

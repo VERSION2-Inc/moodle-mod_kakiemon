@@ -24,17 +24,37 @@ class ke_page extends model {
 	 * @return \stdClass[]
 	 */
 	public function others($limitnum = 0) {
-		global $USER;
+		global $USER, $COURSE, $SITE;
 
-		return $this->db->get_records_select(self::TABLE,
-				'userid <> :userid', array('userid' => $USER->id),
-				'timemodified DESC', '*', 0, $limitnum);
+		$where = '
+				WHERE userid <> :userid
+					AND (k.viewstartdate = 0 OR k.viewstartdate <= :startdatetest)
+					AND (k.viewenddate = 0 OR k.viewenddate > :enddatetest)';
+		$now = time();
+		$params = array(
+				'userid' => $USER->id,
+				'startdatetest' => $now,
+				'enddatetest' => $now
+		);
+
+		if ($COURSE->id != $SITE->id) {
+			$where .= ' AND c.id = :course';
+			$params['course'] = $COURSE->id;
+		}
+
+		$sql = '
+				SELECT p.*
+				FROM {kakiemon_pages} p
+					JOIN {kakiemon} k ON p.kakiemon = k.id
+					JOIN {course} c ON k.course = c.id
+				'.$where.'
+				ORDER BY p.timemodified DESC
+				';
+
+		return $this->db->get_records_sql($sql, $params, 0, $limitnum);
 	}
 
 	public function most_liked($limitnum = 5) {
-// 		return $this->db->get_records_select(self::TABLE,
-// 				'likes > 0', null,
-// 				'likes DESC, timemodified DESC');
 		$sql = '
 				SELECT p.*,
 					(
@@ -51,9 +71,6 @@ class ke_page extends model {
 	}
 
 	public function most_disliked($limitnum = 5) {
-// 		return $this->db->get_records_select(self::TABLE,
-// 				'dislikes > 0', null,
-// 				'dislikes DESC, timemodified DESC');
 		$sql = '
 				SELECT p.*,
 					(

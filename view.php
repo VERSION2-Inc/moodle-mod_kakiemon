@@ -22,12 +22,26 @@ class page_view extends page {
 
 		echo $this->output->header();
 
-		echo $this->output->action_link(
-				new \moodle_url($this->ke->url('page_edit', array(
-						'add' => 1
-				)), array(
-						'action' => 'addpage'
-				)), ke::str('addpage'));
+		echo $this->output->box_start();
+		echo format_text($this->ke->options->intro, $this->ke->options->introformat);
+		echo \html_writer::start_tag('div');
+		echo $this->format_period(ke::str('createperiod'), $this->ke->options->createstartdate,
+				$this->ke->options->createenddate);
+		echo \html_writer::empty_tag('br');
+		echo $this->format_period(ke::str('viewperiod'), $this->ke->options->viewstartdate,
+				$this->ke->options->viewenddate);
+		echo \html_writer::end_tag('div');
+		echo $this->output->box_end();
+
+		$now = time();
+		if ($now > $this->ke->options->createstartdate && $now < $this->ke->options->createenddate) {
+			echo $this->output->action_link(
+					new \moodle_url($this->ke->url('page_edit', array(
+							'add' => 1
+					)), array(
+							'action' => 'addpage'
+					)), ke::str('addpage'));
+		}
 
 		echo $this->output->heading(ke::str('mypages'));
 
@@ -59,6 +73,9 @@ class page_view extends page {
 					'page' => $page->id
 			));
 			$name = $this->output->action_link($url, $page->name);
+			if ($page->template) {
+				$name .= ' ('.ke::str('template').')';
+			}
 			$params = array(
 					'page' => $page->id
 			);
@@ -78,7 +95,7 @@ class page_view extends page {
 
 		$pages = $DB->get_records_sql(
 				'
-				SELECT p.id, p.name, p.timecreated,
+				SELECT p.id, p.name, p.timecreated, p.template,
 					u.lastname, u.firstname
 				FROM {' . ke::TABLE_PAGES . '} p
 					JOIN {user} u ON p.userid = u.id
@@ -105,10 +122,13 @@ class page_view extends page {
 		$table->sortable(true, 'timecreated', SORT_DESC);
 		$table->setup();
 		foreach ($pages as $page) {
-			$name = $this->output->action_link(
-					new \moodle_url($this->url, array(
-							'page' => $page->id
-					)), $page->name);
+			$url = new \moodle_url($this->ke->url('page_view'), array(
+					'page' => $page->id
+			));
+			$name = $this->output->action_link($url, $page->name);
+			if ($page->template) {
+				$name .= ' ('.ke::str('template').')';
+			}
 			$row = array(
 					$name,
 					fullname($page),
@@ -119,6 +139,22 @@ class page_view extends page {
 		$table->finish_output();
 
 		echo $this->output->footer();
+	}
+
+	private function format_period($label, $start, $end) {
+		$o = $label.': ';
+		$o .= $this->format_period_date($start);
+		$o .= ' &ndash; ';
+		$o .= $this->format_period_date($end);
+
+		return $o;
+	}
+
+	private function format_period_date($date) {
+		if ($date) {
+			return userdate($date);
+		}
+		return '';
 	}
 }
 

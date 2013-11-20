@@ -40,3 +40,7 @@ $string['uselike'] = 'イイネ！を使う';
 $string['video'] = 'ビデオ';
 $string['viewenddate'] = '閲覧終了日時';
 $string['viewstartdate'] = '閲覧開始日時';
+$string['template'] = 'テンプレート';
+$string['viewperiod'] = 'ページ閲覧期間';
+$string['createperiod'] = 'ページ作成期間';
+$string['noperiod'] = '無期限';

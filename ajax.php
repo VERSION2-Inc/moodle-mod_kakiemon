@@ -1,8 +1,6 @@
 <?php
 namespace ver2\kakiemon;
 
-use ver2\kakiemon\kakiemon as ke;
-
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 
@@ -21,7 +19,9 @@ class page_ajax extends page {
 		global $DB;
 
 		$block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('block', PARAM_INT)));
-		$targetblock = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('target', PARAM_INT)));
+		$block->blockcolumn = required_param('column', PARAM_INT);
+		$block->blockorder = required_param('order', PARAM_INT);
+		$DB->update_record(ke::TABLE_BLOCKS, $block);
 
 		$columnblocks = $DB->get_records(ke::TABLE_BLOCKS, array(
 				'page' => $block->page,
@@ -29,8 +29,6 @@ class page_ajax extends page {
 		), 'blockorder');
 
 		$ids = array_keys($columnblocks);
-		array_splice($ids, array_search($block->id, $ids), 1, array());
-		array_splice($ids, array_search($targetblock->id, $ids), 1, array($block->id, $targetblock->id));
 
 		$order = 1;
 		foreach ($ids as $id) {

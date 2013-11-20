@@ -53,14 +53,14 @@ class page_page_view extends page {
 						'fullpath' => '/mod/kakiemon/module.js',
 						'requires' => array('dd', 'io')
 				));
-		$PAGE->requires->yui_module('moodle-mod_kakiemon-dragdrop', 'M.mod_kakiemon.init_dragdrop',
-				array(array('cmid' => $this->cmid)));
 
 		$PAGE->requires->css('/mod/kakiemon/lib/lightbox/css/lightbox.css');
 
 		$page = $DB->get_record(ke::TABLE_PAGES, array(
 				'id' => $pageid
 		));
+
+		$this->ke->update_access($page);
 
 		$title = $page->name;
 
@@ -75,26 +75,30 @@ class page_page_view extends page {
 
 		echo $this->output->container_start('likebuttons');
 		$likeelement = 'span';
-		$likecount = $DB->count_records(ke::TABLE_LIKES, array(
-				'page' => $pageid,
-				'type' => self::LIKE
-		));
-		echo $this->output->action_link(new \moodle_url($this->url, array(
-				'page' => $pageid,
-				'action' => 'like',
-				'type' => self::LIKE
-		)), ke::str('like'), null, array('class' => 'likebutton'));
-		echo \html_writer::tag($likeelement, $likecount, array('class' => 'likecount'));
-		$dislikecount = $DB->count_records(ke::TABLE_LIKES, array(
-				'page' => $pageid,
-				'type' => self::DISLIKE
-		));
-		echo $this->output->action_link(new \moodle_url($this->url, array(
-				'page' => $pageid,
-				'action' => 'like',
-				'type' => self::DISLIKE
-		)), ke::str('dislike'), null, array('class' => 'likebutton'));
-		echo \html_writer::tag($likeelement, $dislikecount, array('class' => 'likecount'));
+		if ($this->ke->options->uselike) {
+			$likecount = $DB->count_records(ke::TABLE_LIKES, array(
+					'page' => $pageid,
+					'type' => self::LIKE
+			));
+			echo $this->output->action_link(new \moodle_url($this->url, array(
+					'page' => $pageid,
+					'action' => 'like',
+					'type' => self::LIKE
+			)), ke::str('like'), null, array('class' => 'likebutton'));
+			echo \html_writer::tag($likeelement, $likecount, array('class' => 'likecount'));
+		}
+		if ($this->ke->options->usedislike) {
+			$dislikecount = $DB->count_records(ke::TABLE_LIKES, array(
+					'page' => $pageid,
+					'type' => self::DISLIKE
+			));
+			echo $this->output->action_link(new \moodle_url($this->url, array(
+					'page' => $pageid,
+					'action' => 'like',
+					'type' => self::DISLIKE
+			)), ke::str('dislike'), null, array('class' => 'likebutton'));
+			echo \html_writer::tag($likeelement, $dislikecount, array('class' => 'likecount'));
+		}
 		echo $this->output->container_end();
 
 		if ($editing) {
@@ -120,8 +124,12 @@ class page_page_view extends page {
 		}
 		echo $this->output->container('', 'clearer');
 
-		for ($column = 0; $column < 3; $column++) {
+		for ($column = 1; $column <= 3; $column++) {
 			echo $this->output->container_start('block-column', 'column'.$column);
+			echo \html_writer::start_tag('div', array(
+					'class' => 'block-column-blocks',
+					'data-column' => $column
+			));
 
 			$blocks = $DB->get_records(ke::TABLE_BLOCKS, array(
 					'page' => $pageid,
@@ -130,8 +138,6 @@ class page_page_view extends page {
 			$row = 0;
 			foreach ($blocks as $block) {
 				$ob = '';
-
-// 				$ob .= \html_writer::tag('h3', $block->title);
 
 				if ($editing) {
 					$buttons = '';
@@ -189,11 +195,14 @@ class page_page_view extends page {
 
 				echo \html_writer::tag('div', $ob, array(
 						'class' => 'kaki-block',
-						'data-id' => $block->id
+						'data-id' => $block->id,
+						'data-column' => $block->blockcolumn,
+						'data-order' => $block->blockorder
 				));
 
 				$row++;
 			}
+			echo \html_writer::end_tag('div');
 
 			if ($editing) {
 				echo $this->output->container(ke::str('addblock'));

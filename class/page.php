@@ -16,7 +16,7 @@ abstract class page {
 	public $cmid;
 	/**
 	 *
-	 * @var kakiemon
+	 * @var ke
 	 */
 	public $ke;
 	/**
@@ -24,9 +24,14 @@ abstract class page {
 	 * @var string
 	 */
 	public $action;
+	/**
+	 *
+	 * @var \moodle_database
+	 */
+	protected $db;
 
 	public function __construct($url) {
-		global $PAGE, $OUTPUT;
+		global $DB, $PAGE, $OUTPUT;
 
 		$id = required_param('id', PARAM_INT);
 		$this->url = new \moodle_url($url, array('id' => $id));
@@ -43,6 +48,7 @@ abstract class page {
 		$PAGE->set_heading('heading');
 
 		$this->output = $OUTPUT;
+		$this->db = $DB;
 	}
 
 	public abstract function execute();

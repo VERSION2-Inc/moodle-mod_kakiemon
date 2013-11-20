@@ -21,5 +21,16 @@ $capabilities = array(
 						'guest' => CAP_ALLOW,
 						'user' => CAP_ALLOW
 				)
+		),
+
+		'mod/kakiemon:createtemplate' => array(
+				'riskbitmask' => RISK_XSS,
+
+				'captype' => 'write',
+				'contextlevel' => CONTEXT_MODULE,
+				'archetypes' => array(
+						'editingteacher' => CAP_ALLOW,
+						'manager' => CAP_ALLOW
+				)
 		)
 );

@@ -1,11 +1,9 @@
 <?php
-
 namespace ver2\kakiemon;
-
-use ver2\kakiemon\kakiemon as ke;
 
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
+require_once $CFG->libdir . '/formslib.php';
 
 class page_page_edit extends page {
 	/**
@@ -70,8 +68,18 @@ class page_page_edit extends page {
 
 		$now = time();
 
+		if ($data->template) {
+			if ($template = $this->ke->get_template_page()) {
+				if (!$data->page || $data->page && $template->id != $data->page) {
+					$template->template = 0;
+					$this->db->update_record(ke::TABLE_PAGES, $template);
+				}
+			}
+		}
+
 		$page = new \stdClass();
 		$page->name = $data->name;
+		$page->template = $data->template;
 		$page->timemodified = $now;
 
 		if ($data->page) {
@@ -83,7 +91,11 @@ class page_page_edit extends page {
 			$page->userid = $userid;
 			$page->timecreated = $now;
 
-			$DB->insert_record(ke::TABLE_PAGES, $page);
+			$page->id = $DB->insert_record(ke::TABLE_PAGES, $page);
+
+			if ($template = $this->ke->get_template_page()) {
+				$this->ke->copy_page($template, $page);
+			}
 		}
 
 		redirect($this->ke->url('view'));
@@ -91,11 +103,10 @@ class page_page_edit extends page {
 }
 
 class form_page_edit extends \moodleform {
-
 	protected function definition() {
 		$f = $this->_form;
 
-		/* @var $ke kakiemon */
+		/* @var $ke ke */
 		$ke = $this->_customdata->ke;
 
 		$f->addElement('hidden', 'id', $ke->cmid);
@@ -111,6 +122,10 @@ class form_page_edit extends \moodleform {
 		));
 		$f->setType('name', PARAM_TEXT);
 		$f->addRule('name', null, 'required', null, 'client');
+
+		if ($ke->has_capability(ke::CAP_CREATE_TEMPLATE)) {
+			$f->addElement('selectyesno', 'template', ke::str('useastemplate'));
+		}
 
 		$this->add_action_buttons(false);
 	}
