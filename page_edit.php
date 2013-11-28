@@ -133,6 +133,9 @@ class form_page_edit extends \moodleform {
 
 		if ($ke->has_capability(ke::CAP_CREATE_TEMPLATE)) {
 			$f->addElement('selectyesno', 'template', ke::str('useastemplate'));
+		} else {
+			$f->addElement('hidden', 'template', 0);
+			$f->setType('template', PARAM_BOOL);
 		}
 
 		$this->add_action_buttons(false);

@@ -39,7 +39,7 @@ class page_block_edit extends page {
 		global $DB;
 
 		$customdata = (object)array(
-				'kakiemon' => $this->kakiemon
+				'kakiemon' => $this->ke
 		);
 		$editmode = required_param('editmode', PARAM_ALPHA);
 		if ($editmode == 'update') {

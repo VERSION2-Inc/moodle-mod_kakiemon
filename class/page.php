@@ -21,6 +21,12 @@ abstract class page {
 	public $ke;
 	/**
 	 *
+	 * @var ke
+	 * @deprecated
+	 */
+	public $kakiemon;
+	/**
+	 *
 	 * @var string
 	 */
 	public $action;
@@ -40,6 +46,7 @@ abstract class page {
 		$this->cmid = $id;
 
 		$this->ke = new ke($id);
+		$this->kakiemon = $this->ke;
 		$this->action = optional_param('action', null, PARAM_ALPHA);
 
 		require_login($this->ke->cm->course, true, $this->ke->cm);

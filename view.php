@@ -34,7 +34,7 @@ class page_view extends page {
 		echo $this->output->box_end();
 
 		$now = time();
-		if ($now > $this->ke->options->createstartdate && $now < $this->ke->options->createenddate) {
+		if ($this->ke->can_create_page()) {
 			echo $this->output->action_link(
 					new \moodle_url($this->ke->url('page_edit', array(
 							'add' => 1

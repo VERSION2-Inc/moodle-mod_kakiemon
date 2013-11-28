@@ -21,7 +21,7 @@ class block_image extends block {
 	 */
 	public function update_data(form_block_edit $form, \stdClass $block) {
 		$data = $form->get_data();
-		file_save_draft_area_files($data->file, $this->kakiemon->context->id, ke::COMPONENT,
+		file_save_draft_area_files($data->file, $this->ke->context->id, ke::COMPONENT,
 				'blockfile', $block->id);
 
 		$data = (object)[];
