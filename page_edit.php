@@ -29,6 +29,12 @@ class page_page_edit extends page {
 	private function view() {
 		global $DB;
 
+		$pageid = optional_param('page', 0, PARAM_INT);
+
+		if ($pageid) {
+			$this->check_user($pageid);
+		}
+
 		if ($this->form->is_submitted()) {
 			$this->update();
 			return;
@@ -38,7 +44,6 @@ class page_page_edit extends page {
 
 		// } else {
 		// $pageid = required_param('page', PARAM_INT);
-		$pageid = optional_param('page', 0, PARAM_INT);
 		if ($pageid) {
 			$page = $DB->get_record(ke::TABLE_PAGES, array(
 					'id' => $pageid
@@ -67,7 +72,6 @@ class page_page_edit extends page {
 		$userid = $USER->id;
 
 		$data = $this->form->get_data();
-		// var_dump($data);
 
 		$now = time();
 
@@ -86,6 +90,8 @@ class page_page_edit extends page {
 		$page->timemodified = $now;
 
 		if ($data->page) {
+			$this->check_user($data->page);
+
 			$page->id = $data->page;
 
 			$DB->update_record(ke::TABLE_PAGES, $page);
@@ -101,12 +107,36 @@ class page_page_edit extends page {
 			}
 		}
 
+		$this->ke->log('edit page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
+
 		redirect($this->ke->url('view'));
 	}
 
 	private function delete() {
-		$this->db->delete_records(ke::TABLE_PAGES, array('id' => required_param('page', PARAM_INT)));
-		redirect($this->ke->url('view'));
+		global $USER;
+
+		$pageid = required_param('page', PARAM_INT);
+		$this->check_user($pageid);
+
+		$this->db->delete_records(ke::TABLE_PAGES, array('id' => $pageid));
+
+		$url = $this->ke->url('view');
+		$this->ke->log('delete page', $url, $pageid);
+		redirect($url);
+	}
+
+	/**
+	 *
+	 * @param int $page
+	 */
+	private function check_user($pageid) {
+		global $USER;
+
+		$page = $this->db->get_record(ke::TABLE_PAGES, array('id' => $pageid), '*', MUST_EXIST);
+
+		if ($page->userid != $USER->id) {
+			$this->ke->print_error('thisisnotyourpage');
+		}
 	}
 }
 

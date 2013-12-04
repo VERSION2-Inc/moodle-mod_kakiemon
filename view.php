@@ -146,6 +146,8 @@ class page_view extends page {
 		$table->finish_output();
 
 		echo $this->output->footer();
+
+		$this->ke->log('view', $this->url, $this->ke->options->name);
 	}
 
 	private function format_period($label, $start, $end) {

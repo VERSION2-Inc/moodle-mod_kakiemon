@@ -35,7 +35,16 @@ abstract class page {
 	 * @var \moodle_database
 	 */
 	protected $db;
+	/**
+	 *
+	 * @var \moodle_url
+	 */
+	protected $url;
 
+	/**
+	 *
+	 * @param string $url
+	 */
 	public function __construct($url) {
 		global $DB, $PAGE, $OUTPUT;
 
@@ -60,13 +69,33 @@ abstract class page {
 
 	public abstract function execute();
 
+	/**
+	 *
+	 * @param string $text
+	 * @param string $action
+	 */
 	public function add_navbar($text, $action = null) {
 		global $PAGE;
 
 		$PAGE->navbar->add($text, $action);
 	}
 
+	/**
+	 *
+	 * @param string $file
+	 */
 	public static function execute_new($file) {
 		global $CFG;
+
+		if (strpos($file, $CFG->dirroot) !== 0) {
+			print_error('cantexecutepage', ke::COMPONENT);
+		}
+
+		$url = substr($file, strlen($CFG->dirroot));
+		if ($CFG->ostype == 'WINDOWS') {
+			$url = str_replace('\\', '/', $url);
+		}
+		$page = new static($url);
+		$page->execute();
 	}
 }

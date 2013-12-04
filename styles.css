@@ -1,5 +1,18 @@
 @charset "UTF-8";
 
+.path-mod-kakiemon .menulinks {
+	text-align: right;
+	margin: 0.5em 0;
+}
+.path-mod-kakiemon .page-author {
+	text-align: right;
+	margin: 0.5em 0;
+}
+.path-mod-kakiemon .page-infolinks {
+	text-align: right;
+	margin: 0.5em 0;
+}
+
 .path-mod-kakiemon .block-column {
 	float: left;
 	width: 30%;
@@ -51,4 +64,11 @@
 
 .path-mod-kakiemon .thumbnailweb_free_ss {
 	max-width: 100%;
+}
+
+.path-mod-kakiemon .accesses {
+	margin: auto;
+}
+.path-mod-kakiemon .accesses td {
+	vertical-align: middle;
 }

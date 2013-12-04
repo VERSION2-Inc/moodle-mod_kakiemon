@@ -31,6 +31,8 @@ class page_page_view extends page {
 	private function view() {
 		global $DB, $PAGE, $SESSION, $USER;
 
+		$userid = $USER->id;
+
 		$PAGE->blocks->show_only_fake_blocks();
 
 		$pageid = required_param('page', PARAM_INT);
@@ -70,8 +72,14 @@ class page_page_view extends page {
 		echo $this->output->heading($title);
 
 		$user = $DB->get_record('user', array('id' => $page->userid));
-		echo \html_writer::tag('div',
-				$user->idnumber.' '.fullname($user), array('style'=>'text-align:right'));
+		echo $this->output->container($user->idnumber.' '.fullname($user),
+				'page-author');
+		if ($this->ke->options->showtracks && $page->userid == $userid) {
+			echo $this->output->container(
+					$this->output->action_link($this->ke->url('accesses', array('page' => $pageid)),
+							ke::str('viewaccesses')),
+					'page-infolinks');
+		}
 
 		echo $this->output->container_start('likebuttons');
 		$likeelement = 'span';
@@ -219,8 +227,9 @@ class page_page_view extends page {
 			echo $this->output->container_end();
 		}
 
-
 		echo $this->output->footer();
+
+		$this->ke->log('view page', $this->url, $page->name);
 	}
 
 	private function set_editing() {
@@ -244,14 +253,18 @@ class page_page_view extends page {
 		$pageid = required_param('page', PARAM_INT);
 		$type = required_param('type', PARAM_ALPHA);
 
+		$url = new \moodle_url($this->url, array('page' => $pageid));
+
 		$like = $DB->get_record(ke::TABLE_LIKES, array(
 				'page' => $pageid,
 				'userid' => $userid
 		));
+		$updated = false;
 		if ($like) {
 			if ($like->type != $type) {
 				$like->type = $type;
 				$DB->update_record(ke::TABLE_LIKES, $like);
+				$updated = true;
 			}
 		} else {
 			$like = (object)array(
@@ -261,9 +274,14 @@ class page_page_view extends page {
 					'type' => $type
 			);
 			$DB->insert_record(ke::TABLE_LIKES, $like);
+			$updated = true;
 		}
 
-		redirect(new \moodle_url($this->url, array('page' => $pageid)));
+		if ($updated) {
+			$this->ke->log('like page', $url, $type);
+		}
+
+		redirect($url);
 	}
 }
 

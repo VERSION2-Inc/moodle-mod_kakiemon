@@ -53,6 +53,11 @@ class ke {
 	 * @var \stdClass
 	 */
 	public $options;
+	/**
+	 *
+	 * @var \stdClass
+	 */
+	public $course;
 
 	/**
 	 *
@@ -62,6 +67,7 @@ class ke {
 		global $DB;
 
 		$this->cm = get_coursemodule_from_id(self::TABLE_MOD, $cmid);
+		$this->course = $this->cm->course;
 		$this->cmid = $this->cm->id;
 		$this->instance = $this->cm->instance;
 		$this->context = \context_module::instance($this->cm->id);
@@ -203,23 +209,23 @@ class ke {
 
 		$userid = $USER->id;
 
-		if (!$this->options->showtracks || $page->userid == $userid) {
-			return;
-		}
+// 		if (!$this->options->showtracks || $page->userid == $userid) {
+// 			return;
+// 		}
 
 		$pageid = $page->id;
-		$daystart = strtotime('00:00');
-		if ($access = $this->db->get_record_select(self::TABLE_ACCESSES,
-					'page = :page AND userid = :userid AND timeaccessed >= :daystart',
-					array(
-							'page' => $pageid,
-							'userid' => $userid,
-							'daystart' => $daystart
-					)
-		)) {
-			$access->timeaccessed = time();
-			$this->db->update_record(self::TABLE_ACCESSES, $access);
-		} else {
+// 		$daystart = strtotime('00:00');
+// 		if ($access = $this->db->get_record_select(self::TABLE_ACCESSES,
+// 					'page = :page AND userid = :userid AND timeaccessed >= :daystart',
+// 					array(
+// 							'page' => $pageid,
+// 							'userid' => $userid,
+// 							'daystart' => $daystart
+// 					)
+// 		)) {
+// 			$access->timeaccessed = time();
+// 			$this->db->update_record(self::TABLE_ACCESSES, $access);
+// 		} else {
 			$access = (object)array(
 					'kakiemon' => $this->instance,
 					'page' => $pageid,
@@ -227,15 +233,24 @@ class ke {
 					'timeaccessed' => time()
 			);
 			$this->db->insert_record(self::TABLE_ACCESSES, $access);
-		}
+// 		}
 	}
 
 	/**
 	 *
 	 * @param string $action
+	 * @param string $url
+	 * @param string $info
+	 * @param string $cm
+	 * @param string $user
 	 */
-	public function log($action) {
-		add_to_log($this->cm->course, self::COMPONENT, $action);
+	public function log($action, $url = '', $info = '', $cm = '', $user = '') {
+		if ($url instanceof \moodle_url) {
+			$url = $url->out_as_local_url(false);
+		}
+		$url = preg_replace(',^/mod/kakiemon/,', '', $url);
+
+		add_to_log($this->cm->course, 'kakiemon', $action, $url, $info, $cm, $user);
 	}
 
 	/**
@@ -264,5 +279,18 @@ class ke {
 		$now = time();
 
 		return (!$start || $now >= $start) && (!$end || $now < $end);
+	}
+
+	/**
+	 *
+	 * @param string $errorcode
+	 * @param string $link
+	 */
+	public function print_error($errorcode, $link = '') {
+		if (!$link) {
+			$link = $this->url('view');
+		}
+
+		print_error($errorcode, self::COMPONENT, $link);
 	}
 }
