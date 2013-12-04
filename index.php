@@ -4,7 +4,6 @@ namespace ver2\kakiemon;
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 
-// TODO コースid 0のとき？フロントページ？
 $id = optional_param('id', 0, PARAM_INT);
 
 if ($id) {
@@ -24,8 +23,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(ke::str('modulenameplural'));
 
 $coursecontext = \context_course::instance($course->id);
-
-add_to_log($course->id, 'kakiemon', 'view kakiemons', "index.php?id=$course->id");
 
 echo $OUTPUT->header();
 
@@ -55,3 +52,5 @@ foreach ($kakiemons as $kakiemon) {
 echo \html_writer::table($table);
 
 echo $OUTPUT->footer();
+
+add_to_log($course->id, 'kakiemon', 'view kakiemons', "index.php?id=$course->id");
