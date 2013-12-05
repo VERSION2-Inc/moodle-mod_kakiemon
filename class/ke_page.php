@@ -20,6 +20,16 @@ class ke_page extends model {
 
 	/**
 	 *
+	 * @return int
+	 */
+	public function count_mine() {
+		global $USER;
+
+		return $this->db->count_records(self::TABLE, array('userid' => $USER->id));
+	}
+
+	/**
+	 *
 	 * @param int $limitnum
 	 * @return \stdClass[]
 	 */
@@ -54,6 +64,22 @@ class ke_page extends model {
 		return $this->db->get_records_sql($sql, $params, 0, $limitnum);
 	}
 
+	/**
+	 *
+	 * @return int
+	 */
+	public function count_others() {
+		global $USER;
+
+		return $this->db->count_records_select(self::TABLE, 'userid <> :userid',
+				array('userid' => $USER->id));
+	}
+
+	/**
+	 *
+	 * @param int $limitnum
+	 * @return \stdClass[]
+	 */
 	public function most_liked($limitnum = 5) {
 		$sql = '
 				SELECT p.*,
@@ -71,6 +97,11 @@ class ke_page extends model {
 		return $this->db->get_records_sql($sql, $params, 0, $limitnum);
 	}
 
+	/**
+	 *
+	 * @param int $limitnum
+	 * @return \stdClass[]
+	 */
 	public function most_disliked($limitnum = 5) {
 		$sql = '
 				SELECT p.*,

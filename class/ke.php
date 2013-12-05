@@ -5,6 +5,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class ke {
 	const COMPONENT = 'mod_kakiemon';
+	const MODULE_DIR = '/mod/kakiemon/';
 
 	const KEY = 'kakiemon';
 	const TABLE_MOD = 'kakiemon';
@@ -163,7 +164,7 @@ class ke {
 			$url .= '.php';
 		}
 		if ($url[0] != '/') {
-			$url = '/mod/kakiemon/'.$url;
+			$url = self::MODULE_DIR.$url;
 		}
 
 		$params['id'] = $this->cm->id;

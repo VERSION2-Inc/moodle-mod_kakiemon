@@ -229,7 +229,7 @@ class page_page_view extends page {
 
 		echo $this->output->footer();
 
-		$this->ke->log('view page', $this->url, $page->name);
+		$this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
 	}
 
 	private function set_editing() {
@@ -285,5 +285,4 @@ class page_page_view extends page {
 	}
 }
 
-$page = new page_page_view('/mod/kakiemon/page_view.php');
-$page->execute();
+page_page_view::execute_new(__FILE__);
