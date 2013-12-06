@@ -155,7 +155,7 @@ class ke {
 	 * @param array $params
 	 * @return \moodle_url
 	 */
-	public function url($url, array $params = null) {
+	public function url($url, array $params = array()) {
 		if ($url instanceof \moodle_url) {
 			return new \moodle_url($url, $params);
 		}
@@ -167,7 +167,7 @@ class ke {
 			$url = self::MODULE_DIR.$url;
 		}
 
-		$params['id'] = $this->cm->id;
+		$params = array('id' => $this->cm->id) + $params;
 
 		return new \moodle_url($url, $params);
 	}
