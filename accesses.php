@@ -1,7 +1,6 @@
 <?php
 namespace ver2\kakiemon;
 
-use assignfeedback_editpdf\annotation;
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 
