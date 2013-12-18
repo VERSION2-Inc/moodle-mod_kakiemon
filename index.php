@@ -7,11 +7,11 @@ require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 $id = optional_param('id', 0, PARAM_INT);
 
 if ($id) {
-	if (!($course = $DB->get_record('course', array('id' => $id)))) {
-		print_error('invalidcourseid');
-	}
+    if (!($course = $DB->get_record('course', array('id' => $id)))) {
+        print_error('invalidcourseid');
+    }
 } else {
-	$course = get_site();
+    $course = get_site();
 }
 
 require_course_login($course);
@@ -27,26 +27,26 @@ $coursecontext = \context_course::instance($course->id);
 echo $OUTPUT->header();
 
 if (!($kakiemons = get_all_instances_in_course('kakiemon', $course))) {
-	notice(get_string('thereareno', '', ke::str('modulenameplural')), "$CFG->wwwroot/course/view.php?id=$course->id");
-	exit();
+    notice(get_string('thereareno', '', ke::str('modulenameplural')), "$CFG->wwwroot/course/view.php?id=$course->id");
+    exit();
 }
 
 $table = new \html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 $table->head = array(
-		'',
-		ke::str('modulename'),
-		'説明'
+        '',
+        ke::str('modulename'),
+        '説明'
 );
 
 $modinfo = get_fast_modinfo($course);
 foreach ($kakiemons as $kakiemon) {
-	$cm = $modinfo->cms[$kakiemon->coursemodule];
-	$table->data[] = array(
-			'',
-			$OUTPUT->action_link('/mod/kakiemon/view.php', $kakiemon->name),
-			format_module_intro('kakiemon', $kakiemon, $cm->id)
-	);
+    $cm = $modinfo->cms[$kakiemon->coursemodule];
+    $table->data[] = array(
+            '',
+            $OUTPUT->action_link('/mod/kakiemon/view.php', $kakiemon->name),
+            format_module_intro('kakiemon', $kakiemon, $cm->id)
+    );
 }
 
 echo \html_writer::table($table);

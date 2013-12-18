@@ -8,9 +8,9 @@ defined('MOODLE_INTERNAL') || die();
  * @return int
  */
 function kakiemon_add_instance($kakiemon, $form) {
-	global $DB;
+    global $DB;
 
-	return $DB->insert_record('kakiemon', $kakiemon);
+    return $DB->insert_record('kakiemon', $kakiemon);
 }
 
 /**
@@ -20,12 +20,12 @@ function kakiemon_add_instance($kakiemon, $form) {
  * @return boolean
  */
 function kakiemon_update_instance($kakiemon, $form) {
-	global $DB;
+    global $DB;
 
-	$kakiemon->id = $kakiemon->instance;
-	$DB->update_record('kakiemon', $kakiemon);
+    $kakiemon->id = $kakiemon->instance;
+    $DB->update_record('kakiemon', $kakiemon);
 
-	return true;
+    return true;
 }
 
 /**
@@ -34,15 +34,15 @@ function kakiemon_update_instance($kakiemon, $form) {
  * @return boolean
  */
 function kakiemon_delete_instance($id) {
-	global $DB;
+    global $DB;
 
-	$DB->delete_records('kakiemon', array('id' => $id));
-	$DB->delete_records('kakiemon_pages', array('kakiemon' => $id));
-	$DB->delete_records('kakiemon_blocks', array('kakiemon' => $id));
-	$DB->delete_records('kakiemon_likes', array('kakiemon' => $id));
-	$DB->delete_records('kakiemon_accesses', array('kakiemon' => $id));
+    $DB->delete_records('kakiemon', array('id' => $id));
+    $DB->delete_records('kakiemon_pages', array('kakiemon' => $id));
+    $DB->delete_records('kakiemon_blocks', array('kakiemon' => $id));
+    $DB->delete_records('kakiemon_likes', array('kakiemon' => $id));
+    $DB->delete_records('kakiemon_accesses', array('kakiemon' => $id));
 
-	return true;
+    return true;
 }
 
 /**
@@ -56,34 +56,34 @@ function kakiemon_delete_instance($id) {
  * @param array $options
  */
 function mod_kakiemon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-	if ($context->contextlevel != CONTEXT_MODULE) {
-		return false;
-	}
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
 
-	if ($filearea !== 'blockfile') {
-		return false;
-	}
+    if ($filearea !== 'blockfile') {
+        return false;
+    }
 
-	require_login($course, true, $cm);
+    require_login($course, true, $cm);
 
-	if (!has_capability('mod/kakiemon:view', $context)) {
-		return false;
-	}
+    if (!has_capability('mod/kakiemon:view', $context)) {
+        return false;
+    }
 
-	$itemid = array_shift($args);
+    $itemid = array_shift($args);
 
-	$filename = array_pop($args);
-	if (!$args) {
-		$filepath = '/';
-	} else {
-		$filepath = '/'.implode('/', $args).'/';
-	}
+    $filename = array_pop($args);
+    if (!$args) {
+        $filepath = '/';
+    } else {
+        $filepath = '/'.implode('/', $args).'/';
+    }
 
-	$fs = get_file_storage();
-	$file = $fs->get_file($context->id, 'mod_kakiemon', $filearea, $itemid, $filepath, $filename);
-	if (!$file) {
-		return false;
-	}
+    $fs = get_file_storage();
+    $file = $fs->get_file($context->id, 'mod_kakiemon', $filearea, $itemid, $filepath, $filename);
+    if (!$file) {
+        return false;
+    }
 
-	send_stored_file($file, DAYSECS, 0, $forcedownload, $options);
+    send_stored_file($file, DAYSECS, 0, $forcedownload, $options);
 }
