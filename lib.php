@@ -47,6 +47,33 @@ function kakiemon_delete_instance($id) {
 
 /**
  *
+ * @param string $feature
+ * @return boolean
+ */
+function kakiemon_supports($feature) {
+    return in_array($feature, array(
+            FEATURE_GRADE_HAS_GRADE,
+            FEATURE_ADVANCED_GRADING
+    ));
+}
+
+/**
+ * @return string[]
+ */
+function kakiemon_grading_areas_list() {
+    error_log('grading area find found');
+    ob_start();
+    xdebug_print_function_stack();
+    $w=ob_get_contents();
+    ob_end_clean();
+    error_log($w);
+    return array(
+            'page' => get_string('page', 'mod_kakiemon')
+    );
+}
+
+/**
+ *
  * @param \stdClass $course
  * @param \stdClass $cm
  * @param context_module $context

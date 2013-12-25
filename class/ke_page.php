@@ -6,6 +6,10 @@ defined('MOODLE_INTERNAL') || die();
 class ke_page extends model {
     const TABLE = ke::TABLE_PAGES;
 
+    const SHARE_COURSE = 'course';
+    const SHARE_LOGIN = 'login';
+    const SHARE_PUBLIC = 'public';
+
     /**
      *
      * @param int $limitnum
@@ -117,5 +121,23 @@ class ke_page extends model {
                 'type' => 'dislike'
         );
         return $this->db->get_records_sql($sql, $params, 0, $limitnum);
+    }
+    
+    public function is_viewable() {
+        global $USER;
+        
+        
+    }
+
+    /**
+     *
+     * @return string[]
+     */
+    public static function get_share_options() {
+        return array(
+                self::SHARE_COURSE => ke::str('sharecourse'),
+                self::SHARE_LOGIN => ke::str('sharelogin'),
+                self::SHARE_PUBLIC => ke::str('sharepublic')
+        );
     }
 }

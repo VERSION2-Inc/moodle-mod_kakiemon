@@ -209,7 +209,7 @@ class form_block_edit extends \moodleform {
         $f->addElement('text', 'title', 'ブロックタイトル');
         $f->setType('title', PARAM_TEXT);
         $f->addRule('title', null, 'required', null, 'client');
-        $f->setDefault('title', kakiemon::str($blocktype));
+        $f->setDefault('title', ke::str($blocktype));
 
         //格納、自動格納
         //ファイル

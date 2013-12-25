@@ -1,74 +1,53 @@
-@charset "UTF-8";
-
-.path-mod-kakiemon .menulinks {
-    text-align: right;
-    margin: 0.5em 0;
+.path-mod-kakiemon .menulinks, .path-mod-kakiemon .page-author, .path-mod-kakiemon .page-infolinks {
+  text-align: right;
+  margin: 0.5em 0;
 }
-.path-mod-kakiemon .page-author {
-    text-align: right;
-    margin: 0.5em 0;
-}
-.path-mod-kakiemon .page-infolinks {
-    text-align: right;
-    margin: 0.5em 0;
-}
-
 .path-mod-kakiemon .block-column {
-    float: left;
-    width: 30%;
-    /*border:1px solid gray;*/
+  float: left;
+  width: 30%;
 }
-
 .path-mod-kakiemon .block-column-blocks {
-    padding-bottom: 40px;
+  padding-bottom: 40px;
 }
-
 .path-mod-kakiemon .kaki-block {
-    border: 1px solid #AAA;
-    margin: 0 1em 1em 0;
-    padding: 5px;
+  border: 1px solid #aaaaaa;
+  margin: 0 1em 1em 0;
+  padding: 5px;
 }
-
-.path-mod-kakiemon .editbutton,
-.path-mod-kakiemon .blockeditbutton {
-    float: right;
+.path-mod-kakiemon .editbutton, .path-mod-kakiemon .blockeditbutton {
+  float: right;
 }
-
 .path-mod-kakiemon .blockeditbuttons {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
-
 .path-mod-kakiemon .likebuttons {
-    margin: 8px 0;
-    text-align: center;
+  margin: 8px 0;
+  text-align: center;
 }
 .path-mod-kakiemon .likebutton {
-    border: 1px solid gray;
-    border-radius: 5px;
-    background: #E6E6FA;
-    padding: 3px 8px;
-    margin: 5px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  background: lavender;
+  padding: 3px 8px;
+  margin: 5px;
 }
 .path-mod-kakiemon .likecount {
-    border: 1px solid gray;
-    border-radius: 5px;
-    padding: 2px 5px;
-    font-size: 75%;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 2px 5px;
+  font-size: 75%;
 }
-
 .path-mod-kakiemon .block-image {
-    max-width: 100%;
-    margin: auto;
-    display: block;
+  max-width: 100%;
+  margin: auto;
+  display: block;
 }
-
 .path-mod-kakiemon .thumbnailweb_free_ss {
-    max-width: 100%;
+  max-width: 100%;
 }
-
 .path-mod-kakiemon .accesses {
-    margin: auto;
+  margin: auto;
 }
 .path-mod-kakiemon .accesses td {
-    vertical-align: middle;
+  vertical-align: middle;
 }

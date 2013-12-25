@@ -19,6 +19,8 @@ class ke {
 
     const FILE_ICON_SIZE = 24;
 
+    const GRADING_AREA_PAGE = 'page';
+
     /**
      *
      * @var \stdClass

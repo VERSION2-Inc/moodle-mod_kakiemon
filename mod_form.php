@@ -1,5 +1,6 @@
 <?php
 use ver2\kakiemon\ke;
+use ver2\kakiemon\ke_page;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,13 +29,14 @@ class mod_kakiemon_mod_form extends moodleform_mod {
         $f->addElement('date_time_selector', 'viewenddate', ke::str('viewenddate'),
                 array('optional' => true));
 
-        //編集権限
-        //公開範囲
+        $f->addElement('select', 'sharewith', ke::str('sharewith'), ke_page::get_share_options());
 
         $f->addElement('header', 'features', ke::str('features'));
         $f->addElement('selectyesno', 'showtracks', ke::str('usefootmark'));
         $f->addElement('selectyesno', 'uselike', ke::str('uselike'));
         $f->addElement('selectyesno', 'usedislike', ke::str('usedislike'));
+
+        $this->standard_grading_coursemodule_elements();
 
         $this->standard_coursemodule_elements();
 

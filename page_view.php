@@ -80,6 +80,7 @@ class page_page_view extends page {
                             ke::str('viewaccesses')),
                     'page-infolinks');
         }
+        echo $this->output->action_link($this->ke->url('grade', array('page' => $pageid)), ke::str('gradepage'));
 
         echo $this->output->container_start('likebuttons');
         $likeelement = 'span';
