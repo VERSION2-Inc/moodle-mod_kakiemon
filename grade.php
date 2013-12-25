@@ -21,7 +21,7 @@ class page_grade extends page {
         $advancedgradinginstanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
         $pageid = required_param('page', PARAM_INT);
 
-        $formdata = (object)array(
+        $customdata = (object)array(
                 'ke' => $this->ke,
                 'pageid' => $pageid
         );
@@ -32,14 +32,24 @@ class page_grade extends page {
             /* @var $controller \gradingform_rubric_controller */
         	$controller = $manager->get_controller($method);
         }
-        if (!isset($formdata->advancedgradinginstance)) {
-        	$formdata->advancedgradinginstance = new \stdClass();
+        if (!isset($customdata->advancedgradinginstance)) {
+        	$customdata->advancedgradinginstance = new \stdClass();
         }
-        if ($formdata->advancedgradinginstance) {
+        if ($customdata->advancedgradinginstance) {
         	$gradinginstance = $controller->get_or_create_instance($advancedgradinginstanceid, $USER->id, $pageid);
-        	$formdata->advancedgradinginstance = $gradinginstance;
+        	$customdata->advancedgradinginstance = $gradinginstance;
         }
-        $form = new form_grade(null, $formdata);
+        $form = new form_grade(null, $customdata);
+
+        if ($form->is_cancelled()) {
+            redirect($this->ke->url('page_view', array('page' => $data->page)));
+        } else if ($data = $form->get_data()) {
+            if (isset($gradinginstance)) {
+            	$_POST['xgrade'] = $gradinginstance->submit_and_get_grade($data->advancedgrading, $pageid);
+            }
+
+            redirect($this->ke->url('page_view', array('page' => $data->page)));
+        }
 
         echo $this->output->header();
 
@@ -54,7 +64,7 @@ class form_grade extends \moodleform {
         /* @var $ke ke */
         $ke = $this->_customdata->ke;
         if ($this->_customdata->advancedgradinginstance) {
-        	$isntanceid = $this->_customdata->advancedgradinginstance;
+        	$instanceid = $this->_customdata->advancedgradinginstance->get_id();
         }
 
         $f = $this->_form;
@@ -66,11 +76,14 @@ class form_grade extends \moodleform {
 
         $f->addElement('header', 'gradehdr', 'Grade');
 
+        if ($instanceid) {
+            $f->addElement('hidden', 'advancedgradinginstanceid', $instanceid);
+            $f->setType('advancedgradinginstanceid', PARAM_INT);
 
-        $f->addElement('grading', 'advancedgrading', 'Adv Grade', array(
-                'gradinginstance' => $this->_customdata->advancedgradinginstance
-        ));
-//         $f->addElement('hidden', 'advancedgradinginstanceid', '0');
+            $f->addElement('grading', 'advancedgrading', 'Adv Grade', array(
+                    'gradinginstance' => $this->_customdata->advancedgradinginstance
+            ));
+        }
 
         $this->add_action_buttons();
     }
