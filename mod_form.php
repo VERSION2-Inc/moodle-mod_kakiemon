@@ -35,6 +35,7 @@ class mod_kakiemon_mod_form extends moodleform_mod {
         $f->addElement('selectyesno', 'showtracks', ke::str('usefootmark'));
         $f->addElement('selectyesno', 'uselike', ke::str('uselike'));
         $f->addElement('selectyesno', 'usedislike', ke::str('usedislike'));
+        $f->addElement('selectyesno', 'userating', ke::str('userating'));
 
         $this->standard_grading_coursemodule_elements();
 

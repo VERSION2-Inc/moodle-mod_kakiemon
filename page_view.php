@@ -15,6 +15,12 @@ class page_page_view extends page {
      */
     private $form;
 
+    public function __construct($url) {
+        $this->ispublic = true;
+
+        parent::__construct($url);
+    }
+
     public function execute() {
         switch (optional_param('action', null, PARAM_ALPHA)) {
             case 'setediting':
@@ -22,6 +28,9 @@ class page_page_view extends page {
                 break;
             case 'like':
                 $this->like();
+                break;
+            case 'rate':
+                $this->rate();
                 break;
             default:
                 $this->view();
@@ -36,6 +45,12 @@ class page_page_view extends page {
         $PAGE->blocks->show_only_fake_blocks();
 
         $pageid = required_param('page', PARAM_INT);
+
+        $opage = new ke_page_cls($this->ke, $pageid);
+
+        if (!$opage->is_viewable()) {
+            print_error('cantviewpage', ke::COMPONENT);
+        }
 
         if (!ke::is_page_editable($pageid)) {
             $SESSION->kakiemon_editing = false;
@@ -74,13 +89,19 @@ class page_page_view extends page {
         $user = $DB->get_record('user', array('id' => $page->userid));
         echo $this->output->container($user->idnumber.' '.fullname($user),
                 'page-author');
+        echo \html_writer::start_tag('div', array('class' => 'page-infolinks'));
         if ($this->ke->options->showtracks && $page->userid == $userid) {
-            echo $this->output->container(
-                    $this->output->action_link($this->ke->url('accesses', array('page' => $pageid)),
-                            ke::str('viewaccesses')),
-                    'page-infolinks');
+            echo \html_writer::start_tag('div');
+            echo $this->output->action_link($this->ke->url('accesses', array('page' => $pageid)),
+                    ke::str('viewaccesses'));
+            echo \html_writer::end_tag('div');
         }
-        echo $this->output->action_link($this->ke->url('grade', array('page' => $pageid)), ke::str('gradepage'));
+        if (has_capability('mod/kakiemon:grade', $this->ke->context)) {
+            echo \html_writer::start_tag('div');
+            echo $this->output->action_link($this->ke->url('grade', array('page' => $pageid)), ke::str('gradepage'));
+            echo \html_writer::end_tag('div');
+        }
+        echo \html_writer::end_tag('div');
 
         echo $this->output->container_start('likebuttons');
         $likeelement = 'span';
@@ -109,6 +130,30 @@ class page_page_view extends page {
             echo \html_writer::tag($likeelement, $dislikecount, array('class' => 'likecount'));
         }
         echo $this->output->container_end();
+
+        if ($this->ke->data->userating) {
+            echo \html_writer::start_tag('div', array('id' => 'rating'));
+            echo ke::str('rating').': ';
+            $averagerating = $opage->get_average_rating();
+            echo $this->print_rating($averagerating);
+            echo sprintf('%g', $opage->get_average_rating());
+            echo ' ('.ke::str('ratedbyusers', $opage->get_rated_users()).')';
+            $ratingselect = new \single_select(
+                    $this->ke->url('page_view', array('action' => 'rate', 'page' => $pageid)), 'rating',
+                    array(
+                            5 => '5',
+                            4 => '4',
+                            3 => '3',
+                            2 => '2',
+                            1 => '1',
+                            0 => ke::str('norating')
+                    ),
+                    $opage->get_my_rating()
+            );
+            $ratingselect->label = ke::str('yourrating').': ';
+            echo $this->output->render($ratingselect);
+            echo \html_writer::end_tag('div');
+        }
 
         if ($editing) {
             echo $this->output->container(
@@ -228,9 +273,21 @@ class page_page_view extends page {
             echo $this->output->container_end();
         }
 
-        echo $this->output->footer();
+        if ($page->userid == $USER->id || has_capability('mod/kakiemon:grade', $this->ke->context)) {
+            echo '<div style="clear: both"></div>';
+            $gradinginfo = $this->ke->get_grading_info();
+            $manager = get_grading_manager($this->ke->context, ke::COMPONENT, ke::GRADING_AREA_PAGE);
+            $method = $manager->get_active_method();
+            if ($method) {
+                /* @var $controller \gradingform_rubric_controller */
+            	$controller = $manager->get_controller($method);
+            }
+            echo $controller->render_grade($PAGE, $pageid, $gradinginfo, '', false);
 
-        $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
+            echo $this->output->footer();
+
+            $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
+        }
     }
 
     private function set_editing() {
@@ -283,6 +340,51 @@ class page_page_view extends page {
         }
 
         redirect($url);
+    }
+
+    private function rate() {
+        global $DB, $USER;
+
+        $pageid = required_param('page', PARAM_INT);
+        $userid = $USER->id;
+        $rating = required_param('rating', PARAM_INT);
+
+        if ($row = $DB->get_record(ke::TABLE_RATINGS, array(
+                'kakiemon' => $this->ke->instance,
+                'page' => $pageid,
+                'userid' => $userid))) {
+        	$row->rating = $rating;
+        	$row->timemodified = time();
+        	$DB->update_record(ke::TABLE_RATINGS, $row);
+        } else {
+            $row = (object)array(
+                    'kakiemon' => $this->ke->instance,
+                    'page' => $pageid,
+                    'userid' => $userid,
+                    'rating' => $rating,
+                    'timemodified' => time()
+            );
+            $DB->insert_record(ke::TABLE_RATINGS, $row);
+        }
+
+        redirect($this->ke->url('page_view', array('page' => $pageid)));
+    }
+
+    /**
+     *
+     * @param float $rating
+     * @return string
+     */
+    private function print_rating($rating) {
+        $rating = round($rating);
+
+        $o = '';
+        $pix = new \pix_icon('star', '★', ke::COMPONENT);
+        for ($i = 0; $i < $rating; $i++) {
+        	$o .= $this->output->render($pix);
+        }
+
+        return $o;
     }
 }
 

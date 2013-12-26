@@ -40,6 +40,7 @@ abstract class page {
      * @var \moodle_url
      */
     protected $url;
+    public $ispublic;
 
     /**
      *
@@ -58,10 +59,18 @@ abstract class page {
         $this->kakiemon = $this->ke;
         $this->action = optional_param('action', null, PARAM_ALPHA);
 
-        require_login($this->ke->cm->course, true, $this->ke->cm);
+        if ($this->ispublic) {
+//             var_dump($this->ke->cm);
+//             var_dump($this->ke->course);
+//             $PAGE->set_context(\context_module::instance($this->cmid));
+            $PAGE->set_cm($this->ke->cm, $this->ke->course);
+        } else {
+            require_login($this->ke->cm->course, true, $this->ke->cm);
+        }
 
-        $PAGE->set_title('title');
-        $PAGE->set_heading('heading');
+        $strkakiemon = ke::str('modulename');
+        $PAGE->set_title($strkakiemon);
+        $PAGE->set_heading($strkakiemon);
 
         $this->output = $OUTPUT;
         $this->db = $DB;

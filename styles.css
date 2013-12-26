@@ -20,7 +20,7 @@
 .path-mod-kakiemon .blockeditbuttons {
   margin-bottom: 5px;
 }
-.path-mod-kakiemon .likebuttons {
+.path-mod-kakiemon .likebuttons, .path-mod-kakiemon #rating {
   margin: 8px 0;
   text-align: center;
 }

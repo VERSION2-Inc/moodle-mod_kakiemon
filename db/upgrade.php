@@ -115,5 +115,54 @@ function xmldb_kakiemon_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2013121900, 'kakiemon');
     }
 
+    if ($oldversion < 2013122600) {
+
+        // Rename field sharewith on table kakiemon to NEWNAMEGOESHERE.
+        $table = new xmldb_table('kakiemon');
+        $field = new xmldb_field('publicarea', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'editcapabilities');
+
+        // Launch rename field sharewith.
+        $dbman->rename_field($table, $field, 'sharewith');
+
+        $field = new xmldb_field('sharewith', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, 'editcapabilities');
+
+        // Launch change of type for field sharewith.
+        $dbman->change_field_type($table, $field);
+
+        // Launch change of default for field sharewith.
+        $dbman->change_field_default($table, $field);
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2013122600, 'kakiemon');
+    }
+
+    if ($oldversion < 2013122701) {
+
+        // Define field userating to be added to kakiemon.
+        $table = new xmldb_table('kakiemon');
+        $field = new xmldb_field('userating', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'usedislike');
+
+        // Conditionally launch add field userating.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2013122701, 'kakiemon');
+    }
+
+    if ($oldversion < 2013122702) {
+
+        // Changing precision of field type on table kakiemon_blocks to (20).
+        $table = new xmldb_table('kakiemon_blocks');
+        $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '20', null, null, null, null, 'page');
+
+        // Launch change of precision for field type.
+        $dbman->change_field_precision($table, $field);
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2013122702, 'kakiemon');
+    }
+
     return true;
 }

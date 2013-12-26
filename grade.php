@@ -6,6 +6,7 @@ require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
 require_once $CFG->libdir . '/formslib.php';
 require_once $CFG->libdir . '/pear/HTML/QuickForm/input.php';
 require_once $CFG->dirroot . '/grade/grading/lib.php';
+require_once $CFG->libdir . '/gradelib.php';
 
 class page_grade extends page {
     private $advancedgradinginstance;
@@ -20,10 +21,12 @@ class page_grade extends page {
         // TODO 評定フォーム定義できてないとエラーになるから定義済んでるかチェック
         $advancedgradinginstanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
         $pageid = required_param('page', PARAM_INT);
+        $page = $this->db->get_record(ke::TABLE_PAGES, array('id' => $pageid));
 
         $customdata = (object)array(
                 'ke' => $this->ke,
-                'pageid' => $pageid
+                'pageid' => $pageid,
+                'page' => $page
         );
 
         $manager = get_grading_manager($this->ke->context, ke::COMPONENT, ke::GRADING_AREA_PAGE);
@@ -48,6 +51,10 @@ class page_grade extends page {
             	$_POST['xgrade'] = $gradinginstance->submit_and_get_grade($data->advancedgrading, $pageid);
             }
 
+
+
+//             grade_update('mod/kakiemon', $this->ke->course, 'mod', 'kakiemon', $this->ke->instance, 0);
+
             redirect($this->ke->url('page_view', array('page' => $data->page)));
         }
 
@@ -61,8 +68,12 @@ class page_grade extends page {
 
 class form_grade extends \moodleform {
     public function definition() {
+
+
         /* @var $ke ke */
         $ke = $this->_customdata->ke;
+        $page = $this->_customdata->page;
+
         if ($this->_customdata->advancedgradinginstance) {
         	$instanceid = $this->_customdata->advancedgradinginstance->get_id();
         }
@@ -76,13 +87,21 @@ class form_grade extends \moodleform {
 
         $f->addElement('header', 'gradehdr', 'Grade');
 
+//         $gradinginfo = grade_get_grades($ke->course->id, 'mod', 'kakiemon', $ke->instance, $page->userid);
+//         var_dump($gradinginfo);
+
         if ($instanceid) {
             $f->addElement('hidden', 'advancedgradinginstanceid', $instanceid);
             $f->setType('advancedgradinginstanceid', PARAM_INT);
 
-            $f->addElement('grading', 'advancedgrading', 'Adv Grade', array(
+            $f->addElement('grading', 'advancedgrading', get_string('grade'), array(
                     'gradinginstance' => $this->_customdata->advancedgradinginstance
             ));
+
+//             $f->addElement('static', 'currentgrade', ke::str('currentgrade'));
+            $f->addElement('editor', 'feedback', get_string('feedback'));
+        } else {
+            echo '申し訳ありません。シンプル評定は利用できません。';
         }
 
         $this->add_action_buttons();

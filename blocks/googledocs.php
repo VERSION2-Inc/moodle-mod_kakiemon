@@ -4,7 +4,14 @@ namespace ver2\kakiemon;
 class block_googledocs extends block {
     public function add_form_elements(\MoodleQuickForm $f) {
         $f->addElement('textarea', 'content', ke::str('embedcode'),
-                array('cols' => 40, 'rows' => 5));
+                array(
+                        'cols' => 40,
+                        'rows' => 5,
+                        'spellcheck' => 'false'
+                )
+        );
+
+        $f->addElement('static', 'embedhelp', ke::str('howtogetembedcode'), ke::str('googledriveembedhelp'));
     }
 
     public function update_data(form_block_edit $form, \stdClass $block) {

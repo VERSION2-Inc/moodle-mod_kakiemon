@@ -34,14 +34,14 @@ $capabilities = array(
                 )
         ),
 
-//         'mod/kakiemon:createtemplate' => array(
-//                 'riskbitmask' => RISK_XSS,
+        'mod/kakiemon:grade' => array(
+                'riskbitmask' => RISK_XSS,
 
-//                 'captype' => 'write',
-//                 'contextlevel' => CONTEXT_MODULE,
-//                 'archetypes' => array(
-//                         'editingteacher' => CAP_ALLOW,
-//                         'manager' => CAP_ALLOW
-//                 )
-//         )
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_MODULE,
+                'archetypes' => array(
+                        'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                )
+        ),
 );

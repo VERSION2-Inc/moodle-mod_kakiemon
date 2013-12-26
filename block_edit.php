@@ -106,7 +106,7 @@ class page_block_edit extends page {
                     'type' => $data->type,
                     'title' => $data->title,
             );
-            $block->id = $DB->insert_record(kakiemon::TABLE_BLOCKS, $block);
+            $block->id = $DB->insert_record(ke::TABLE_BLOCKS, $block);
         }
 
         $oblock->update_data($this->form, $block);

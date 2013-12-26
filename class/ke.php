@@ -13,6 +13,7 @@ class ke {
     const TABLE_BLOCKS = 'kakiemon_blocks';
     const TABLE_LIKES = 'kakiemon_likes';
     const TABLE_ACCESSES = 'kakiemon_accesses';
+    const TABLE_RATINGS = 'kakiemon_ratings';
 
     const CAP_VIEW = 'mod/kakiemon:view';
     const CAP_CREATE_TEMPLATE = 'mod/kakiemon:createtemplate';
@@ -20,6 +21,10 @@ class ke {
     const FILE_ICON_SIZE = 24;
 
     const GRADING_AREA_PAGE = 'page';
+
+    const SHARE_COURSE = 'course';
+    const SHARE_LOGIN = 'login';
+    const SHARE_PUBLIC = 'public';
 
     /**
      *
@@ -54,8 +59,14 @@ class ke {
     /**
      *
      * @var \stdClass
+     * @deprecated
      */
     public $options;
+    /**
+     *
+     * @var \stdClass
+     */
+    public $data;
     /**
      *
      * @var \stdClass
@@ -69,13 +80,14 @@ class ke {
     public function __construct($cmid) {
         global $DB;
 
+        $this->db = $DB;
         $this->cm = get_coursemodule_from_id(self::TABLE_MOD, $cmid);
-        $this->course = $this->cm->course;
+        $this->course = $this->db->get_record('course', array('id' => $this->cm->course));
         $this->cmid = $this->cm->id;
         $this->instance = $this->cm->instance;
         $this->context = \context_module::instance($this->cm->id);
-        $this->db = $DB;
-        $this->options = $this->db->get_record(self::TABLE_MOD, array('id' => $this->instance));
+        $this->data = $this->db->get_record(self::TABLE_MOD, array('id' => $this->instance));
+        $this->options = $this->data;
 
         $this->load_block_plugins();
     }
@@ -295,5 +307,16 @@ class ke {
         }
 
         print_error($errorcode, self::COMPONENT, $link);
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function get_grading_info() {
+        global $CFG;
+        require_once $CFG->libdir . '/gradelib.php';
+
+        return grade_get_grades($this->course->id, 'mod', 'kakiemon', $this->instance);
     }
 }
