@@ -2,10 +2,19 @@
 namespace ver2\kakiemon;
 
 class block_blog extends block {
+    /**
+     *
+     * @param \MoodleQuickForm $f
+     */
     public function add_form_elements(\MoodleQuickForm $f) {
         $f->addElement('static', 'desc', '', 'コース上の「ブログメニュー」ブロック＞「このコースのエントリを追加する」から追加されたブログ記事を一覧表示します。');
     }
 
+    /**
+     *
+     * @param \stdClass $block
+     * @return string
+     */
     public function get_content(\stdClass $block) {
         global $DB;
 

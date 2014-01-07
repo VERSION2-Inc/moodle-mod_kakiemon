@@ -164,5 +164,57 @@ function xmldb_kakiemon_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2013122702, 'kakiemon');
     }
 
+    if ($oldversion < 2013122703) {
+
+        // Define field grade to be added to kakiemon.
+        $table = new xmldb_table('kakiemon');
+        $field = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'introformat');
+
+        // Conditionally launch add field grade.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2013122703, 'kakiemon');
+    }
+
+    if ($oldversion < 2013122704) {
+
+        // Define field feedback to be added to kakiemon_grades.
+        $table = new xmldb_table('kakiemon_grades');
+        $field = new xmldb_field('feedback', XMLDB_TYPE_TEXT, null, null, null, null, null, 'grade');
+
+        // Conditionally launch add field feedback.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('feedbackformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'feedback');
+
+        // Conditionally launch add field feedbackformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2013122704, 'kakiemon');
+    }
+
+    if ($oldversion < 2013122705) {
+
+        // Define index gradeitem (unique) to be dropped form kakiemon_grades.
+        $table = new xmldb_table('kakiemon_grades');
+        $index = new xmldb_index('gradeitem', XMLDB_INDEX_UNIQUE, array('gradeitem'));
+
+        // Conditionally launch drop index gradeitem.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2013122705, 'kakiemon');
+    }
+
     return true;
 }

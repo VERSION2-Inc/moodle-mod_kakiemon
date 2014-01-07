@@ -61,12 +61,6 @@ function kakiemon_supports($feature) {
  * @return string[]
  */
 function kakiemon_grading_areas_list() {
-    error_log('grading area find found');
-    ob_start();
-    xdebug_print_function_stack();
-    $w=ob_get_contents();
-    ob_end_clean();
-    error_log($w);
     return array(
             'page' => get_string('page', 'mod_kakiemon')
     );

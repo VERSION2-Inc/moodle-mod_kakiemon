@@ -2,11 +2,21 @@
 namespace ver2\kakiemon;
 
 class block_file extends block {
+    /**
+     *
+     * @param \MoodleQuickForm $f
+     */
     public function add_form_elements(\MoodleQuickForm $f) {
         $f->addElement('filemanager', 'file', 'ファイル');
     }
 
-    public function update_data(form_block_edit $form,\stdClass $block) {
+    /**
+     *
+     * @param form_block_edit $form
+     * @param \stdClass $block
+     * @return string
+     */
+    public function update_data(form_block_edit $form, \stdClass $block) {
         $data = $form->get_data();
         file_save_draft_area_files($data->file, $this->ke->context->id, ke::COMPONENT,
                 'blockfile', $block->id);
@@ -16,6 +26,11 @@ class block_file extends block {
         return serialize($data);
     }
 
+    /**
+     *
+     * @param \stdClass $block
+     * @return string
+     */
     public function get_content(\stdClass $block) {
         $data = unserialize($block->data);
 

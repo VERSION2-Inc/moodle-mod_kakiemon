@@ -1,6 +1,10 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ *
+ * @param string $classname
+ */
 function mod_kakiemon_autoload($classname) {
     global $CFG;
 

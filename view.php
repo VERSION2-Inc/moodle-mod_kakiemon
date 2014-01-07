@@ -150,6 +150,13 @@ class page_view extends page {
         $this->ke->log('view', $this->url, $this->ke->options->name);
     }
 
+    /**
+     *
+     * @param string $label
+     * @param int $start
+     * @param int $end
+     * @return string
+     */
     private function format_period($label, $start, $end) {
         $o = $label.': ';
         $o .= $this->format_period_date($start);
@@ -159,6 +166,11 @@ class page_view extends page {
         return $o;
     }
 
+    /**
+     *
+     * @param int $date
+     * @return string
+     */
     private function format_period_date($date) {
         if ($date) {
             return userdate($date);

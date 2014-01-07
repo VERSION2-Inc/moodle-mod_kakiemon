@@ -15,6 +15,10 @@ class page_page_view extends page {
      */
     private $form;
 
+    /**
+     *
+     * @param string $url
+     */
     public function __construct($url) {
         $this->ispublic = true;
 
@@ -281,13 +285,27 @@ class page_page_view extends page {
             if ($method) {
                 /* @var $controller \gradingform_rubric_controller */
             	$controller = $manager->get_controller($method);
+            	if ($controller->is_form_available()) {
+            	    echo $controller->render_grade($PAGE, $pageid, $gradinginfo, '', false);
+            	}
             }
-            echo $controller->render_grade($PAGE, $pageid, $gradinginfo, '', false);
-
-            echo $this->output->footer();
-
-            $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
+            if ($grade = $opage->get_grade()) {
+                echo \html_writer::start_tag('div', array('class' => 'page-grade'));
+                echo \html_writer::start_tag('div');
+                echo \html_writer::tag('strong', get_string('grade'));
+                echo ': ';
+                echo sprintf('%g', $grade->grade);
+                echo \html_writer::end_tag('div');
+                echo \html_writer::start_tag('div');
+                echo format_text($grade->feedback);
+                echo \html_writer::end_tag('div');
+                echo \html_writer::end_tag('div');
+            }
         }
+
+        echo $this->output->footer();
+
+        $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
     }
 
     private function set_editing() {

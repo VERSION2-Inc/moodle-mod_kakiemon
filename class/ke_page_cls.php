@@ -85,4 +85,42 @@ class ke_page_cls {
                 'userid' => $USER->id
         ));
     }
+
+    /**
+     *
+     * @param int $grade
+     */
+    public function update_grade($grade, $feedback = null) {
+        if ($row = $this->db->get_record(ke::TABLE_GRADES, array(
+                'kakiemon' => $this->ke->instance,
+                'page' => $this->data->id
+        ))) {
+        	$row->timemarked = time();
+        	$row->grade = $grade;
+        	$row->feedback = $feedback;
+        	$this->db->update_record(ke::TABLE_GRADES, $row);
+        } else {
+            $row = (object)array(
+                    'kakiemon' => $this->ke->instance,
+                    'page' => $this->data->id,
+                    'timemarked' => time(),
+                    'grade' => $grade,
+                    'feedback' => $feedback
+            );
+            $this->db->insert_record(ke::TABLE_GRADES, $row);
+        }
+
+        //grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber);
+    }
+
+    /**
+     *
+     * @return \stdClass
+     */
+    public function get_grade() {
+        return $this->db->get_record(ke::TABLE_GRADES, array(
+                'kakiemon' => $this->ke->instance,
+                'page' => $this->data->id
+        ));
+    }
 }

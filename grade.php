@@ -22,6 +22,7 @@ class page_grade extends page {
         $advancedgradinginstanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
         $pageid = required_param('page', PARAM_INT);
         $page = $this->db->get_record(ke::TABLE_PAGES, array('id' => $pageid));
+        $opage = new ke_page_cls($this->ke, $pageid);
 
         $customdata = (object)array(
                 'ke' => $this->ke,
@@ -34,26 +35,28 @@ class page_grade extends page {
         if ($method) {
             /* @var $controller \gradingform_rubric_controller */
         	$controller = $manager->get_controller($method);
-        }
-        if (!isset($customdata->advancedgradinginstance)) {
-        	$customdata->advancedgradinginstance = new \stdClass();
-        }
-        if ($customdata->advancedgradinginstance) {
-        	$gradinginstance = $controller->get_or_create_instance($advancedgradinginstanceid, $USER->id, $pageid);
-        	$customdata->advancedgradinginstance = $gradinginstance;
+        	if ($controller->is_form_available()) {
+                if (!isset($customdata->advancedgradinginstance)) {
+                	$customdata->advancedgradinginstance = new \stdClass();
+                }
+                if ($customdata->advancedgradinginstance) {
+                	$gradinginstance = $controller->get_or_create_instance($advancedgradinginstanceid, $USER->id, $pageid);
+                	$customdata->advancedgradinginstance = $gradinginstance;
+                }
+        	}
         }
         $form = new form_grade(null, $customdata);
 
         if ($form->is_cancelled()) {
-            redirect($this->ke->url('page_view', array('page' => $data->page)));
+            redirect($this->ke->url('page_view', array('page' => optional_param('page', 0, PARAM_INT))));
         } else if ($data = $form->get_data()) {
             if (isset($gradinginstance)) {
-            	$_POST['xgrade'] = $gradinginstance->submit_and_get_grade($data->advancedgrading, $pageid);
+            	$grade = $gradinginstance->submit_and_get_grade($data->advancedgrading, $pageid);
+            	error_log('grade: '.$grade);
+            	$opage->update_grade($grade, $data->feedback);
+            } else {
+                $opage->update_grade($data->grade, $data->feedback);
             }
-
-
-
-//             grade_update('mod/kakiemon', $this->ke->course, 'mod', 'kakiemon', $this->ke->instance, 0);
 
             redirect($this->ke->url('page_view', array('page' => $data->page)));
         }
@@ -69,12 +72,11 @@ class page_grade extends page {
 class form_grade extends \moodleform {
     public function definition() {
 
-
         /* @var $ke ke */
         $ke = $this->_customdata->ke;
         $page = $this->_customdata->page;
 
-        if ($this->_customdata->advancedgradinginstance) {
+        if (isset($this->_customdata->advancedgradinginstance)) {
         	$instanceid = $this->_customdata->advancedgradinginstance->get_id();
         }
 
@@ -87,10 +89,14 @@ class form_grade extends \moodleform {
 
         $f->addElement('header', 'gradehdr', 'Grade');
 
-//         $gradinginfo = grade_get_grades($ke->course->id, 'mod', 'kakiemon', $ke->instance, $page->userid);
-//         var_dump($gradinginfo);
-
-        if ($instanceid) {
+        //         $gradinginfo = grade_get_grades($ke->course->id, 'mod', 'kakiemon', $ke->instance, $page->userid);
+        //         var_dump($gradinginfo);
+        global $DB;
+        $grade = $DB->get_record(ke::TABLE_GRADES, array(
+                'kakiemon' => $ke->instance,
+                'page' => $page->id
+        ));
+        if (isset($instanceid)) {
             $f->addElement('hidden', 'advancedgradinginstanceid', $instanceid);
             $f->setType('advancedgradinginstanceid', PARAM_INT);
 
@@ -98,10 +104,25 @@ class form_grade extends \moodleform {
                     'gradinginstance' => $this->_customdata->advancedgradinginstance
             ));
 
-//             $f->addElement('static', 'currentgrade', ke::str('currentgrade'));
-            $f->addElement('editor', 'feedback', get_string('feedback'));
+            //             $f->addElement('static', 'currentgrade', ke::str('currentgrade'));
         } else {
-            echo '申し訳ありません。シンプル評定は利用できません。';
+            //             $f->addElement('static', 'advancedgrading', '', '申し訳ありません。シンプル評定は利用できません。');
+            if (empty($ke->data->grade)) {
+                $f->addElement('hidden', 'grade', 0);
+                $f->addElement('static', 'nograde', get_string('grade'), '最大評定が0になっています。');
+            } else {
+                $f->addElement('select', 'grade', get_string('grade'), make_grades_menu($ke->data->grade));
+
+                if ($grade) {
+                    $f->setDefault('grade', $grade->grade);
+                }
+            }
+        }
+
+        $f->addElement('textarea', 'feedback', get_string('feedback'),
+                array('cols' => 50, 'rows' => 10));
+        if (!empty($grade)) {
+        	$f->setDefault('feedback', $grade->feedback);
         }
 
         $this->add_action_buttons();

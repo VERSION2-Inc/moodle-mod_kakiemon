@@ -16,6 +16,11 @@ class model {
         $this->db = $DB;
     }
 
+    /**
+     *
+     * @param string[] $conditions
+     * @return \stdClass[]
+     */
     public function many($conditions = null) {
         return $this->db->get_records(self::TABLE, $conditions);
     }
