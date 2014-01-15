@@ -91,6 +91,22 @@ abstract class page {
 
     /**
      *
+     * @param string $html
+     * @param string $format
+     */
+    protected function output_pdf($html, $format) {
+        global $CFG;
+        require_once $CFG->dirroot . '/mod/kakiemon/lib/mpdf/mpdf.php';
+
+        $mpdf = new \mPDF('', $format);
+        $mpdf->dpi = 300;
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+    }
+
+    /**
+     *
      * @param string $file
      */
     public static function execute_new($file) {

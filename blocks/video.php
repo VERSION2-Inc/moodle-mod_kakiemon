@@ -7,8 +7,7 @@ class block_video extends block {
      * @param \MoodleQuickForm $f
      */
     public function add_form_elements(\MoodleQuickForm $f) {
-        $f->addElement('textarea', 'content', ke::str('embedcode'),
-                array('cols' => 40, 'rows' => 5));
+        $f->addElement('textarea', 'content', ke::str('embedcode'), $this->codeareaattrs);
     }
 
     /**

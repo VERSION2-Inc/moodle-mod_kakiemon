@@ -1,56 +1,64 @@
 .path-mod-kakiemon .menulinks, .path-mod-kakiemon .page-author, .path-mod-kakiemon .page-infolinks {
   text-align: right;
-  margin: 0.5em 0;
-}
+  margin: 0.5em 0; }
 .path-mod-kakiemon .block-column {
   float: left;
-  width: 30%;
-}
+  width: 30%; }
 .path-mod-kakiemon .block-column-blocks {
-  padding-bottom: 40px;
-}
+  padding-bottom: 40px; }
 .path-mod-kakiemon .kaki-block {
   border: 1px solid #aaaaaa;
   margin: 0 1em 1em 0;
-  padding: 5px;
-}
+  padding: 5px; }
 .path-mod-kakiemon .editbutton, .path-mod-kakiemon .blockeditbutton {
-  float: right;
-}
+  float: right; }
 .path-mod-kakiemon .blockeditbuttons {
-  margin-bottom: 5px;
-}
+  margin-bottom: 5px; }
 .path-mod-kakiemon .likebuttons, .path-mod-kakiemon #rating {
   margin: 8px 0;
-  text-align: center;
-}
+  text-align: center; }
+.path-mod-kakiemon #newblocks li {
+  border: 1px solid gray;
+  border-radius: 5px;
+  cursor: move;
+  list-style-type: none;
+  width: 200px;
+  margin: 5px;
+  padding: 4px; }
+.path-mod-kakiemon .feedbacks .feedback {
+  width: 100%;
+  color: #444444; }
+  .path-mod-kakiemon .feedbacks .feedback .userpiccell {
+    width: 50px; }
+  .path-mod-kakiemon .feedbacks .feedback .namecomment {
+    background: #f8f8f8; }
+  .path-mod-kakiemon .feedbacks .feedback .namedate {
+    font-size: 80%; }
+  .path-mod-kakiemon .feedbacks .feedback .comment {
+    margin-top: 0.5em;
+    font-size: 90%; }
+.path-mod-kakiemon textarea.code {
+  font: 90% monospace; }
 .path-mod-kakiemon .likebutton {
   border: 1px solid gray;
   border-radius: 5px;
   background: lavender;
   padding: 3px 8px;
-  margin: 5px;
-}
+  margin: 5px; }
 .path-mod-kakiemon .likecount {
   border: 1px solid gray;
   border-radius: 5px;
   padding: 2px 5px;
-  font-size: 75%;
-}
+  font-size: 75%; }
 .path-mod-kakiemon .page-grade {
-  margin: 2em;
-}
+  margin: 2em; }
 .path-mod-kakiemon .block-image {
   max-width: 100%;
   margin: auto;
-  display: block;
-}
+  display: block; }
 .path-mod-kakiemon .thumbnailweb_free_ss {
-  max-width: 100%;
-}
+  max-width: 100%; }
 .path-mod-kakiemon .accesses {
-  margin: auto;
-}
-.path-mod-kakiemon .accesses td {
-  vertical-align: middle;
-}
+  margin: auto; }
+  .path-mod-kakiemon .accesses td {
+    vertical-align: middle; }

@@ -20,7 +20,7 @@ class ke_page_cls {
     private $db;
 
     /**
-     *
+     * @param ke $ke
      * @param int $id
      */
     public function __construct($ke, $id) {

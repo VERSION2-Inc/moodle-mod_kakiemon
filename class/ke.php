@@ -15,6 +15,7 @@ class ke {
     const TABLE_ACCESSES = 'kakiemon_accesses';
     const TABLE_RATINGS = 'kakiemon_ratings';
     const TABLE_GRADES = 'kakiemon_grades';
+    const TABLE_FEEDBACKS = 'kakiemon_feedbacks';
 
     const CAP_VIEW = 'mod/kakiemon:view';
     const CAP_CREATE_TEMPLATE = 'mod/kakiemon:createtemplate';
@@ -168,11 +169,12 @@ class ke {
      *
      * @param string|\moodle_url $url
      * @param array $params
+     * @param string $anchor
      * @return \moodle_url
      */
-    public function url($url, array $params = array()) {
+    public function url($url, array $params = array(), $anchor = null) {
         if ($url instanceof \moodle_url) {
-            return new \moodle_url($url, $params);
+            return new \moodle_url($url, $params, $anchor);
         }
 
         if (!preg_match(',/$,', $url) && strpos(basename($url), '.') === false) {
@@ -184,7 +186,7 @@ class ke {
 
         $params = array('id' => $this->cm->id) + $params;
 
-        return new \moodle_url($url, $params);
+        return new \moodle_url($url, $params, $anchor);
     }
 
     public function get_template_page() {

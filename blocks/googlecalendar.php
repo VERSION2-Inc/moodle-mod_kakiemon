@@ -7,13 +7,7 @@ class block_googlecalendar extends block {
      * @param \MoodleQuickForm $f
      */
     public function add_form_elements(\MoodleQuickForm $f) {
-        $f->addElement('textarea', 'content', ke::str('embedcode'),
-                array(
-                        'cols' => 50,
-                        'rows' => 10,
-                        'spellcheck' => 'false'
-                )
-        );
+        $f->addElement('textarea', 'content', ke::str('embedcode'), $this->codeareaattrs);
 
         $f->addElement('static', 'embedhelp', ke::str('howtogetembedcode'), ke::str('googlecalendarembedhelp'));
     }
@@ -44,7 +38,7 @@ class block_googlecalendar extends block {
         $data = unserialize($block->data);
 
         $o = $data->content;
-//         $o = preg_replace('/(width|height)="\d+"/', '$1="100%"', $data->content);
+        $o = preg_replace('/(width)="\d+"/', '$1="100%"', $data->content);
 
         return $o;
     }

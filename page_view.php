@@ -3,6 +3,7 @@ namespace ver2\kakiemon;
 
 require_once '../../config.php';
 require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
+require_once $CFG->libdir . '/formslib.php';
 
 class page_page_view extends page {
     const LIKE = 'like';
@@ -14,6 +15,7 @@ class page_page_view extends page {
      * @var form_page_edit
      */
     private $form;
+    private $pageid;
 
     /**
      *
@@ -36,6 +38,9 @@ class page_page_view extends page {
             case 'rate':
                 $this->rate();
                 break;
+            case 'comment':
+                $this->comment();
+                break;
             default:
                 $this->view();
         }
@@ -43,6 +48,9 @@ class page_page_view extends page {
 
     private function view() {
         global $DB, $PAGE, $SESSION, $USER;
+
+        $download = optional_param('download', 0, PARAM_BOOL);
+        $pdf = optional_param('pdf', 0, PARAM_BOOL);
 
         $userid = $USER->id;
 
@@ -72,7 +80,14 @@ class page_page_view extends page {
                 array(
                         'name' => 'mod_kakiemon',
                         'fullpath' => '/mod/kakiemon/module.js',
-                        'requires' => array('dd', 'io')
+                        'requires' => array(
+                                'dd',
+                                'io',
+                                'dd-drag',
+                                'dd-proxy',
+                                'panel',
+                                'widget',
+                        )
                 ));
 
         $PAGE->requires->css('/mod/kakiemon/lib/lightbox/css/lightbox.css');
@@ -86,6 +101,15 @@ class page_page_view extends page {
         $title = $page->name;
 
         $this->add_navbar($title);
+
+        if ($download) {
+            $filename = 'page.html';
+            header('Content-Disposition: attachment; filename="'.$filename.'"');
+        }
+
+        if ($pdf) {
+            ob_start();
+        }
 
         echo $this->output->header();
         echo $this->output->heading($title);
@@ -102,9 +126,18 @@ class page_page_view extends page {
         }
         if (has_capability('mod/kakiemon:grade', $this->ke->context)) {
             echo \html_writer::start_tag('div');
-            echo $this->output->action_link($this->ke->url('grade', array('page' => $pageid)), ke::str('gradepage'));
+            echo $this->output->action_link($this->ke->url('grade',
+                    array('page' => $pageid)), ke::str('gradepage'));
             echo \html_writer::end_tag('div');
         }
+        echo \html_writer::start_tag('div');
+        echo $this->output->action_link($this->ke->url('page_view',
+                array('page' => $pageid, 'download' => 1)), ke::str('downloadhtml'));
+        echo \html_writer::end_tag('div');
+        echo \html_writer::start_tag('div');
+        echo $this->output->action_link($this->ke->url('page_view',
+                array('page' => $pageid, 'pdf' => 1)), ke::str('downloadpdf'));
+        echo \html_writer::end_tag('div');
         echo \html_writer::end_tag('div');
 
         echo $this->output->container_start('likebuttons');
@@ -168,6 +201,12 @@ class page_page_view extends page {
                                     'editing' => 'off'
                             )), ke::str('finisheditingthispage')),
                     'editbutton');
+
+//             echo \html_writer::start_tag('ul', array('id' => 'newblocks'));
+//             foreach ($this->ke->blocks as $type => $name) {
+//                 echo \html_writer::tag('li', $name);
+//             }
+//             echo \html_writer::end_tag('ul');
         } else {
             if (ke::is_page_editable($pageid)) {
                 echo $this->output->container(
@@ -303,9 +342,57 @@ class page_page_view extends page {
             }
         }
 
+        $this->pageid = $pageid;
+        $this->view_feedback();
+
+        echo \html_writer::tag('div', '', array('id' => 'blockedit'));
+
         echo $this->output->footer();
 
+        if ($pdf) {
+        	$htmlforpdf = ob_get_contents();
+        	ob_end_clean();
+        	$this->output_pdf($htmlforpdf, 'A4-L');
+        }
+
         $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
+    }
+
+    private function view_feedback() {
+        echo $this->output->heading(ke::str('feedback'));
+        echo \html_writer::start_div('feedbacks');
+        $customdata = (object)array(
+                'cmid' => $this->cmid,
+                'pageid' => $this->pageid
+        );
+        $commentform = new form_page_comment(null, $customdata);
+        $commentform->display();
+
+        //XXX
+        $this->output->paging_bar(10, 1, 3, $this->url);
+
+        $feedbacks = $this->db->get_records_sql('
+                SELECT c.*, '.\user_picture::fields('u', null, 'userid').'
+                FROM {'.ke::TABLE_FEEDBACKS.'} c
+                    JOIN {user} u ON c.userid = u.id
+                WHERE c.kakiemon = :kakiemon AND c.page = :page
+                ORDER BY timemodified DESC
+                ',
+                array(
+                        'kakiemon' => $this->ke->instance,
+                        'page' => $this->pageid
+                )
+        );
+        foreach ($feedbacks as $feedback) {
+            $fbobj = new feedback($feedback);
+            echo '<table class="feedback"><tr><td class="userpiccell">';
+            echo $this->output->user_picture($feedback);
+            echo '</td><td class="namecomment">';
+            echo \html_writer::div(fullname($feedback).' - '.userdate($feedback->timemodified), 'namedate');
+            echo \html_writer::div(format_text($feedback->comments, $feedback->commentsformat), 'comment');
+            echo '</td></tr></table>';
+        }
+        echo \html_writer::end_div();
     }
 
     private function set_editing() {
@@ -403,6 +490,51 @@ class page_page_view extends page {
         }
 
         return $o;
+    }
+
+    private function comment() {
+        global $USER;
+
+        $customdata = (object)array(
+                'cmid' => $this->cmid,
+                'pageid' => required_param('page', PARAM_INT)
+        );
+        $form = new form_page_comment(null, $customdata);
+        $data = $form->get_data();
+
+        $feedback = (object)array(
+                'kakiemon' => $this->ke->instance,
+                'page' => $data->page,
+                'userid' => $USER->id,
+                'comments' => $data->comment['text'],
+                'commentsformat' => $data->comment['format'],
+                'timemodified' => time()
+        );
+        $this->db->insert_record(ke::TABLE_FEEDBACKS, $feedback);
+
+        redirect($this->ke->url('page_view', array('page' => $data->page), 'feedback'));
+    }
+}
+
+class form_page_comment extends \moodleform {
+    protected function definition() {
+        $f = $this->_form;
+
+        $f->addElement('hidden', 'id', $this->_customdata->cmid);
+        $f->setType('id', PARAM_INT);
+        $f->addElement('hidden', 'action', 'comment');
+        $f->setType('action', PARAM_ALPHA);
+        $f->addElement('hidden', 'page', $this->_customdata->pageid);
+        $f->setType('page', PARAM_INT);
+
+        $f->addElement('editor', 'comment', 'コメント',
+                array(
+                        'cols' => 40,
+                        'rows' => 10
+                )
+        );
+
+        $this->add_action_buttons();
     }
 }
 

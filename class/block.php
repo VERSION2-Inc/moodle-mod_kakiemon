@@ -4,6 +4,20 @@ namespace ver2\kakiemon;
 class block {
     const FILE_AREA = 'blockfile';
 
+    /**
+     * @var array
+     */
+    protected $codeareaattrs = array(
+            'class' => 'code',
+            'cols' => 60,
+            'rows' => 10,
+            'spellcheck' => 'false'
+    );
+
+    /**
+     *
+     * @var ke
+     */
     protected $ke;
     /**
      *

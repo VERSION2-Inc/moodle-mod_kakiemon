@@ -216,5 +216,36 @@ function xmldb_kakiemon_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2013122705, 'kakiemon');
     }
 
+    if ($oldversion < 2014011502) {
+
+        // Define table kakiemon_feedbacks to be created.
+        $table = new xmldb_table('kakiemon_feedbacks');
+
+        // Adding fields to table kakiemon_feedbacks.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('kakiemon', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('page', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('comments', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('commentsformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table kakiemon_feedbacks.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('kakiemon', XMLDB_KEY_FOREIGN, array('kakiemon'), 'kakiemon', array('id'));
+        $table->add_key('page', XMLDB_KEY_FOREIGN, array('page'), 'kakiemon_pages', array('id'));
+
+        // Adding indexes to table kakiemon_feedbacks.
+        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+
+        // Conditionally launch create table for kakiemon_feedbacks.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2014011502, 'kakiemon');
+    }
+
     return true;
 }

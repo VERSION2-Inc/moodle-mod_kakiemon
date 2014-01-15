@@ -182,7 +182,7 @@ class page_block_edit extends page {
 class form_block_edit extends \moodleform {
     protected function definition() {
         $f = $this->_form;
-        /* @var $kakiemon kakiemon */
+        /* @var $kakiemon ke */
         $kakiemon = $this->_customdata->kakiemon;
         $blocktype = $this->_customdata->blocktype;
 
@@ -193,20 +193,22 @@ class form_block_edit extends \moodleform {
         $f->addElement('hidden', 'block');
         $f->setType('block', PARAM_INT);
 
+        /* @var $oblock block */
         $oblock = $kakiemon->get_block_type($blocktype);
 
         $f->addElement('hidden', 'id', $kakiemon->cm->id);
         $f->setType('id', PARAM_INT);
-        $f->addElement('hidden', 'page', optional_param('page', 0,PARAM_INT));
+        $f->addElement('hidden', 'page', optional_param('page', 0, PARAM_INT));
         $f->setType('page', PARAM_INT);
-        if (required_param('editmode', PARAM_ALPHA)=='add'){
+        if (required_param('editmode', PARAM_ALPHA) == 'add') {
             $f->addElement('hidden', 'blockcolumn', required_param('blockcolumn', PARAM_INT));
             $f->setType('blockcolumn', PARAM_INT);
         }
         $f->addElement('hidden', 'type', $blocktype);
         $f->setType('type', PARAM_ALPHA);
 
-        $f->addElement('text', 'title', 'ブロックタイトル');
+        $f->addElement('text', 'title', ke::str('blocktitle'),
+                array('size' => 40, 'maxlength' => 255));
         $f->setType('title', PARAM_TEXT);
         $f->addRule('title', null, 'required', null, 'client');
         $f->setDefault('title', ke::str($blocktype));
