@@ -15,7 +15,16 @@ class page_page_view extends page {
      * @var form_page_edit
      */
     private $form;
+    /**
+     *
+     * @var int
+     */
     private $pageid;
+    /**
+     *
+     * @var ke_page_cls
+     */
+    private $page;
 
     /**
      *
@@ -25,6 +34,8 @@ class page_page_view extends page {
         $this->ispublic = true;
 
         parent::__construct($url);
+
+        $this->page = new ke_page_cls($this->ke, required_param('page', PARAM_INT));
     }
 
     public function execute() {
@@ -40,6 +51,9 @@ class page_page_view extends page {
                 break;
             case 'comment':
                 $this->comment();
+                break;
+            case 'feedbackdelete':
+                $this->feedback_delete();
                 break;
             default:
                 $this->view();
@@ -58,7 +72,8 @@ class page_page_view extends page {
 
         $pageid = required_param('page', PARAM_INT);
 
-        $opage = new ke_page_cls($this->ke, $pageid);
+        $this->page = new ke_page_cls($this->ke, $pageid);
+        $opage = $this->page;
 
         if (!$opage->is_viewable()) {
             print_error('cantviewpage', ke::COMPONENT);
@@ -103,11 +118,18 @@ class page_page_view extends page {
         $this->add_navbar($title);
 
         if ($download) {
-            $filename = 'page.html';
+            $filename = $page->name.'.html';
+            if (check_browser_version('MSIE')) {
+                $filename = rawurlencode($filename);
+            }
             header('Content-Disposition: attachment; filename="'.$filename.'"');
-        }
+        } else if ($pdf) {
+            $filename = $page->name.'.pdf';
+            if (check_browser_version('MSIE')) {
+                $filename = rawurlencode($filename);
+            }
+            header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-        if ($pdf) {
             ob_start();
         }
 
@@ -359,39 +381,79 @@ class page_page_view extends page {
     }
 
     private function view_feedback() {
-        echo $this->output->heading(ke::str('feedback'));
-        echo \html_writer::start_div('feedbacks');
-        $customdata = (object)array(
-                'cmid' => $this->cmid,
-                'pageid' => $this->pageid
-        );
-        $commentform = new form_page_comment(null, $customdata);
-        $commentform->display();
+        global $USER;
 
-        //XXX
-        $this->output->paging_bar(10, 1, 3, $this->url);
+        $feedbackpage = optional_param('feedbackpage', 0, PARAM_INT);
+        $perpage = 10;
+
+        echo $this->output->heading(ke::str('feedback'), 5);
+        echo \html_writer::start_div('feedbacks', array('id' => 'feedbacks'));
 
         $feedbacks = $this->db->get_records_sql('
-                SELECT c.*, '.\user_picture::fields('u', null, 'userid').'
+                SELECT c.*
                 FROM {'.ke::TABLE_FEEDBACKS.'} c
-                    JOIN {user} u ON c.userid = u.id
                 WHERE c.kakiemon = :kakiemon AND c.page = :page
                 ORDER BY timemodified DESC
                 ',
                 array(
                         'kakiemon' => $this->ke->instance,
                         'page' => $this->pageid
-                )
+                ),
+                $feedbackpage * $perpage, $perpage
         );
+        $delicon = new \pix_icon('t/delete', get_string('delete'));
         foreach ($feedbacks as $feedback) {
-            $fbobj = new feedback($feedback);
             echo '<table class="feedback"><tr><td class="userpiccell">';
-            echo $this->output->user_picture($feedback);
+
+            $user = $this->db->get_record('user', array('id' => $feedback->userid),
+                    \user_picture::fields(), MUST_EXIST);
+            echo $this->output->user_picture($user);
+
             echo '</td><td class="namecomment">';
-            echo \html_writer::div(fullname($feedback).' - '.userdate($feedback->timemodified), 'namedate');
+
+            if ($this->page->can_delete_feedback($feedback)) {
+                echo \html_writer::start_div('actionicons');
+            	echo $this->output->action_icon(
+            	        $this->ke->url('page_view',
+            	                array(
+            	                        'action' => 'feedbackdelete',
+            	                        'page' => $this->pageid,
+            	                        'feedback' => $feedback->id
+            	                )
+            	        ),
+            	        $delicon,
+            	        new \confirm_action(ke::str('reallydeletefeedback'))
+            	);
+            	echo \html_writer::end_div();
+            }
+
+            echo \html_writer::div(fullname($user).' - '.userdate($feedback->timemodified), 'namedate');
             echo \html_writer::div(format_text($feedback->comments, $feedback->commentsformat), 'comment');
             echo '</td></tr></table>';
         }
+
+        $numfeedbacks = $this->db->count_records(ke::TABLE_FEEDBACKS,
+            	array(
+            	        'kakiemon' => $this->ke->instance,
+            	        'page' => $this->pageid
+                ));
+        $baseurl = $this->ke->url('page_view',
+                array(
+                        'page' => $this->pageid
+                ),
+                'feedbacks');
+        echo $this->output->paging_bar($numfeedbacks, $feedbackpage, $perpage, $baseurl, 'feedbackpage');
+
+        echo \html_writer::div(
+                \html_writer::link('#feedbackform', ke::str('postfeedback')),
+                '', array('id' => 'showfeedbackform'));
+        $customdata = (object)array(
+                'cmid' => $this->cmid,
+                'pageid' => $this->pageid
+        );
+        $commentform = new form_page_comment(null, $customdata, 'post', '', array('id' => 'feedbackform'));
+        $commentform->display();
+
         echo \html_writer::end_div();
     }
 
@@ -512,7 +574,15 @@ class page_page_view extends page {
         );
         $this->db->insert_record(ke::TABLE_FEEDBACKS, $feedback);
 
-        redirect($this->ke->url('page_view', array('page' => $data->page), 'feedback'));
+        redirect($this->ke->url('page_view', array('page' => $data->page), 'feedbacks'));
+    }
+
+    private function feedback_delete() {
+        $feedbackid = required_param('feedback', PARAM_INT);
+        if ($this->page->can_delete_feedback($feedbackid)) {
+            $this->db->delete_records(ke::TABLE_FEEDBACKS, array('id' => $feedbackid));
+        }
+        redirect($this->ke->url('page_view', array('page' => $this->page->id), 'feedbacks'));
     }
 }
 
@@ -527,14 +597,14 @@ class form_page_comment extends \moodleform {
         $f->addElement('hidden', 'page', $this->_customdata->pageid);
         $f->setType('page', PARAM_INT);
 
-        $f->addElement('editor', 'comment', 'コメント',
+        $f->addElement('editor', 'comment', ke::str('message'),
                 array(
                         'cols' => 40,
                         'rows' => 10
                 )
         );
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(false, ke::str('postfeedback'));
     }
 }
 

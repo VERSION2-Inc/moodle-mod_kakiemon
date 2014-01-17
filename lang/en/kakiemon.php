@@ -1,6 +1,9 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
+$string['message'] = 'メッセージ';
+$string['postfeedback'] = 'フィードバックを投稿する';
+$string['reallydeletefeedback'] = 'フィードバックを削除してよろしいですか？';
 $string['accesses'] = '足あと';
 $string['addblock'] = '新規ブロックを追加';
 $string['addpage'] = '新規ページを追加';

@@ -37,6 +37,10 @@
   .path-mod-kakiemon .feedbacks .feedback .comment {
     margin-top: 0.5em;
     font-size: 90%; }
+  .path-mod-kakiemon .feedbacks .feedback .actionicons {
+    float: right; }
+.path-mod-kakiemon .feedbacks #showfeedbackform {
+  margin-bottom: 20px; }
 .path-mod-kakiemon textarea.code {
   font: 90% monospace; }
 .path-mod-kakiemon .likebutton {

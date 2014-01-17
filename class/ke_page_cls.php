@@ -7,6 +7,7 @@ class ke_page_cls {
      * @var \stdClass
      */
     public $data;
+    public $id;
 
     /**
      *
@@ -30,6 +31,7 @@ class ke_page_cls {
         $this->db = $DB;
 
         $this->data = $this->db->get_record(ke::TABLE_PAGES, array('id' => $id), '*', MUST_EXIST);
+        $this->id = $this->data->id;
     }
 
     /**
@@ -122,5 +124,20 @@ class ke_page_cls {
                 'kakiemon' => $this->ke->instance,
                 'page' => $this->data->id
         ));
+    }
+
+    /**
+     *
+     * @param \stdClass|int $feedback
+     * @return boolean
+     */
+    public function can_delete_feedback($feedback) {
+        global $USER;
+
+        if (!is_object($feedback)) {
+            $feedback = $this->db->get_record(ke::TABLE_FEEDBACKS, array('id' => $feedback), '*', MUST_EXIST);
+        }
+
+        return $this->data->userid == $USER->id || $feedback->userid == $USER->id;
     }
 }

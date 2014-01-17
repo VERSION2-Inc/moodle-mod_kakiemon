@@ -5,10 +5,16 @@ if (M.mod_kakiemon == null) {
 M.mod_kakiemon.page_view_init = function(Y, params) {
   this.Y = Y;
   this.params = params;
+  Y = this.Y;
   this.ajaxurl = M.cfg.wwwroot + '/mod/kakiemon/ajax.php';
   if (this.params.editing) {
-    return this.page_view_init_block_dragdrop();
+    this.page_view_init_block_dragdrop();
   }
+  Y.on('click', function(e) {
+    Y.one('#feedbackform').toggleView();
+    return tinyMCE.activeEditor.focus();
+  }, '#showfeedbackform a');
+  return Y.one('#feedbackform').hide();
 };
 
 M.mod_kakiemon.page_view_init_block_dragdrop = function() {
