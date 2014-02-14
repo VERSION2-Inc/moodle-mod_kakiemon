@@ -40,7 +40,7 @@ class block_html extends block {
             'content' => $formdata->content['text']
         ];
 
-        $DB->set_field(kakiemon::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
+        $DB->set_field(ke::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
     }
 
     /**

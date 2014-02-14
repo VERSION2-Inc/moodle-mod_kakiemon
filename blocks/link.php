@@ -26,7 +26,7 @@ class block_link extends block {
             'url' => $formdata->url
         ];
 
-        $DB->set_field(kakiemon::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
+        $DB->set_field(ke::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
     }
 
     /**

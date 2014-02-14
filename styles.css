@@ -5,7 +5,8 @@
   float: left;
   width: 30%; }
 .path-mod-kakiemon .block-column-blocks {
-  padding-bottom: 40px; }
+  padding-bottom: 40px;
+  margin: 5px; }
 .path-mod-kakiemon .kaki-block {
   border: 1px solid #aaaaaa;
   margin: 0 1em 1em 0;

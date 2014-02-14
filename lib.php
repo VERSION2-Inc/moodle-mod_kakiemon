@@ -52,6 +52,7 @@ function kakiemon_delete_instance($id) {
  */
 function kakiemon_supports($feature) {
     return in_array($feature, array(
+            FEATURE_MOD_INTRO,
             FEATURE_GRADE_HAS_GRADE,
             FEATURE_ADVANCED_GRADING
     ));

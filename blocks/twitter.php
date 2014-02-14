@@ -9,7 +9,7 @@ class block_twitter extends block {
     public function add_form_elements(\MoodleQuickForm $f) {
         $f->addElement('textarea', 'content', ke::str('embedcode'), $this->codeareaattrs);
 
-        $f->addElement('static', 'embedhelp', ke::str('howtogetembedcode'), ke::str('googlecalendarembedhelp'));
+        $f->addElement('static', 'embedhelp', ke::str('howtogetembedcode'), ke::str('twitterembedhelp'));
     }
 
     /**

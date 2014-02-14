@@ -51,11 +51,13 @@ M.mod_kakiemon.page_view_init_block_dragdrop = function() {
     }
     drag.get('node').setStyle('opacity', '.25');
     drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
-    return drag.get('dragNode').setStyles({
+    drag.get('dragNode').setStyles({
       opacity: '.5',
       borderColor: drag.get('node').getStyle('borderColor'),
       backgroundColor: drag.get('node').getStyle('backgroundColor')
     });
+    Y.all('.block-column-blocks').setStyle('background', '#f8f8f8');
+    return Y.all('.block-column-blocks').setStyle('margin', '10px');
   });
   Y.DD.DDM.on('drag:drag', function(e) {
     var drag, y;
@@ -70,11 +72,12 @@ M.mod_kakiemon.page_view_init_block_dragdrop = function() {
     var drag;
     drag = e.target;
     if (true) {
-      return drag.get('node').setStyles({
+      drag.get('node').setStyles({
         visibility: '',
         opacity: '1'
       });
     }
+    return Y.all('.block-column-blocks').setStyle('background', '').setStyle('margin', '0');
   });
   Y.DD.DDM.on('drag:drophit', function(e) {
     var drag, drop;
@@ -92,7 +95,7 @@ M.mod_kakiemon.page_view_init_block_dragdrop = function() {
         order: neworder
       });
     }
-  });
+  }, this);
   blocks = Y.all('.' + CSS.BLOCK);
   blocks.each(function(v, k) {
     return new Y.DD.Drag({

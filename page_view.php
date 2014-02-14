@@ -130,6 +130,8 @@ class page_page_view extends page {
             }
             header('Content-Disposition: attachment; filename="'.$filename.'"');
 
+            $PAGE->force_theme('base');
+
             ob_start();
         }
 
