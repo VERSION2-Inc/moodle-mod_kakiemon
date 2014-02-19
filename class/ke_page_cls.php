@@ -91,6 +91,8 @@ class ke_page_cls {
     /**
      *
      * @param int $grade
+     * @param string $feedback
+     * @return int
      */
     public function update_grade($grade, $feedback = null) {
         if ($row = $this->db->get_record(ke::TABLE_GRADES, array(
@@ -112,7 +114,17 @@ class ke_page_cls {
             $this->db->insert_record(ke::TABLE_GRADES, $row);
         }
 
-        //grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber);
+        $grades = array(
+                'userid' => $this->data->userid,
+                'rawgrade' => $grade
+        );
+        $params = array(
+                'itemname' => $this->ke->data->name,
+                'idnumber' => $this->ke->instance
+        );
+
+        return grade_update('mod/kakiemon', $this->ke->course->id, 'mod', 'kakiemon', $this->ke->instance, 0,
+            $grades, $params);
     }
 
     /**

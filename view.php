@@ -100,10 +100,15 @@ class page_view extends page {
 
         echo $this->output->heading(ke::str('allpages'));
 
+        if (function_exists('get_all_user_name_fields')) {
+            $usernamefields = get_all_user_name_fields(true, 'u');
+        } else {
+            $usernamefields = 'u.lastname, u.firstname';
+        }
         $pages = $DB->get_records_sql(
                 '
                 SELECT p.id, p.name, p.timecreated, p.template,
-                    u.lastname, u.firstname
+                    '.$usernamefields.'
                 FROM {' . ke::TABLE_PAGES . '} p
                     JOIN {user} u ON p.userid = u.id
                 WHERE p.kakiemon = :ke

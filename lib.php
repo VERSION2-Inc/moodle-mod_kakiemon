@@ -67,6 +67,36 @@ function kakiemon_grading_areas_list() {
     );
 }
 
+function kakiemon_grade_item_update($ke, $grades = null) {
+    error_log('grade item update call');
+//     $params = array(
+//             'itemname' => $ke->name,
+//             'idnumber' => $ke->cmidnumber
+//     );
+
+//     if ($ke->scale == 0) {
+//     	$params['gradetype'] = GRADE_TYPE_NONE;
+//     } else if ($ke->scale > 0) {
+//         $params['gradetype'] = GRADE_TYPE_VALUE;
+//         $params['grademax'] = $ke->scale;
+//         $params['grademin'] = 0;
+//     } else if ($ke->scale < 0) {
+//         $params['gradetype'] = GRADE_TYPE_SCALE;
+//         $params['scaleid'] = -$ke->scale;
+//     }
+
+//     if ($grades === 'reset') {
+//         $params['reset'] = true;
+//         $grades = null;
+//     }
+
+//     return grade_update('mod/kakiemon', $ke->course, 'mod', 'kakiemon', $ke->id, 0, $grades, $params);
+}
+
+function kakiemon_update_grades($ke, $userid = 0, $nullifnone = true) {
+    error_log('update user grades call');
+}
+
 /**
  *
  * @param \stdClass $course

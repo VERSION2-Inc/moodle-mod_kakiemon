@@ -150,7 +150,7 @@ class page_page_view extends page {
         }
         if (has_capability('mod/kakiemon:grade', $this->ke->context)) {
             echo \html_writer::start_tag('div');
-            echo $this->output->action_link($this->ke->url('grade',
+            echo $this->output->action_link($this->ke->url('page_grade',
                     array('page' => $pageid)), ke::str('gradepage'));
             echo \html_writer::end_tag('div');
         }
@@ -488,7 +488,10 @@ class page_page_view extends page {
         ));
         $updated = false;
         if ($like) {
-            if ($like->type != $type) {
+            if ($like->type == $type) {
+                $this->db->delete_records(ke::TABLE_LIKES, array('id' => $like->id));
+                $updated = true;
+            } else {
                 $like->type = $type;
                 $DB->update_record(ke::TABLE_LIKES, $like);
                 $updated = true;
