@@ -36,9 +36,9 @@ class block_html extends block {
 
         $formdata = $form->get_data();
 
-        $data = (object)[
+        $data = (object)array(
             'content' => $formdata->content['text']
-        ];
+        );
 
         $DB->set_field(ke::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
     }

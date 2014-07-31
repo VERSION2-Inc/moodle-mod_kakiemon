@@ -8,7 +8,7 @@ require_once $CFG->libdir . '/pear/HTML/QuickForm/input.php';
 require_once $CFG->dirroot . '/grade/grading/lib.php';
 require_once $CFG->libdir . '/gradelib.php';
 
-class page_grade extends page {
+class page_page_grade extends page {
     private $advancedgradinginstance;
 
     public function execute() {
@@ -129,4 +129,4 @@ class form_grade extends \moodleform {
     }
 }
 
-page_grade::execute_new(__FILE__);
+page_page_grade::execute_new(__FILE__);

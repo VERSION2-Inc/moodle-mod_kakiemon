@@ -26,9 +26,9 @@ class block_page extends block {
 
         $formdata = $form->get_data();
 
-        $data = (object)[
+        $data = (object)array(
                 'url' => $formdata->url
-        ];
+        );
 
 //         $thumb = $this->make_thumbnail($formdata->url);
 //         if ($thumb) {

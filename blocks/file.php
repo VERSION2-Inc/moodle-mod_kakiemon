@@ -21,7 +21,7 @@ class block_file extends block {
         file_save_draft_area_files($data->file, $this->ke->context->id, ke::COMPONENT,
                 'blockfile', $block->id);
 
-        $data = (object)[];
+        $data = (object)array();
 
         return serialize($data);
     }

@@ -42,7 +42,7 @@ class ke {
      *
      * @var string[]
      */
-    public $blocks = [];
+    public $blocks = array();
     /**
      *
      * @var \context_module

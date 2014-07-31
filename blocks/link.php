@@ -22,9 +22,9 @@ class block_link extends block {
 
         $formdata = $form->get_data();
 
-        $data = (object)[
+        $data = (object)array(
             'url' => $formdata->url
-        ];
+        );
 
         $DB->set_field(ke::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
     }
