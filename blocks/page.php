@@ -27,7 +27,7 @@ class block_page extends block {
         $formdata = $form->get_data();
 
         $data = (object)array(
-                'url' => $formdata->url
+            'url' => $formdata->url
         );
 
 //         $thumb = $this->make_thumbnail($formdata->url);
@@ -68,6 +68,7 @@ class block_page extends block {
 //             ));
 //         }
         $o .= $this->get_thumbnail_code($data->url);
+        $o .= '<br>';
         $o .= \html_writer::tag('a', $data->url, array(
                 'href' => $data->url,
                 'target' => '_blank'
@@ -77,28 +78,10 @@ class block_page extends block {
     }
 
     private function get_thumbnail_code($url) {
-        return $this->get_thumbnail_code_thumbnail_web($url);
-//         return $this->get_thumbnail_code_thumbalizr($url);
-    }
-
-    private function get_thumbnail_code_thumbnail_web($url) {
-        $params = array(
-                '320x240',
-                'guest',
-                $url
-        );
-        $jsurl = 'http://free.thumbnail-web.com/p2?'.implode('&', $params);
-
-        return \html_writer::script('', $jsurl);
-    }
-
-    private function get_thumbnail_code_thumbalizr($url) {
-        $url = rtrim($url, '/');
-
-        $imgurl = 'http://api1.thumbalizr.com/?url='.$url.'&width=250';
+        $thumburl = 'http://api.webthumbnail.org?width=320&height=240&screen=1024&url='.$url;
 
         return \html_writer::empty_tag('img', array(
-                'src' => $imgurl
+            'src' => $thumburl
         ));
     }
 

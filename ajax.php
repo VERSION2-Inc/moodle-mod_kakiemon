@@ -12,6 +12,9 @@ class page_ajax extends page {
             case 'blockmove':
                 $this->block_move();
                 break;
+            case 'blockresize':
+                $this->block_resize();
+                break;
         }
     }
 
@@ -34,6 +37,15 @@ class page_ajax extends page {
         foreach ($ids as $id) {
             $DB->set_field(ke::TABLE_BLOCKS, 'blockorder', $order++, array('id' => $id));
         }
+    }
+
+    private function block_resize() {
+        global $DB;
+
+        $block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => required_param('block', PARAM_INT)));
+        $block->width = required_param('width', PARAM_INT);
+        $block->height = required_param('height', PARAM_INT);
+        $DB->update_record(ke::TABLE_BLOCKS, $block);
     }
 }
 

@@ -1,0 +1,82 @@
+@mixin roundborder
+    border: 1px solid gray
+    border-radius: 5px
+
+.path-mod-kakiemon
+    .menulinks, .page-author, .page-infolinks
+        text-align: right
+        margin: 0.5em 0
+    .block-column
+        float: left
+        // width: 30%
+        min-width: 30%
+    .block-column-blocks
+        padding-bottom: 40px
+        margin: 5px
+
+    .kaki-block
+        border: 1px solid #aaa
+        margin: 0 1em 1em 0
+        padding: 5px
+
+        h3
+            margin: 0
+            text-align: left
+
+    .editbutton, .blockeditbutton
+        float: right
+    .blockeditbuttons
+        margin-bottom: 5px
+    .likebuttons, #rating
+        margin: 8px 0
+        text-align: center
+    #newblocks li
+        @include roundborder
+        cursor: move
+        list-style-type: none
+        width: 200px
+        margin: 5px
+        padding: 4px
+    
+    .feedbacks
+        .feedback
+            width: 100%
+            color: #444
+            .userpiccell
+                width: 50px
+            .namecomment
+                background: #f8f8f8
+            .namedate
+                font-size: 80%
+            .comment
+                margin-top: 0.5em
+                font-size: 90%
+            .actionicons
+                float: right
+        #showfeedbackform
+            margin-bottom: 20px
+
+    textarea.code
+        font: 90% monospace
+    .likebutton
+        @include roundborder
+        background: lavender
+        padding: 3px 8px
+        margin: 5px
+    .likecount
+        @include roundborder
+        padding: 2px 5px
+        font-size: 75%
+    .page-grade
+        margin: 2em
+    .block-image
+        max-width: 100%
+        margin: auto
+        display: block
+
+    .thumbnailweb_free_ss
+        max-width: 100%
+    .accesses
+        margin: auto
+        td
+            vertical-align: middle

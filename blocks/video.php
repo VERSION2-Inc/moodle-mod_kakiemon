@@ -35,7 +35,19 @@ class block_video extends block {
     public function get_content(\stdClass $block) {
         $data = unserialize($block->data);
 
-        $o = preg_replace('/(width|height)="\d+"/', '$1="100%"', $data->content);
+        $o = '';
+
+        $dom = new \DOMDocument;
+        if (!$dom->loadHTML($data->content))
+            return $data->content;
+
+        $nodelist = $dom->getElementsByTagName('iframe');
+        if ($nodelist->length) {
+            $iframe = $nodelist->item(0);
+            $iframe->setAttribute('width', '100%');
+            $iframe->setAttribute('height', '100%');
+            $o = $dom->saveHTML($iframe);
+        }
 
         return $o;
     }

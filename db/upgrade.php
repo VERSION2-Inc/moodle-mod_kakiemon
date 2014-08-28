@@ -247,5 +247,35 @@ function xmldb_kakiemon_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2014011502, 'kakiemon');
     }
 
+    if ($oldversion < 2014082900) {
+
+        // Define field displaytitle to be added to kakiemon_blocks.
+        $table = new xmldb_table('kakiemon_blocks');
+
+        $field = new xmldb_field('displaytitle', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'blockorder');
+
+        // Conditionally launch add field displaytitle.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('width', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'displaytitle');
+
+        // Conditionally launch add field width.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('height', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'width');
+
+        // Conditionally launch add field height.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2014082900, 'kakiemon');
+    }
+
     return true;
 }

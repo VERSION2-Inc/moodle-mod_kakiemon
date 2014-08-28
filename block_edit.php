@@ -96,15 +96,21 @@ class page_block_edit extends page {
         if ($this->editmode == 'update') {
             $block = $DB->get_record(ke::TABLE_BLOCKS, array('id' => $data->block));
             $block->title = $data->title;
+            $block->displaytitle = $data->displaytitle;
+            $block->width = $data->width;
+            $block->height = $data->height;
             $DB->update_record(ke::TABLE_BLOCKS, $block);
         } else {
             $pageid=required_param('page', PARAM_INT);
             $block = (object)array(
-                    'kakiemon' => $this->kakiemon->instance,
-                    'page' => $pageid,
-                    'blockcolumn' => $data->blockcolumn,
-                    'type' => $data->type,
-                    'title' => $data->title,
+                'kakiemon' => $this->kakiemon->instance,
+                'page' => $pageid,
+                'blockcolumn' => $data->blockcolumn,
+                'type' => $data->type,
+                'displaytitle' => $data->displaytitle,
+                'width' => $data->width,
+                'height' => $data->height,
+                'title' => $data->title,
             );
             $block->id = $DB->insert_record(ke::TABLE_BLOCKS, $block);
         }
@@ -207,11 +213,23 @@ class form_block_edit extends \moodleform {
         $f->addElement('hidden', 'type', $blocktype);
         $f->setType('type', PARAM_ALPHA);
 
+        $f->addElement('header', 'general', get_string('general'));
+
         $f->addElement('text', 'title', ke::str('blocktitle'),
                 array('size' => 40, 'maxlength' => 255));
         $f->setType('title', PARAM_TEXT);
         $f->addRule('title', null, 'required', null, 'client');
         $f->setDefault('title', ke::str($blocktype));
+
+        $f->addElement('selectyesno', 'displaytitle', ke::str('displaytitle'));
+
+        $f->addElement('text', 'width', ke::str('width'), array('size' => 5));
+        $f->setType('width', PARAM_INT);
+        $f->addHelpButton('width', 'width', ke::COMPONENT);
+
+        $f->addElement('text', 'height', ke::str('height'), array('size' => 5));
+        $f->setType('height', PARAM_INT);
+        $f->addHelpButton('height', 'height', ke::COMPONENT);
 
         //格納、自動格納
         //ファイル

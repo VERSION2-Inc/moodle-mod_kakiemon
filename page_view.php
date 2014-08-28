@@ -87,28 +87,36 @@ class page_page_view extends page {
             $editing = true;
         }
 
+        $PAGE->requires->jquery();
+        $PAGE->requires->jquery_plugin('ui');
+        $PAGE->requires->jquery_plugin('ui-css');
+        $jqueryinit = 'var cmid = '.$this->cmid.';'
+            .'var editing = '.($editing ? 'true' : 'false').';';
+        $PAGE->requires->js('/mod/kakiemon/js/page_view.js');
         $jsparams = (object)array(
-                'cmid' => $this->cmid,
-                'editing' => $editing
+            'cmid' => $this->cmid,
+            'editing' => $editing
         );
         $PAGE->requires->js_init_call('M.mod_kakiemon.page_view_init', array($jsparams), false,
-                array(
-                        'name' => 'mod_kakiemon',
-                        'fullpath' => '/mod/kakiemon/module.js',
-                        'requires' => array(
-                                'dd',
-                                'io',
-                                'dd-drag',
-                                'dd-proxy',
-                                'panel',
-                                'widget',
-                        )
-                ));
+            array(
+                'name' => 'mod_kakiemon',
+                'fullpath' => '/mod/kakiemon/module.js',
+                'requires' => array(
+                    'dd',
+                    'io',
+                    'dd-drag',
+                    'dd-proxy',
+                    'panel',
+                    'resize',
+                    'resize-plugin',
+                    'widget'
+                )
+            ));
 
         $PAGE->requires->css('/mod/kakiemon/lib/lightbox/css/lightbox.css');
 
         $page = $DB->get_record(ke::TABLE_PAGES, array(
-                'id' => $pageid
+            'id' => $pageid
         ));
 
         $this->ke->update_access($page);
@@ -137,6 +145,8 @@ class page_page_view extends page {
 
         echo $this->output->header();
         echo $this->output->heading($title);
+
+        echo \html_writer::script($jqueryinit);
 
         $user = $DB->get_record('user', array('id' => $page->userid));
         echo $this->output->container($user->idnumber.' '.fullname($user),
@@ -168,25 +178,25 @@ class page_page_view extends page {
         $likeelement = 'span';
         if ($this->ke->options->uselike) {
             $likecount = $DB->count_records(ke::TABLE_LIKES, array(
-                    'page' => $pageid,
-                    'type' => self::LIKE
+                'page' => $pageid,
+                'type' => self::LIKE
             ));
             echo $this->output->action_link(new \moodle_url($this->url, array(
-                    'page' => $pageid,
-                    'action' => 'like',
-                    'type' => self::LIKE
+                'page' => $pageid,
+                'action' => 'like',
+                'type' => self::LIKE
             )), ke::str('like'), null, array('class' => 'likebutton'));
             echo \html_writer::tag($likeelement, $likecount, array('class' => 'likecount'));
         }
         if ($this->ke->options->usedislike) {
             $dislikecount = $DB->count_records(ke::TABLE_LIKES, array(
-                    'page' => $pageid,
-                    'type' => self::DISLIKE
+                'page' => $pageid,
+                'type' => self::DISLIKE
             ));
             echo $this->output->action_link(new \moodle_url($this->url, array(
-                    'page' => $pageid,
-                    'action' => 'like',
-                    'type' => self::DISLIKE
+                'page' => $pageid,
+                'action' => 'like',
+                'type' => self::DISLIKE
             )), ke::str('dislike'), null, array('class' => 'likebutton'));
             echo \html_writer::tag($likeelement, $dislikecount, array('class' => 'likecount'));
         }
@@ -200,16 +210,16 @@ class page_page_view extends page {
             echo sprintf('%g', $opage->get_average_rating());
             echo ' ('.ke::str('ratedbyusers', $opage->get_rated_users()).')';
             $ratingselect = new \single_select(
-                    $this->ke->url('page_view', array('action' => 'rate', 'page' => $pageid)), 'rating',
-                    array(
-                            5 => '5',
-                            4 => '4',
-                            3 => '3',
-                            2 => '2',
-                            1 => '1',
-                            0 => ke::str('norating')
-                    ),
-                    $opage->get_my_rating()
+                $this->ke->url('page_view', array('action' => 'rate', 'page' => $pageid)), 'rating',
+                array(
+                    5 => '5',
+                    4 => '4',
+                    3 => '3',
+                    2 => '2',
+                    1 => '1',
+                    0 => ke::str('norating')
+                ),
+                $opage->get_my_rating()
             );
             $ratingselect->label = ke::str('yourrating').': ';
             echo $this->output->render($ratingselect);
@@ -218,13 +228,13 @@ class page_page_view extends page {
 
         if ($editing) {
             echo $this->output->container(
-                    $this->output->single_button(
-                            new \moodle_url($this->url, array(
-                                    'page' => $pageid,
-                                    'action' => 'setediting',
-                                    'editing' => 'off'
-                            )), ke::str('finisheditingthispage')),
-                    'editbutton');
+                $this->output->single_button(
+                    new \moodle_url($this->url, array(
+                        'page' => $pageid,
+                        'action' => 'setediting',
+                        'editing' => 'off'
+                    )), ke::str('finisheditingthispage')),
+                'editbutton');
 
 //             echo \html_writer::start_tag('ul', array('id' => 'newblocks'));
 //             foreach ($this->ke->blocks as $type => $name) {
@@ -234,13 +244,13 @@ class page_page_view extends page {
         } else {
             if (ke::is_page_editable($pageid)) {
                 echo $this->output->container(
-                        $this->output->single_button(
-                                new \moodle_url($this->url, array(
-                                        'page' => $pageid,
-                                        'action' => 'setediting',
-                                        'editing' => 'on'
-                                )), ke::str('editthispage')),
-                        'editbutton');
+                    $this->output->single_button(
+                        new \moodle_url($this->url, array(
+                            'page' => $pageid,
+                            'action' => 'setediting',
+                            'editing' => 'on'
+                        )), ke::str('editthispage')),
+                    'editbutton');
             }
         }
         echo $this->output->container('', 'clearer');
@@ -248,13 +258,13 @@ class page_page_view extends page {
         for ($column = 1; $column <= 3; $column++) {
             echo $this->output->container_start('block-column', 'column'.$column);
             echo \html_writer::start_tag('div', array(
-                    'class' => 'block-column-blocks',
-                    'data-column' => $column
+                'class' => 'block-column-blocks',
+                'data-column' => $column
             ));
 
             $blocks = $DB->get_records(ke::TABLE_BLOCKS, array(
-                    'page' => $pageid,
-                    'blockcolumn' => $column
+                'page' => $pageid,
+                'blockcolumn' => $column
             ), 'blockorder');
             $row = 0;
             foreach ($blocks as $block) {
@@ -264,62 +274,73 @@ class page_page_view extends page {
                     $buttons = '';
 
                     $buttons .= util::button(util::BUTTON_EDIT,
-                            new \moodle_url($this->ke->url('block_edit', array(
-                                    'block' => $block->id,
-                                    'action' => 'edit',
-                                    'editmode' => 'update'
-                            ))));
+                        new \moodle_url($this->ke->url('block_edit', array(
+                            'block' => $block->id,
+                            'action' => 'edit',
+                            'editmode' => 'update'
+                        ))));
                     $buttons .= util::button(util::BUTTON_DELETE,
-                            new \moodle_url($this->ke->url('block_edit', array(
-                                    'action' => 'delete',
-                                    'block' => $block->id
-                            ))),
-                            new \confirm_action(ke::str('reallydeleteblock')));
+                        new \moodle_url($this->ke->url('block_edit', array(
+                            'action' => 'delete',
+                            'block' => $block->id
+                        ))),
+                        new \confirm_action(ke::str('reallydeleteblock')));
 
                     if ($row > 0) {
                         $buttons .= util::button(util::BUTTON_UP,
-                                new \moodle_url($this->ke->url('block_edit', array(
-                                        'action' => 'changeorder',
-                                        'value' => -1,
-                                        'block' => $block->id
-                                ))));
+                            new \moodle_url($this->ke->url('block_edit', array(
+                                'action' => 'changeorder',
+                                'value' => -1,
+                                'block' => $block->id
+                            ))));
                     }
                     if ($row < count($blocks) - 1) {
                         $buttons .= util::button(util::BUTTON_DOWN,
-                                new \moodle_url($this->ke->url('block_edit', array(
-                                        'action' => 'changeorder',
-                                        'value' => 1,
-                                        'block' => $block->id
-                                ))));
+                            new \moodle_url($this->ke->url('block_edit', array(
+                                'action' => 'changeorder',
+                                'value' => 1,
+                                'block' => $block->id
+                            ))));
                     }
                     if ($column > 0) {
                         $buttons .= util::button(util::BUTTON_LEFT,
-                                new \moodle_url($this->ke->url('block_edit', array(
-                                        'action' => 'changecolumn',
-                                        'value' => -1,
-                                        'block' => $block->id
-                                ))));
+                            new \moodle_url($this->ke->url('block_edit', array(
+                                'action' => 'changecolumn',
+                                'value' => -1,
+                                'block' => $block->id
+                            ))));
                     }
                     if ($column < self::BLOCK_COLUMNS) {
                         $buttons .= util::button(util::BUTTON_RIGHT,
-                                new \moodle_url($this->ke->url('block_edit', array(
-                                        'action' => 'changecolumn',
-                                        'value' => 1,
-                                        'block' => $block->id
-                                ))));
+                            new \moodle_url($this->ke->url('block_edit', array(
+                                'action' => 'changecolumn',
+                                'value' => 1,
+                                'block' => $block->id
+                            ))));
                     }
                     $ob .= $this->output->container($buttons, 'blockeditbuttons');
                 }
 
+                if ($block->displaytitle)
+                    $ob .= $this->output->heading($block->title, 3);
+
                 $oblock = $this->ke->get_block_type($block->type);
                 $ob .= $oblock->get_content($block);
 
+                echo '<div class="kaki-block-wrap" style="width:300px;height:300px;">';
+                $style = '';
+                if ($block->width)
+                    $style .= 'width:'.$block->width.'px;';
+                if ($block->height)
+                    $style .= 'height:'.$block->height.'px;';
                 echo \html_writer::tag('div', $ob, array(
-                        'class' => 'kaki-block',
-                        'data-id' => $block->id,
-                        'data-column' => $block->blockcolumn,
-                        'data-order' => $block->blockorder
+                    'class' => 'kaki-block',
+                    'style' => $style,
+                    'data-id' => $block->id,
+                    'data-column' => $block->blockcolumn,
+                    'data-order' => $block->blockorder
                 ));
+                echo '</div>';
 
                 $row++;
             }
@@ -328,13 +349,13 @@ class page_page_view extends page {
             if ($editing) {
                 echo $this->output->container(ke::str('addblock'));
                 echo $this->output->single_select(
-                        $this->ke->url('block_edit',
-                                array(
-                                        'action' => 'edit',
-                                        'editmode' => 'add',
-                                        'page' => $pageid,
-                                        'blockcolumn' => $column
-                                )), 'type', $this->ke->blocks);
+                    $this->ke->url('block_edit',
+                        array(
+                            'action' => 'edit',
+                            'editmode' => 'add',
+                            'page' => $pageid,
+                            'blockcolumn' => $column
+                )), 'type', $this->ke->blocks);
             }
 
             echo $this->output->container_end();
@@ -347,10 +368,10 @@ class page_page_view extends page {
             $method = $manager->get_active_method();
             if ($method) {
                 /* @var $controller \gradingform_rubric_controller */
-            	$controller = $manager->get_controller($method);
-            	if ($controller->is_form_available()) {
-            	    echo $controller->render_grade($PAGE, $pageid, $gradinginfo, '', false);
-            	}
+                $controller = $manager->get_controller($method);
+                if ($controller->is_form_available()) {
+                    echo $controller->render_grade($PAGE, $pageid, $gradinginfo, '', false);
+                }
             }
             if ($grade = $opage->get_grade()) {
                 echo \html_writer::start_tag('div', array('class' => 'page-grade'));
@@ -374,11 +395,11 @@ class page_page_view extends page {
         echo $this->output->footer();
 
         if ($pdf) {
-        	$htmlforpdf = ob_get_contents();
-        	ob_end_clean();
-        	$this->output_pdf($htmlforpdf, 'A4-L');
+            $htmlforpdf = ob_get_contents();
+            ob_end_clean();
+            $this->output_pdf($htmlforpdf, 'A4-L');
         }
-
+//         echo '<script>$(".kaki-block").css("background", "red");</script>';
         $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
     }
 
@@ -392,16 +413,16 @@ class page_page_view extends page {
         echo \html_writer::start_div('feedbacks', array('id' => 'feedbacks'));
 
         $feedbacks = $this->db->get_records_sql('
-                SELECT c.*
-                FROM {'.ke::TABLE_FEEDBACKS.'} c
-                WHERE c.kakiemon = :kakiemon AND c.page = :page
-                ORDER BY timemodified DESC
-                ',
-                array(
-                        'kakiemon' => $this->ke->instance,
-                        'page' => $this->pageid
-                ),
-                $feedbackpage * $perpage, $perpage
+            SELECT c.*
+            FROM {'.ke::TABLE_FEEDBACKS.'} c
+            WHERE c.kakiemon = :kakiemon AND c.page = :page
+            ORDER BY timemodified DESC
+            ',
+            array(
+                'kakiemon' => $this->ke->instance,
+                'page' => $this->pageid
+            ),
+            $feedbackpage * $perpage, $perpage
         );
         $delicon = new \pix_icon('t/delete', get_string('delete'));
         foreach ($feedbacks as $feedback) {
@@ -415,18 +436,18 @@ class page_page_view extends page {
 
             if ($this->page->can_delete_feedback($feedback)) {
                 echo \html_writer::start_div('actionicons');
-            	echo $this->output->action_icon(
-            	        $this->ke->url('page_view',
-            	                array(
-            	                        'action' => 'feedbackdelete',
-            	                        'page' => $this->pageid,
-            	                        'feedback' => $feedback->id
-            	                )
-            	        ),
-            	        $delicon,
-            	        new \confirm_action(ke::str('reallydeletefeedback'))
-            	);
-            	echo \html_writer::end_div();
+                echo $this->output->action_icon(
+                    $this->ke->url('page_view',
+                        array(
+                            'action' => 'feedbackdelete',
+                            'page' => $this->pageid,
+                            'feedback' => $feedback->id
+                        )
+                    ),
+                    $delicon,
+                    new \confirm_action(ke::str('reallydeletefeedback'))
+                );
+                echo \html_writer::end_div();
             }
 
             echo \html_writer::div(fullname($user).' - '.userdate($feedback->timemodified), 'namedate');
@@ -435,23 +456,23 @@ class page_page_view extends page {
         }
 
         $numfeedbacks = $this->db->count_records(ke::TABLE_FEEDBACKS,
-            	array(
-            	        'kakiemon' => $this->ke->instance,
-            	        'page' => $this->pageid
-                ));
+            array(
+                'kakiemon' => $this->ke->instance,
+                'page' => $this->pageid
+            ));
         $baseurl = $this->ke->url('page_view',
-                array(
-                        'page' => $this->pageid
-                ),
-                'feedbacks');
+            array(
+                'page' => $this->pageid
+            ),
+            'feedbacks');
         echo $this->output->paging_bar($numfeedbacks, $feedbackpage, $perpage, $baseurl, 'feedbackpage');
 
         echo \html_writer::div(
-                \html_writer::link('#feedbackform', ke::str('postfeedback')),
-                '', array('id' => 'showfeedbackform'));
+            \html_writer::link('#feedbackform', ke::str('postfeedback')),
+            '', array('id' => 'showfeedbackform'));
         $customdata = (object)array(
-                'cmid' => $this->cmid,
-                'pageid' => $this->pageid
+            'cmid' => $this->cmid,
+            'pageid' => $this->pageid
         );
         $commentform = new form_page_comment(null, $customdata, 'post', '', array('id' => 'feedbackform'));
         $commentform->display();
@@ -469,7 +490,7 @@ class page_page_view extends page {
         }
 
         redirect($this->ke->url('page_view.php', array(
-                'page' => required_param('page', PARAM_INT)
+            'page' => required_param('page', PARAM_INT)
         )));
     }
 
@@ -483,8 +504,8 @@ class page_page_view extends page {
         $url = new \moodle_url($this->url, array('page' => $pageid));
 
         $like = $DB->get_record(ke::TABLE_LIKES, array(
-                'page' => $pageid,
-                'userid' => $userid
+            'page' => $pageid,
+            'userid' => $userid
         ));
         $updated = false;
         if ($like) {
@@ -498,10 +519,10 @@ class page_page_view extends page {
             }
         } else {
             $like = (object)array(
-                    'kakiemon' => $this->ke->instance,
-                    'page' => $pageid,
-                    'userid' => $userid,
-                    'type' => $type
+                'kakiemon' => $this->ke->instance,
+                'page' => $pageid,
+                'userid' => $userid,
+                'type' => $type
             );
             $DB->insert_record(ke::TABLE_LIKES, $like);
             $updated = true;
@@ -522,19 +543,19 @@ class page_page_view extends page {
         $rating = required_param('rating', PARAM_INT);
 
         if ($row = $DB->get_record(ke::TABLE_RATINGS, array(
-                'kakiemon' => $this->ke->instance,
-                'page' => $pageid,
-                'userid' => $userid))) {
-        	$row->rating = $rating;
-        	$row->timemodified = time();
-        	$DB->update_record(ke::TABLE_RATINGS, $row);
+            'kakiemon' => $this->ke->instance,
+            'page' => $pageid,
+            'userid' => $userid))) {
+            $row->rating = $rating;
+            $row->timemodified = time();
+            $DB->update_record(ke::TABLE_RATINGS, $row);
         } else {
             $row = (object)array(
-                    'kakiemon' => $this->ke->instance,
-                    'page' => $pageid,
-                    'userid' => $userid,
-                    'rating' => $rating,
-                    'timemodified' => time()
+                'kakiemon' => $this->ke->instance,
+                'page' => $pageid,
+                'userid' => $userid,
+                'rating' => $rating,
+                'timemodified' => time()
             );
             $DB->insert_record(ke::TABLE_RATINGS, $row);
         }
@@ -553,7 +574,7 @@ class page_page_view extends page {
         $o = '';
         $pix = new \pix_icon('star', '★', ke::COMPONENT);
         for ($i = 0; $i < $rating; $i++) {
-        	$o .= $this->output->render($pix);
+            $o .= $this->output->render($pix);
         }
 
         return $o;
@@ -563,19 +584,19 @@ class page_page_view extends page {
         global $USER;
 
         $customdata = (object)array(
-                'cmid' => $this->cmid,
-                'pageid' => required_param('page', PARAM_INT)
+            'cmid' => $this->cmid,
+            'pageid' => required_param('page', PARAM_INT)
         );
         $form = new form_page_comment(null, $customdata);
         $data = $form->get_data();
 
         $feedback = (object)array(
-                'kakiemon' => $this->ke->instance,
-                'page' => $data->page,
-                'userid' => $USER->id,
-                'comments' => $data->comment['text'],
-                'commentsformat' => $data->comment['format'],
-                'timemodified' => time()
+            'kakiemon' => $this->ke->instance,
+            'page' => $data->page,
+            'userid' => $USER->id,
+            'comments' => $data->comment['text'],
+            'commentsformat' => $data->comment['format'],
+            'timemodified' => time()
         );
         $this->db->insert_record(ke::TABLE_FEEDBACKS, $feedback);
 
@@ -603,10 +624,10 @@ class form_page_comment extends \moodleform {
         $f->setType('page', PARAM_INT);
 
         $f->addElement('editor', 'comment', ke::str('message'),
-                array(
-                        'cols' => 40,
-                        'rows' => 10
-                )
+            array(
+                'cols' => 40,
+                'rows' => 10
+            )
         );
 
         $this->add_action_buttons(false, ke::str('postfeedback'));
