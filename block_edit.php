@@ -39,17 +39,20 @@ class page_block_edit extends page {
         global $DB;
 
         $customdata = (object)array(
-                'kakiemon' => $this->ke
+            'kakiemon' => $this->ke
         );
         $editmode = required_param('editmode', PARAM_ALPHA);
         if ($editmode == 'update') {
-            $block = util::get_record_for_form(ke::TABLE_BLOCKS, required_param('block', PARAM_INT), 'block');
+            $blockid = required_param('block', PARAM_INT);
+            $block = util::get_record_for_form(ke::TABLE_BLOCKS, $blockid, 'block');
             $customdata->blocktype = $block->type;
             $this->form = new form_block_edit(null, $customdata);
             $this->form->set_data($block);
 
             $blocktype = $this->ke->get_block_type($block->type);
             $blocktype->set_form_data($this->form, $block);
+            $blockwithid = $DB->get_record(ke::TABLE_BLOCKS, array('id' => $blockid));
+            $blocktype->prepare_file($this->form, $blockwithid);
 
             $this->pageid = $block->page;
         } else {

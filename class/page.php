@@ -60,9 +60,6 @@ abstract class page {
         $this->action = optional_param('action', null, PARAM_ALPHA);
 
         if ($this->ispublic) {
-//             var_dump($this->ke->cm);
-//             var_dump($this->ke->course);
-//             $PAGE->set_context(\context_module::instance($this->cmid));
             $PAGE->set_cm($this->ke->cm, $this->ke->course);
         } else {
             require_login($this->ke->cm->course, true, $this->ke->cm);
@@ -94,15 +91,32 @@ abstract class page {
      * @param string $html
      * @param string $format
      */
-    protected function output_pdf($html, $format) {
+    protected function output_pdf($html, $title) {
         global $CFG;
-        require_once $CFG->dirroot . '/mod/kakiemon/lib/mpdf/mpdf.php';
 
-        $mpdf = new \mPDF('', $format);
-        $mpdf->dpi = 300;
+        $tmpdir = $CFG->tempdir.'/kakiemon/pdf';
+        if (!file_exists($tmpdir))
+            mkdir($tmpdir, 0777, true);
+        do
+            $htmlpath = $tmpdir.'/'.mt_rand(0, 999999).'.html';
+        while (file_exists($htmlpath));
+        file_put_contents($htmlpath, $html);
+        $pdfpath = preg_replace('/\.html$/', '.pdf', $htmlpath);
 
-        $mpdf->WriteHTML($html);
-        $mpdf->Output();
+        $cmdline = sprintf(
+            'phantomjs %s %s %s',
+            $CFG->dirroot.'/mod/kakiemon/script/pdf.js',
+            $htmlpath,
+            $pdfpath
+        );
+        $last = system($cmdline, $retval);
+
+        if (!file_exists($pdfpath)) {
+            echo 'PDFを生成できません。';
+            exit;
+        }
+
+        send_file($pdfpath, $title.'.pdf', 0);
     }
 
     /**

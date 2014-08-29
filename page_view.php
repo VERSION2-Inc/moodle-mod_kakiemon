@@ -132,11 +132,11 @@ class page_page_view extends page {
             }
             header('Content-Disposition: attachment; filename="'.$filename.'"');
         } else if ($pdf) {
-            $filename = $page->name.'.pdf';
-            if (check_browser_version('MSIE')) {
-                $filename = rawurlencode($filename);
-            }
-            header('Content-Disposition: attachment; filename="'.$filename.'"');
+//             $filename = $page->name.'.pdf';
+//             if (check_browser_version('MSIE')) {
+//                 $filename = rawurlencode($filename);
+//             }
+//             header('Content-Disposition: attachment; filename="'.$filename.'"');
 
             $PAGE->force_theme('base');
 
@@ -397,9 +397,8 @@ class page_page_view extends page {
         if ($pdf) {
             $htmlforpdf = ob_get_contents();
             ob_end_clean();
-            $this->output_pdf($htmlforpdf, 'A4-L');
+            $this->output_pdf($htmlforpdf, $title);
         }
-//         echo '<script>$(".kaki-block").css("background", "red");</script>';
         $this->ke->log('view page', $this->ke->url('page_view', array('page' => $page->id)), $page->name);
     }
 

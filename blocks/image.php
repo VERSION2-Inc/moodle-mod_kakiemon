@@ -10,8 +10,17 @@ class block_image extends block {
      */
     public function add_form_elements(\MoodleQuickForm $f) {
         $f->addElement('filemanager', 'file', '画像ファイル', array(
-                'maxfiles' => 1
+            'maxfiles' => 1
         ));
+    }
+
+    public function prepare_file(form_block_edit $form, \stdClass $block) {
+        $draftitemid = file_get_submitted_draft_itemid('file');
+        file_prepare_draft_area($draftitemid, $this->ke->context->id, ke::COMPONENT, 'blockfile',
+            $block->id);
+        $data = new \stdClass();
+        $data->file = $draftitemid;
+        $form->set_data($data);
     }
 
     /**

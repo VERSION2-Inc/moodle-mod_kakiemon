@@ -8,10 +8,10 @@ class block {
      * @var array
      */
     protected $codeareaattrs = array(
-            'class' => 'code',
-            'cols' => 60,
-            'rows' => 10,
-            'spellcheck' => 'false'
+        'class' => 'code',
+        'cols' => 60,
+        'rows' => 10,
+        'spellcheck' => 'false'
     );
 
     /**
@@ -47,6 +47,9 @@ class block {
         $data = (array)unserialize($block->data);
 
         $form->set_data($data);
+    }
+
+    public function prepare_file(form_block_edit $form, \stdClass $block) {
     }
 
     /**
