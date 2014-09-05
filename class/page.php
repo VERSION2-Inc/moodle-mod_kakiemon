@@ -104,7 +104,7 @@ abstract class page {
         $pdfpath = preg_replace('/\.html$/', '.pdf', $htmlpath);
 
         $cmdline = sprintf(
-            'phantomjs %s %s %s',
+            '/usr/local/bin/phantomjs %s %s %s',
             $CFG->dirroot.'/mod/kakiemon/script/pdf.js',
             $htmlpath,
             $pdfpath
