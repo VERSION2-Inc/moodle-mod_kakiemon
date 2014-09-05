@@ -16,6 +16,7 @@ class ke {
     const TABLE_RATINGS = 'kakiemon_ratings';
     const TABLE_GRADES = 'kakiemon_grades';
     const TABLE_FEEDBACKS = 'kakiemon_feedbacks';
+    const TABLE_MOBILE_KEYS = 'kakiemon_mobile_keys';
 
     const CAP_VIEW = 'mod/kakiemon:view';
     const CAP_CREATE_TEMPLATE = 'mod/kakiemon:createtemplate';

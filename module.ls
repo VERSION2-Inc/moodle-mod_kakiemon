@@ -5,13 +5,32 @@ M.mod_kakiemon.page_view_init = (@Y, @params) ->
 
     @ajaxurl = "#{M.cfg.wwwroot}/mod/kakiemon/ajax.php"
 
-    if @params.editing
-        @page_view_init_block_dragdrop!
-
     Y.one '#showfeedbackform a' .on \click, ->
         Y.one \#feedbackform .toggleView!
         tinyMCE.activeEditor.focus!
     Y.one \#feedbackform .hide!
+
+    if @params.editing
+        @page_view_init_block_dragdrop!
+
+        Y.all \.qrcodewrap .hide!
+
+        Y.all \.showqrcode .on \click, (e) ->
+            qrwrap = e.target.ancestor \div .next \.qrcodewrap
+
+            if !qrwrap.one \img
+                blockid = e.target.getData \block
+                img = Y.Node.create \<img>
+                url = "#{M.cfg.wwwroot}/mod/kakiemon/qrcode.php?page=videoupload&instance=#{@params.instance}&block=#{blockid}"
+                img.setAttrs do
+                    src: url
+                img.hide!
+                img.on \load ->
+                    @show!
+                qrwrap.setHTML img
+
+            qrwrap.toggleView!
+        , @
 
 M.mod_kakiemon.page_view_init_block_dragdrop = ->
     Y = @Y

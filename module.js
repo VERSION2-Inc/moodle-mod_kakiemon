@@ -6,14 +6,33 @@
     this.params = params;
     Y = this.Y;
     this.ajaxurl = M.cfg.wwwroot + "/mod/kakiemon/ajax.php";
-    if (this.params.editing) {
-      this.page_view_init_block_dragdrop();
-    }
     Y.one('#showfeedbackform a').on('click', function(){
       Y.one('#feedbackform').toggleView();
       return tinyMCE.activeEditor.focus();
     });
-    return Y.one('#feedbackform').hide();
+    Y.one('#feedbackform').hide();
+    if (this.params.editing) {
+      this.page_view_init_block_dragdrop();
+      Y.all('.qrcodewrap').hide();
+      return Y.all('.showqrcode').on('click', function(e){
+        var qrwrap, blockid, img, url;
+        qrwrap = e.target.ancestor('div').next('.qrcodewrap');
+        if (!qrwrap.one('img')) {
+          blockid = e.target.getData('block');
+          img = Y.Node.create('<img>');
+          url = M.cfg.wwwroot + "/mod/kakiemon/qrcode.php?page=videoupload&instance=" + this.params.instance + "&block=" + blockid;
+          img.setAttrs({
+            src: url
+          });
+          img.hide();
+          img.on('load', function(){
+            return this.show();
+          });
+          qrwrap.setHTML(img);
+        }
+        return qrwrap.toggleView();
+      }, this);
+    }
   };
   M.mod_kakiemon.page_view_init_block_dragdrop = function(){
     var Y, CSS, goingUp, lastY, neworder;

@@ -1,4 +1,7 @@
 <?php
+use ver2\kakiemon\ke;
+use ver2\kakiemon\mobile_key;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -52,9 +55,9 @@ function kakiemon_delete_instance($id) {
  */
 function kakiemon_supports($feature) {
     return in_array($feature, array(
-            FEATURE_MOD_INTRO,
-            FEATURE_GRADE_HAS_GRADE,
-            FEATURE_ADVANCED_GRADING
+        FEATURE_MOD_INTRO,
+        FEATURE_GRADE_HAS_GRADE,
+        FEATURE_ADVANCED_GRADING
     ));
 }
 
@@ -68,7 +71,6 @@ function kakiemon_grading_areas_list() {
 }
 
 function kakiemon_grade_item_update($ke, $grades = null) {
-    error_log('grade item update call');
 //     $params = array(
 //             'itemname' => $ke->name,
 //             'idnumber' => $ke->cmidnumber
@@ -94,7 +96,11 @@ function kakiemon_grade_item_update($ke, $grades = null) {
 }
 
 function kakiemon_update_grades($ke, $userid = 0, $nullifnone = true) {
-    error_log('update user grades call');
+}
+
+function kakiemon_cron() {
+    mtrace(ke::str('deletingoldkeys'));
+    mobile_key::delete_expired();
 }
 
 /**

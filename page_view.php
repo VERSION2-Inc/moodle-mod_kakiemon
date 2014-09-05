@@ -92,9 +92,10 @@ class page_page_view extends page {
         $PAGE->requires->jquery_plugin('ui-css');
         $jqueryinit = 'var cmid = '.$this->cmid.';'
             .'var editing = '.($editing ? 'true' : 'false').';';
-        $PAGE->requires->js('/mod/kakiemon/js/page_view.js');
+//         $PAGE->requires->js('/mod/kakiemon/js/page_view.js');
         $jsparams = (object)array(
             'cmid' => $this->cmid,
+            'instance' => $this->ke->instance,
             'editing' => $editing
         );
         $PAGE->requires->js_init_call('M.mod_kakiemon.page_view_init', array($jsparams), false,
@@ -255,6 +256,8 @@ class page_page_view extends page {
         }
         echo $this->output->container('', 'clearer');
 
+        echo $this->output->container_start('block-columns');
+
         for ($column = 1; $column <= 3; $column++) {
             echo $this->output->container_start('block-column', 'column'.$column);
             echo \html_writer::start_tag('div', array(
@@ -327,7 +330,7 @@ class page_page_view extends page {
                 $oblock = $this->ke->get_block_type($block->type);
                 $ob .= $oblock->get_content($block);
 
-                echo '<div class="kaki-block-wrap" style="width:300px;height:300px;">';
+//                 echo '<div class="kaki-block-wrap" style="width:300px;height:300px;">';
                 $style = '';
                 if ($block->width)
                     $style .= 'width:'.$block->width.'px;';
@@ -340,7 +343,7 @@ class page_page_view extends page {
                     'data-column' => $block->blockcolumn,
                     'data-order' => $block->blockorder
                 ));
-                echo '</div>';
+//                 echo '</div>';
 
                 $row++;
             }
@@ -360,6 +363,8 @@ class page_page_view extends page {
 
             echo $this->output->container_end();
         }
+
+        echo $this->output->container_end();
 
         if ($page->userid == $USER->id || has_capability('mod/kakiemon:grade', $this->ke->context)) {
             echo '<div style="clear: both"></div>';
