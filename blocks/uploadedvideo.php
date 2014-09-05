@@ -53,20 +53,19 @@ class block_uploadedvideo extends block {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->ke->context->id, ke::COMPONENT, 'blockfile',
                 $block->id, 'itemid, filepath, filename', false);
-        if (!$files) {
-            return '';
+        if ($files) {
+            /* @var $file \stored_file */
+            $file = reset($files);
+
+            $path = '/' . $this->ke->context->id . '/mod_kakiemon/blockfile/' . $block->id .
+                     $file->get_filepath() . $file->get_filename();
+
+            $fileurl = \moodle_url::make_file_url('/pluginfile.php', $path);
+
+            $o .= \html_writer::link($fileurl, 'Video');
+
+            $o = format_text($o);
         }
-        /* @var $file \stored_file */
-        $file = reset($files);
-
-        $path = '/' . $this->ke->context->id . '/mod_kakiemon/blockfile/' . $block->id .
-                 $file->get_filepath() . $file->get_filename();
-
-        $fileurl = \moodle_url::make_file_url('/pluginfile.php', $path);
-
-        $o .= \html_writer::link($fileurl, 'Video');
-
-        $o = format_text($o);
 
         if ($this->editing) {
             $o .= \html_writer::tag('div',
