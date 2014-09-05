@@ -4,6 +4,7 @@ namespace ver2\kakiemon;
 class block {
     const FILE_AREA = 'blockfile';
 
+    public $editing;
     /**
      * @var array
      */

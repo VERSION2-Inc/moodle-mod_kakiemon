@@ -89,3 +89,4 @@ $string['yourrating'] = 'あなたの評価';
 $string['qrcodeexpired'] = 'QRコードの有効期限が切れています。';
 $string['deletingoldkeys'] = '期限切れの認証情報を削除しています。';
 $string['uploadwithphone'] = '携帯でアップロードする';
+$string['upload'] = 'アップロード';

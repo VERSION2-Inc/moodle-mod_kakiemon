@@ -328,6 +328,7 @@ class page_page_view extends page {
                     $ob .= $this->output->heading($block->title, 3);
 
                 $oblock = $this->ke->get_block_type($block->type);
+                $oblock->editing = $editing;
                 $ob .= $oblock->get_content($block);
 
 //                 echo '<div class="kaki-block-wrap" style="width:300px;height:300px;">';

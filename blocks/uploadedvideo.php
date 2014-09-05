@@ -68,14 +68,16 @@ class block_uploadedvideo extends block {
 
         $o = format_text($o);
 
-        $o .= \html_writer::tag('div',
-            \html_writer::tag('span', ke::str('uploadwithphone'), array(
-                'class' => 'textbutton showqrcode',
-                'data-block' => $block->id
-            )));
-        $o .= \html_writer::tag('div', '', array(
-            'class' => 'qrcodewrap'
-        ));
+        if ($this->editing) {
+            $o .= \html_writer::tag('div',
+                \html_writer::tag('span', ke::str('uploadwithphone'), array(
+                    'class' => 'textbutton showqrcode',
+                    'data-block' => $block->id
+                )));
+            $o .= \html_writer::tag('div', '', array(
+                'class' => 'qrcodewrap'
+            ));
+        }
 
         return $o;
     }
