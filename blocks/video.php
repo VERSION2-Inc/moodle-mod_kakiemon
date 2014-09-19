@@ -38,7 +38,7 @@ class block_video extends block {
         $content = trim($data->content);
 
         if (stripos($content, '<iframe') !== false)
-            return $this->tweak_iframe_params($content);
+            return $this->tweak_iframe_attrs($content);
         elseif (preg_match('/^[[:alnum:]_-]{11}$/', $content))
             return '<iframe width="100%" height="100%" src="//www.youtube.com/embed/' . $content
                 . '" frameborder="0" allowfullscreen></iframe>';
@@ -46,7 +46,7 @@ class block_video extends block {
             return \html_writer::tag('span', ke::str('invalidvideoparam'), array('class' => 'error'));
     }
 
-    private function tweak_iframe_params($html) {
+    private function tweak_iframe_attrs($html) {
         $dom = new \DOMDocument;
         if (!$dom->loadHTML($html))
             return $html;
