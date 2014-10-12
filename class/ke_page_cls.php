@@ -99,10 +99,10 @@ class ke_page_cls {
                 'kakiemon' => $this->ke->instance,
                 'page' => $this->data->id
         ))) {
-        	$row->timemarked = time();
-        	$row->grade = $grade;
-        	$row->feedback = $feedback;
-        	$this->db->update_record(ke::TABLE_GRADES, $row);
+            $row->timemarked = time();
+            $row->grade = $grade;
+            $row->feedback = $feedback;
+            $this->db->update_record(ke::TABLE_GRADES, $row);
         } else {
             $row = (object)array(
                     'kakiemon' => $this->ke->instance,

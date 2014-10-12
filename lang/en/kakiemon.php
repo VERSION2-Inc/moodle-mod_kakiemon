@@ -1,6 +1,4 @@
 <?php
-defined('MOODLE_INTERNAL') || die();
-
 $string['accesses'] = '足あと';
 $string['addblock'] = '新規ブロックを追加';
 $string['addpage'] = '新規ページを追加';
@@ -40,11 +38,14 @@ $string['howtogetembedcode'] = '埋め込みコードをコピーするには';
 $string['html'] = 'HTMLテキスト';
 $string['image'] = '画像';
 $string['invalidvideoparam'] = 'ビデオの指定が正しくありません。';
+$string['kakiemon:addinstance'] = '新しい一筆柿右衛門を追加する';
+$string['kakiemon:createtemplate'] = 'テンプレートを追加する';
+$string['kakiemon:grade'] = '一筆柿右衛門を評定する';
+$string['kakiemon:view'] = '一筆柿右衛門を表示する';
 $string['kakiemonname'] = '一筆柿右衛門名';
 $string['like'] = 'イイネ！';
 $string['link'] = 'リンク';
 $string['message'] = 'メッセージ';
-$string['mod/kakiemon:grade'] = '一筆柿右衛門を評定する';
 $string['modulename'] = '一筆柿右衛門';
 $string['modulenameplural'] = '一筆柿右衛門';
 $string['mypages'] = 'マイページ';
