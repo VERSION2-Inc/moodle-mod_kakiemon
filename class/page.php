@@ -59,6 +59,12 @@ abstract class page {
         $this->kakiemon = $this->ke;
         $this->action = optional_param('action', null, PARAM_ALPHA);
 
+//         if (optional_param('pjs', 0, PARAM_BOOL)) {
+//             $userid = required_param('userid', PARAM_INT);
+//             $user = $DB->get_record('user', array('id' => $userid));
+//             complete_user_login($user);
+//         }
+
         if ($this->ispublic) {
             $PAGE->set_cm($this->ke->cm, $this->ke->course);
         } else {
@@ -105,6 +111,7 @@ abstract class page {
 
         $cmdline = sprintf(
             '/usr/local/bin/phantomjs %s %s %s',
+//             'phantomjs %s %s %s',
             $CFG->dirroot.'/mod/kakiemon/script/pdf.js',
             $htmlpath,
             $pdfpath

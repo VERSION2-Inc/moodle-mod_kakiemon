@@ -1,5 +1,5 @@
 page = require \webpage .create!
-require! system: \system
+require! system
 
 if system.args.length < 3
     phantom.exit 1

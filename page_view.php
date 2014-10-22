@@ -68,6 +68,7 @@ class page_page_view extends page {
 
         $userid = $USER->id;
 
+        $PAGE->set_pagelayout('report');
         $PAGE->blocks->show_only_fake_blocks();
 
         $pageid = required_param('page', PARAM_INT);

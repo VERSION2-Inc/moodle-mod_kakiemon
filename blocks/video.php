@@ -2,8 +2,8 @@
 namespace ver2\kakiemon;
 
 class block_video extends block {
-    const DEF_WIDTH = 500;
-    const DEF_HEIGHT = 280;
+    const DEF_WIDTH = 360;
+    const DEF_HEIGHT = 220;
 
     /**
      *
