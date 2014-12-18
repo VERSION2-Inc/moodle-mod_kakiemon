@@ -199,8 +199,13 @@ class block_page extends block {
     private function resize_image($src, $dst, $width, $height) {
         $imsrc = imagecreatefromjpeg($src);
         list($orgwidth, $orgheight) = getimagesize($src);
+
         $imdst = imagecreatetruecolor($width, $height);
-        imagecopyresampled($imdst, $imsrc, 0, 0, 0, 0, $width, $height, $orgwidth, $orgheight);
+        $bg = imagecolorallocate($imdst, 255, 255, 255);
+        imagefill($imdst, 0, 0, $bg);
+
+        imagecopyresampled($imdst, $imsrc, 0, 0, 0, 0, $width,
+            $orgheight * self::THUMBNAIL_HEIGHT / 1024, $orgwidth, $orgheight);
         imagejpeg($imdst, $dst);
     }
 
