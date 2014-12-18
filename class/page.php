@@ -120,6 +120,8 @@ abstract class page {
 
         $cmd = implode(' ', array_map('escapeshellarg', array(
             $CFG->kakiemon_wkhtmltopdf,
+            '-O',
+            'Landscape',
             $htmlpath,
             $pdfpath
         )));
