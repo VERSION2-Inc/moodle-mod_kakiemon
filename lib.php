@@ -114,7 +114,7 @@ function kakiemon_cron() {
  * @param array $options
  */
 function mod_kakiemon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1' && $_SERVER['REMOTE_ADDR'] != '192.168.0.40') {
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'wkhtmltopdf') === false) {
         if ($context->contextlevel != CONTEXT_MODULE) {
             return false;
         }
