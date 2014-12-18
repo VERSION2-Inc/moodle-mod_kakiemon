@@ -109,14 +109,24 @@ abstract class page {
         file_put_contents($htmlpath, $html);
         $pdfpath = preg_replace('/\.html$/', '.pdf', $htmlpath);
 
-        $cmdline = sprintf(
-            '/usr/local/bin/phantomjs %s %s %s',
+//         $cmdline = sprintf(
+// //             '/usr/local/bin/phantomjs %s %s %s',
 //             'phantomjs %s %s %s',
-            $CFG->dirroot.'/mod/kakiemon/script/pdf.js',
+//             $CFG->dirroot.'/mod/kakiemon/script/pdf.js',
+//             $htmlpath,
+//             $pdfpath
+//         );
+//         $last = system($cmdline, $retval);
+
+        $cmd = implode(' ', array_map('escapeshellarg', array(
+            $CFG->kakiemon_wkhtmltopdf,
             $htmlpath,
             $pdfpath
-        );
-        $last = system($cmdline, $retval);
+        )));
+
+        exec($cmd);
+
+        @unlink($htmlpath);
 
         if (!file_exists($pdfpath)) {
             echo 'PDFを生成できません。';

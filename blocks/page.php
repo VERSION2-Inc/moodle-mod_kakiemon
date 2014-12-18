@@ -3,6 +3,7 @@ namespace ver2\kakiemon;
 
 class block_page extends block {
     const THUMBNAIL_WIDTH = 250;
+    const THUMBNAIL_HEIGHT = 250;
     const THUMBNAIL_NAME = 'thumb.jpg';
     const THUMBNAIL_API_THUMBALIZR = 'http://api1.thumbalizr.com/';
 
@@ -44,6 +45,18 @@ class block_page extends block {
 //         }
 
         $DB->set_field(ke::TABLE_BLOCKS, 'data', serialize($data), array('id' => $block->id));
+
+        $fr = (object)array(
+            'contextid' => $this->ke->context->id,
+            'component' => ke::COMPONENT,
+            'filearea' => block::FILE_AREA,
+            'itemid' => $block->id,
+            'filepath' => '/',
+            'filename' => 'thumb.jpg'
+        );
+
+        $fs = get_file_storage();
+        $fs->delete_area_files($fr->contextid, $fr->component, $fr->filearea, $fr->itemid);
     }
 
     /**
@@ -52,6 +65,8 @@ class block_page extends block {
      * @return string
      */
     public function get_content(\stdClass $block) {
+        $this->block = $block;
+
         $data = unserialize($block->data);
 
         $o = '';
@@ -67,6 +82,7 @@ class block_page extends block {
 //                             self::FILE_AREA, $block->id, '/', self::THUMBNAIL_NAME)
 //             ));
 //         }
+// $o .= $this->make_thumbnail($data->url);
         $o .= $this->get_thumbnail_code($data->url);
         $o .= '<br>';
         $o .= \html_writer::tag('a', $data->url, array(
@@ -78,15 +94,86 @@ class block_page extends block {
     }
 
     private function get_thumbnail_code($url) {
-        $thumburl = 'http://api.webthumbnail.org?width=320&height=240&screen=1024&url='.$url;
+        global $CFG;
+
+//         $thumburl = 'http://api.webthumbnail.org?width=320&height=240&screen=1024&url='.$url;
+
+//         return \html_writer::empty_tag('img', array(
+//             'src' => $thumburl
+//         ));
+
+        $fr = (object)array(
+            'contextid' => $this->ke->context->id,
+            'component' => ke::COMPONENT,
+            'filearea' => block::FILE_AREA,
+            'itemid' => $this->block->id,
+            'filepath' => '/',
+            'filename' => 'thumb.jpg'
+        );
+
+        $fs = get_file_storage();
+        if (!$fs->file_exists($fr->contextid, $fr->component, $fr->filearea, $fr->itemid,
+            $fr->filepath, $fr->filename)) {
+            $tmpdir = $CFG->tempdir.'/kakiemon/page/'.$this->block->id;
+
+            if (!file_exists($tmpdir))
+                mkdir($tmpdir, 0777, true);
+
+            chdir($tmpdir);
+
+            $cmd = implode(' ', array_map('escapeshellarg', array(
+                $CFG->wkhtmltoimage,
+                '--crop-h',
+                '1024',
+                $url,
+                'out.jpg'
+            )));
+
+            exec($cmd, $out, $ret);
+
+            if (!$ret)
+                $this->resize_image('out.jpg', 'resize.jpg', self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT);
+            else
+                $this->create_dummy_image('resize.jpg', self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT);
+
+            $fs->create_file_from_pathname($fr, 'resize.jpg');
+
+            fulldelete($tmpdir);
+        }
+
+        $thumburl = \moodle_url::make_pluginfile_url($fr->contextid, $fr->component, $fr->filearea,
+            $fr->itemid, $fr->filepath, $fr->filename);
 
         return \html_writer::empty_tag('img', array(
-            'src' => $thumburl
+            'src' => $thumburl->out(false)
         ));
     }
 
     private function make_thumbnail($url) {
-        return $this->make_thumbnail_thumbalizr($url);
+        return $this->make_thumbnail_wkhtmltoimage($url);
+    }
+
+    private function make_thumbnail_wkhtmltoimage($url) {
+        global $CFG;
+
+        $tmpdir = $CFG->tempdir . '/kakiemon/page';
+
+        if (!file_exists($tmpdir))
+            mkdir($tmpdir, 0777, true);
+
+        chdir($tmpdir);
+
+        $cmd = implode(' ', array_map('escapeshellarg', array(
+            $CFG->wkhtmltoimage,
+            '--crop-h',
+            '1024',
+            $url,
+            'out.jpg'
+        )));
+
+        exec($cmd);
+
+        $this->resize_image('out.jpg', 'resize.jpg', 200, 200);
     }
 
     private function make_thumbnail_thumbalizr($url) {
@@ -107,5 +194,18 @@ class block_page extends block {
         curl_close($ch);
 
         return $data;
+    }
+
+    private function resize_image($src, $dst, $width, $height) {
+        $imsrc = imagecreatefromjpeg($src);
+        list($orgwidth, $orgheight) = getimagesize($src);
+        $imdst = imagecreatetruecolor($width, $height);
+        imagecopyresampled($imdst, $imsrc, 0, 0, 0, 0, $width, $height, $orgwidth, $orgheight);
+        imagejpeg($imdst, $dst);
+    }
+
+    private function create_dummy_image($path, $width, $height) {
+        $imdst = imagecreatetruecolor($width, $height);
+        imagejpeg($imdst, $path);
     }
 }

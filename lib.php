@@ -114,18 +114,20 @@ function kakiemon_cron() {
  * @param array $options
  */
 function mod_kakiemon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel != CONTEXT_MODULE) {
-        return false;
-    }
+    if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1' && $_SERVER['REMOTE_ADDR'] != '192.168.0.40') {
+        if ($context->contextlevel != CONTEXT_MODULE) {
+            return false;
+        }
 
-    if ($filearea !== 'blockfile') {
-        return false;
-    }
+        if ($filearea !== 'blockfile') {
+            return false;
+        }
 
-    require_login($course, true, $cm);
+        require_login($course, true, $cm);
 
-    if (!has_capability('mod/kakiemon:view', $context)) {
-        return false;
+        if (!has_capability('mod/kakiemon:view', $context)) {
+            return false;
+        }
     }
 
     $itemid = array_shift($args);

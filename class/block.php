@@ -25,6 +25,7 @@ class block {
      * @var \core_renderer
      */
     protected $output;
+    protected $block;
 
     /**
      *
