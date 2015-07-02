@@ -75,6 +75,7 @@ class ke {
      * @var \stdClass
      */
     public $course;
+    public $config;
 
     /**
      *
@@ -91,6 +92,7 @@ class ke {
         $this->context = \context_module::instance($this->cm->id);
         $this->data = $this->db->get_record(self::TABLE_MOD, array('id' => $this->instance));
         $this->options = $this->data;
+        $this->config = get_config('kakiemon');
 
         $this->load_block_plugins();
     }

@@ -119,9 +119,8 @@ abstract class page {
 //         $last = system($cmdline, $retval);
 
         $cmd = implode(' ', array_map('escapeshellarg', array(
-            $CFG->kakiemon_wkhtmltopdf,
-            '-O',
-            'Landscape',
+            $this->ke->config->wkhtmltopdf,
+            '-O', 'Landscape',
             $htmlpath,
             $pdfpath
         )));
@@ -131,7 +130,7 @@ abstract class page {
         @unlink($htmlpath);
 
         if (!file_exists($pdfpath)) {
-            echo 'PDFを生成できません。';
+            echo ke::str('cantoutputpdf');
             exit;
         }
 

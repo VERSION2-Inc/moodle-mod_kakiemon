@@ -2,10 +2,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    require_once $CFG->dirroot . '/mod/kakiemon/locallib.php';
-
-    $settings->add(new admin_setting_configexecutable('kakiemon_wkhtmltopdf', 'wkhtmltopdf へのpath',
-        'wkhtmltopdf', '/usr/local/bin/wkhtmltopdf'));
-    $settings->add(new admin_setting_configexecutable('kakiemon_wkhtmltoimage', 'wkhtmltoimage へのpath',
-        'wkhtmltopdf', '/usr/local/bin/wkhtmltoimage'));
+    $settings->add(new admin_setting_configexecutable('kakiemon/wkhtmltopdf',
+        get_string('wkhtmltopdfpath', 'kakiemon'), get_string('wkhtmltopdfpathdesc', 'kakiemon'),
+        '/usr/local/bin/wkhtmltopdf'));
+    $settings->add(new admin_setting_configexecutable('kakiemon/wkhtmltoimage',
+        get_string('wkhtmltoimagepath', 'kakiemon'), get_string('wkhtmltoimagepathdesc', 'kakiemon'),
+        '/usr/local/bin/wkhtmltoimage'));
 }
