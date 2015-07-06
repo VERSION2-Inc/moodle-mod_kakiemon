@@ -55,7 +55,9 @@ class block_video extends block {
             $data->videoheight = self::DEF_HEIGHT;
 
         if (preg_match('/^([[:alnum:]_-]{11})$/', $content, $m)
-            || preg_match('!youtube\.com/watch\?v=([[:alnum:]_-]{11})!', $content, $m)) {
+            || preg_match('!youtube\.com/watch\?v=([[:alnum:]_-]{11})!', $content, $m)
+            || preg_match('!youtube\.com/embed/([[:alnum:]_-]{11})!', $content, $m)
+        ) {
             $videoid = $m[1];
 
             if ($this->is_output_pdf()) {
