@@ -54,37 +54,27 @@ class block_video extends block {
         if (!isset($data->videoheight))
             $data->videoheight = self::DEF_HEIGHT;
 
-        if (stripos($content, '<iframe') !== false)
-            return $this->tweak_iframe_attrs($content, $data);
-
-        elseif (preg_match('/^([[:alnum:]_-]{11})$/', $content, $m)
+        if (preg_match('/^([[:alnum:]_-]{11})$/', $content, $m)
             || preg_match('!youtube\.com/watch\?v=([[:alnum:]_-]{11})!', $content, $m)) {
             $videoid = $m[1];
-            return \html_writer::tag('iframe', '', array(
-                'src' => '//www.youtube.com/embed/' . $videoid,
-                'width' => $data->videowidth,
-                'height' => $data->videoheight,
-                'frameborder' => 0,
-                'allowfullscreen' => 'allowfullscreen'
-            ));
 
+            if ($this->is_output_pdf()) {
+                $thumburl = 'http://img.youtube.com/vi/'.$videoid.'/mqdefault.jpg';
+                return \html_writer::empty_tag('img', array(
+                    'src' => $thumburl,
+                    'width' => $data->videowidth,
+                    'height' => $data->videoheight
+                ));
+            } else {
+                return \html_writer::tag('iframe', '', array(
+                    'src' => 'http://www.youtube.com/embed/' . $videoid,
+                    'width' => $data->videowidth,
+                    'height' => $data->videoheight,
+                    'frameborder' => 0,
+                    'allowfullscreen' => 'allowfullscreen'
+                ));
+            }
         } else
             return \html_writer::tag('span', ke::str('invalidvideoparam'), array('class' => 'error'));
-    }
-
-    private function tweak_iframe_attrs($html, \stdClass $blockdata) {
-        $dom = new \DOMDocument;
-        if (!$dom->loadHTML($html))
-            return $html;
-
-        $nodelist = $dom->getElementsByTagName('iframe');
-        if ($nodelist->length) {
-            $iframe = $nodelist->item(0);
-            $iframe->setAttribute('width', $blockdata->videowidth);
-            $iframe->setAttribute('height', $blockdata->videoheight);
-            return $dom->saveHTML($iframe);
-        }
-
-        return $html;
     }
 }

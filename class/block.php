@@ -78,4 +78,8 @@ class block {
 
         return $o;
     }
+
+    protected function is_output_pdf() {
+        return optional_param('pdf', 0, PARAM_BOOL);
+    }
 }
