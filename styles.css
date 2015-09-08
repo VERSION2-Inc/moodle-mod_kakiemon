@@ -5,13 +5,15 @@
   text-align: right;
   margin: 0.5em 0; }
 .path-mod-kakiemon .block-columns {
-  white-space: nowrap; }
-.path-mod-kakiemon .block-columns:after {
-  clear: both;
-  content: "."; }
+  white-space: nowrap;
+  text-align: center; }
+  .path-mod-kakiemon .block-columns:after {
+    clear: both; }
 .path-mod-kakiemon .block-column {
   display: inline-block;
-  vertical-align: top; }
+  vertical-align: top;
+  margin-right: 10px;
+  text-align: left; }
 .path-mod-kakiemon .block-column-blocks {
   padding-bottom: 40px;
   margin: 5px; }

@@ -17,24 +17,18 @@
         margin: 0.5em 0
 
     .block-columns
-        // width: 2000px
-        // height: 500px
         white-space: nowrap
-        // vertical-align: top
-        @include dbgborder(blue)
+        text-align: center
 
-    .block-columns:after
-        clear: both
-        content: "."
+        &:after
+            clear: both
 
     .block-column
-        // float: left
-        // width: 33%
         display: inline-block
         vertical-align: top
-        // min-width: 30%
-        // overflow: hidden
-        @include dbgborder(green)
+        margin-right: 10px
+        text-align: left
+
     .block-column-blocks
         padding-bottom: 40px
         margin: 5px
