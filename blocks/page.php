@@ -122,7 +122,7 @@ class block_page extends block {
             chdir($tmpdir);
 
             $cmd = implode(' ', array_map('escapeshellarg', array(
-                $CFG->kakiemon_wkhtmltoimage,
+                $this->ke->config->wkhtmltoimage,
                 '--crop-h',
                 '1024',
                 $url,
