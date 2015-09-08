@@ -24,6 +24,13 @@
   .path-mod-kakiemon .kaki-block h3 {
     margin: 0;
     text-align: left; }
+  .path-mod-kakiemon .kaki-block .iframewrap {
+    text-align: center;
+    width: 100%;
+    height: 100%; }
+    .path-mod-kakiemon .kaki-block .iframewrap iframe {
+      width: 96%;
+      height: 94%; }
 .path-mod-kakiemon .editbutton, .path-mod-kakiemon .blockeditbutton {
   float: right; }
 .path-mod-kakiemon .blockeditbuttons {

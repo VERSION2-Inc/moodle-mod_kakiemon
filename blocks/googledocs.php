@@ -39,6 +39,10 @@ class block_googledocs extends block {
 
         $o = preg_replace('/(width)=["\']\d+["\']/', '$1="100%"', $data->content);
 
+        $o = \html_writer::tag('div', $o, array(
+            'class' => 'iframewrap'
+        ));
+
         return $o;
     }
 }

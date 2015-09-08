@@ -339,7 +339,7 @@ class page_page_view extends page {
                 if ($block->height)
                     $style .= 'height:'.$block->height.'px;';
                 echo \html_writer::tag('div', $ob, array(
-                    'class' => 'kaki-block',
+                    'class' => 'kaki-block kaki-block-'.$block->type,
                     'style' => $style,
                     'data-id' => $block->id,
                     'data-column' => $block->blockcolumn,
