@@ -33,6 +33,16 @@
     .path-mod-kakiemon .kaki-block .iframewrap iframe {
       width: 96%;
       height: 94%; }
+  .path-mod-kakiemon .kaki-block .block-image {
+    max-width: 96%;
+    max-height: 94%;
+    margin: auto;
+    display: block; }
+  .path-mod-kakiemon .kaki-block .mediaplugin object, .path-mod-kakiemon .kaki-block .mediaplugin video {
+    width: auto;
+    height: auto;
+    max-width: 96%;
+    max-height: 94%; }
 .path-mod-kakiemon .editbutton, .path-mod-kakiemon .blockeditbutton {
   float: right; }
 .path-mod-kakiemon .blockeditbuttons {
@@ -79,10 +89,6 @@
   font-size: 75%; }
 .path-mod-kakiemon .page-grade {
   margin: 2em; }
-.path-mod-kakiemon .block-image {
-  max-width: 100%;
-  margin: auto;
-  display: block; }
 .path-mod-kakiemon .thumbnailweb_free_ss {
   max-width: 100%; }
 .path-mod-kakiemon .accesses {

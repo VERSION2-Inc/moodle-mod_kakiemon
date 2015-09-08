@@ -1,15 +1,13 @@
 <?php
-
 namespace ver2\kakiemon;
 
 class block_uploadedvideo extends block {
-
     /**
      *
      * @param \MoodleQuickForm $f
      */
     public function add_form_elements(\MoodleQuickForm $f) {
-        $f->addElement('filemanager', 'file', 'ビデオファイル', array(
+        $f->addElement('filemanager', 'file', ke::str('videofile'), array(
             'maxfiles' => 1
         ));
     }

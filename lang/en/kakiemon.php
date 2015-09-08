@@ -100,3 +100,4 @@ $string['wkhtmltoimagepathdesc'] = 'wkhtmltoimageのインストール先を設�
 $string['wkhtmltopdfpath'] = 'wkhtmltopdfへのパス';
 $string['wkhtmltopdfpathdesc'] = 'ページのPDF出力を行う場合には、wkhtmltopdfのインストール先を設定してください。';
 $string['yourrating'] = 'あなたの評価';
+$string['videofile'] = 'ビデオファイル';
