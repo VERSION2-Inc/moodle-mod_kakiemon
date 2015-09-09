@@ -22,7 +22,8 @@
   padding: 5px;
   overflow: hidden;
   white-space: normal;
-  margin: 1em auto; }
+  margin: 1em auto;
+  position: relative; }
   .path-mod-kakiemon .kaki-block h3 {
     margin: 0;
     text-align: left; }

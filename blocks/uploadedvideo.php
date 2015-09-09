@@ -42,8 +42,6 @@ class block_uploadedvideo extends block {
      * @return string
      */
     public function get_content(\stdClass $block) {
-        util::load_lightbox();
-
         $data = unserialize($block->data);
 
         $o = '';

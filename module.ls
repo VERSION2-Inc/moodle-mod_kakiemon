@@ -1,8 +1,6 @@
 M.mod_kakiemon ?= {}
 
 M.mod_kakiemon.page_view_init = (@Y, @params) ->
-    Y = @Y
-
     @ajaxurl = "#{M.cfg.wwwroot}/mod/kakiemon/ajax.php"
 
     Y.one '#showfeedbackform a' .on \click, ->
@@ -12,6 +10,8 @@ M.mod_kakiemon.page_view_init = (@Y, @params) ->
 
     if @params.editing
         @page_view_init_block_dragdrop!
+
+        # @page_view_init_block_resize!
 
         Y.all \.qrcodewrap .hide!
 
@@ -101,6 +101,11 @@ M.mod_kakiemon.page_view_init_block_dragdrop = ->
     Y.all ".#{CSS.COLUMN_BLOCKS}" .each (v, k) ->
         new Y.DD.Drop do
             node: v
+
+M.mod_kakiemon.page_view_init_block_resize = ->
+    new Y.Resize {
+        node: \.kaki-block
+    }
 
 M.mod_kakiemon.ajax = (data) ->
     Y = @Y
