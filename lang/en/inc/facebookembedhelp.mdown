@@ -1,3 +1,5 @@
-[Facebook](https://ja-jp.facebook.com)のページを埋め込むには
+<a href="https://ja-jp.facebook.com" target="_blank">Facebook</a>のページを埋め込むには、下記の方法で埋め込みコードを取得してください。
 
-[こちら](https://developers.facebook.com/docs/plugins/page-plugin)を参照してください。
+1. <a href="https://developers.facebook.com/docs/plugins/page-plugin" target="_blank">Page Plugin</a>を開く。
+2. Facebook Page URLに埋め込むページのURLを入力する。
+3. オプションを設定してGet Codeをクリックする。
