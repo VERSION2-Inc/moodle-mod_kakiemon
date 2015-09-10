@@ -73,7 +73,7 @@
         backgroundColor: drag.get('node').getStyle('backgroundColor')
       });
       return Y.all('.block-column-blocks').setStyles({
-        background: '#f8f8f8',
+        background: '#ddd',
         margin: '10px'
       });
     });

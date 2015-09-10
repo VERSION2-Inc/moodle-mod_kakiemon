@@ -63,7 +63,7 @@ M.mod_kakiemon.page_view_init_block_dragdrop = ->
             borderColor: drag.get \node .getStyle \borderColor
             backgroundColor: drag.get \node .getStyle \backgroundColor
         Y.all \.block-column-blocks .setStyles do
-            background: \#f8f8f8
+            background: \#ddd
             margin: \10px
     Y.DD.DDM.on \drag:drag, (e) ->
         drag = e.target
