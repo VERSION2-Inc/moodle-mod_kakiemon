@@ -1,0 +1,3 @@
+[Facebook](https://ja-jp.facebook.com)のページを埋め込むには
+
+[こちら](https://developers.facebook.com/docs/plugins/page-plugin)を参照してください。

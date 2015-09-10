@@ -82,4 +82,9 @@ class block {
     protected function is_output_pdf() {
         return optional_param('pdf', 0, PARAM_BOOL);
     }
+
+    protected function add_embed_help(\MoodleQuickForm $f, $identifier) {
+        $f->addElement('static', 'embedhelp', ke::str('howtogetembedcode'),
+            format_text(ke::str($identifier), FORMAT_MARKDOWN));
+    }
 }

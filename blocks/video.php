@@ -11,7 +11,8 @@ class block_video extends block {
      */
     public function add_form_elements(\MoodleQuickForm $f) {
         $f->addElement('textarea', 'content', ke::str('embedcode'), $this->codeareaattrs);
-        $f->addHelpButton('content', 'embedcode', ke::COMPONENT);
+
+        $this->add_embed_help($f, 'youtubeembedhelp');
 
         $f->addElement('text', 'videowidth', ke::str('videowidth'), array('size' => 5));
         $f->setType('videowidth', PARAM_INT);

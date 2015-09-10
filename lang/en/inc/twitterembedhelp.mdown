@@ -1,0 +1,4 @@
+<a href="https://twitter.com/" target="_blank">Twitter</a>のタイムラインやツイートの埋め込む方法については、下のリンクを参照してください。
+
+* <a href="https://dev.twitter.com/ja/docs/embedded-tweets" target="_blank">埋め込みツイート</a>
+* <a href="https://dev.twitter.com/ja/docs/embedded-timelines" target="_blank">埋め込みタイムライン</a>

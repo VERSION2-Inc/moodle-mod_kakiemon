@@ -1,0 +1,1 @@
+<a href="https://www.youtube.com/" target="_blank">YouTube</a>の動画を埋め込むには、URLの v= 以降の11文字の動画IDを入力するか、埋め込む動画を再生し、[共有]→[埋め込みコード] の順に選択し、埋め込みコード (&lt;iframe&gt; タグ) をコピーして貼り付けてください。
