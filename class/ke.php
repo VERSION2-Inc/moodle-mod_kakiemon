@@ -17,6 +17,7 @@ class ke {
     const TABLE_GRADES = 'kakiemon_grades';
     const TABLE_FEEDBACKS = 'kakiemon_feedbacks';
     const TABLE_MOBILE_KEYS = 'kakiemon_mobile_keys';
+    const TABLE_PAGE_KEYS = 'kakiemon_page_keys';
 
     const CAP_VIEW = 'mod/kakiemon:view';
     const CAP_CREATE_TEMPLATE = 'mod/kakiemon:createtemplate';
@@ -304,19 +305,6 @@ class ke {
 
     /**
      *
-     * @param string $errorcode
-     * @param string $link
-     */
-    public function print_error($errorcode, $link = '') {
-        if (!$link) {
-            $link = $this->url('view');
-        }
-
-        print_error($errorcode, self::COMPONENT, $link);
-    }
-
-    /**
-     *
      * @return array
      */
     public function get_grading_info() {
@@ -324,5 +312,39 @@ class ke {
         require_once $CFG->libdir . '/gradelib.php';
 
         return grade_get_grades($this->course->id, 'mod', 'kakiemon', $this->instance);
+    }
+
+    public function create_page_key($pageid, $userid) {
+        global $DB;
+
+        $key = (object)array(
+            'kakiemon' => $this->instance,
+            'page' => $pageid,
+            'userid' => $userid,
+            'keystring' => random_string(10),
+            'expires' => time() + MINSECS
+        );
+        $DB->insert_record(self::TABLE_PAGE_KEYS, $key);
+
+        return $key->keystring;
+    }
+
+    public function is_valid_page_key($pageid, $userid, $keystr) {
+        global $DB;
+
+        return $DB->record_exists_select(
+            self::TABLE_PAGE_KEYS,
+            'kakiemon = :kakiemon
+            AND page = :page
+            AND userid = :userid
+            AND keystring = :keystr
+            AND expires > :now',
+            array(
+                'kakiemon' => $this->instance,
+                'page' => $pageid,
+                'userid' => $userid,
+                'keystr' => $keystr,
+                'now' => time()
+            ));
     }
 }

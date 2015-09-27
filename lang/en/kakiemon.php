@@ -101,5 +101,7 @@ $string['wkhtmltoimagepath'] = 'wkhtmltoimageへのパス';
 $string['wkhtmltoimagepathdesc'] = 'wkhtmltoimageのインストール先を設定してください。';
 $string['wkhtmltopdfpath'] = 'wkhtmltopdfへのパス';
 $string['wkhtmltopdfpathdesc'] = 'ページのPDF出力を行う場合には、wkhtmltopdfのインストール先を設定してください。';
+$string['wkhtmltopdfoptions'] = 'wkhtmltopdfのオプション';
+$string['wkhtmltopdfoptionsdesc'] = 'ページのPDF出力時のオプション';
 $string['yourrating'] = 'あなたの評価';
 $string['youtubeembedhelp'] = file_get_contents(__DIR__.'/inc/youtubeembedhelp.mdown');

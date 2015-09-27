@@ -134,9 +134,8 @@ class page_page_edit extends page {
 
         $page = $this->db->get_record(ke::TABLE_PAGES, array('id' => $pageid), '*', MUST_EXIST);
 
-        if ($page->userid != $USER->id) {
-            $this->ke->print_error('thisisnotyourpage');
-        }
+        if ($page->userid != $USER->id)
+            throw new \moodle_exception('thisisnotyourpage', ke::COMPONENT);
     }
 }
 

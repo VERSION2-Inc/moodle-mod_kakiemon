@@ -59,11 +59,17 @@ abstract class page {
         $this->kakiemon = $this->ke;
         $this->action = optional_param('action', null, PARAM_ALPHA);
 
-//         if (optional_param('pjs', 0, PARAM_BOOL)) {
-//             $userid = required_param('userid', PARAM_INT);
-//             $user = $DB->get_record('user', array('id' => $userid));
-//             complete_user_login($user);
-//         }
+        // PDF 生成用に自動ログイン
+        $keystr = optional_param('key', '', PARAM_RAW);
+        if ($keystr !== '') {
+            $pageid = required_param('page', PARAM_INT);
+            $userid = required_param('userid', PARAM_INT);
+            if (!$this->ke->is_valid_page_key($pageid, $userid, $keystr))
+                throw new \moodle_exception('error', ke::COMPONENT);
+
+            $user = $DB->get_record('user', array('id' => $userid));
+            complete_user_login($user);
+        }
 
         if ($this->ispublic) {
             $PAGE->set_cm($this->ke->cm, $this->ke->course);
@@ -97,37 +103,60 @@ abstract class page {
      * @param string $html
      * @param string $format
      */
-    protected function output_pdf($html, $title) {
-        global $CFG;
+//     protected function output_pdf($html, $title) {
+//         global $CFG;
+
+//         $tmpdir = $CFG->tempdir.'/kakiemon/pdf';
+//         if (!file_exists($tmpdir))
+//             mkdir($tmpdir, 0777, true);
+//         do
+//             $htmlpath = $tmpdir.'/'.mt_rand(0, 999999).'.html';
+//         while (file_exists($htmlpath));
+//         file_put_contents($htmlpath, $html);
+//         $pdfpath = preg_replace('/\.html$/', '.pdf', $htmlpath);
+
+//         $cmd = escapeshellarg($this->ke->config->wkhtmltopdf)
+//             . ' ' . $this->ke->config->wkhtmltopdfoptions
+//             . ' ' . escapeshellarg($htmlpath)
+//             . ' ' . escapeshellarg($pdfpath);
+
+//         exec($cmd);
+
+//         @unlink($htmlpath);
+
+//         if (!file_exists($pdfpath)) {
+//             echo ke::str('cantoutputpdf');
+//             exit;
+//         }
+
+//         send_file($pdfpath, $title.'.pdf', 0);
+//     }
+
+    protected function output_pdf($title) {
+        global $CFG, $USER;
 
         $tmpdir = $CFG->tempdir.'/kakiemon/pdf';
         if (!file_exists($tmpdir))
             mkdir($tmpdir, 0777, true);
-        do
+
+        do {
             $htmlpath = $tmpdir.'/'.mt_rand(0, 999999).'.html';
-        while (file_exists($htmlpath));
-        file_put_contents($htmlpath, $html);
+        } while (file_exists($htmlpath));
         $pdfpath = preg_replace('/\.html$/', '.pdf', $htmlpath);
 
-//         $cmdline = sprintf(
-// //             '/usr/local/bin/phantomjs %s %s %s',
-//             'phantomjs %s %s %s',
-//             $CFG->dirroot.'/mod/kakiemon/script/pdf.js',
-//             $htmlpath,
-//             $pdfpath
-//         );
-//         $last = system($cmdline, $retval);
+        $url = new \moodle_url($this->url, array(
+            'userid' => $USER->id,
+            'key' => $this->ke->create_page_key($this->url->get_param('page'), $USER->id)
+        ));
 
-        $cmd = implode(' ', array_map('escapeshellarg', array(
-            $this->ke->config->wkhtmltopdf,
-            '-O', 'Landscape',
-            $htmlpath,
-            $pdfpath
-        )));
+        $cmd = escapeshellarg($this->ke->config->wkhtmltopdf)
+            . ' ' . $this->ke->config->wkhtmltopdfoptions
+            . ' ' . escapeshellarg($url->out(false))
+            . ' ' . escapeshellarg($pdfpath);
+
+//         echo $cmd;die;
 
         exec($cmd);
-
-        @unlink($htmlpath);
 
         if (!file_exists($pdfpath)) {
             echo ke::str('cantoutputpdf');
@@ -144,9 +173,8 @@ abstract class page {
     public static function execute_new($file) {
         global $CFG;
 
-        if (strpos($file, $CFG->dirroot) !== 0) {
-            print_error('cantexecutepage', ke::COMPONENT);
-        }
+        if (strpos($file, $CFG->dirroot) !== 0)
+            throw new \moodle_exception('cantexecutepage', ke::COMPONENT);
 
         $url = substr($file, strlen($CFG->dirroot));
         if ($CFG->ostype == 'WINDOWS') {

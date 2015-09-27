@@ -7,6 +7,10 @@ class block_page extends block {
     const THUMBNAIL_NAME = 'thumb.jpg';
     const THUMBNAIL_API_THUMBALIZR = 'http://api1.thumbalizr.com/';
 
+    const OUTPUT_FILE = 'out.jpg';
+    const THUMBNAIL_FILE = 'thumb.jpg';
+    const CROP_HEIGHT = 1024;
+
     /**
      *
      * @param \MoodleQuickForm $f
@@ -52,7 +56,7 @@ class block_page extends block {
             'filearea' => block::FILE_AREA,
             'itemid' => $block->id,
             'filepath' => '/',
-            'filename' => 'thumb.jpg'
+            'filename' => self::THUMBNAIL_FILE
         );
 
         $fs = get_file_storage();
@@ -96,19 +100,13 @@ class block_page extends block {
     private function get_thumbnail_code($url) {
         global $CFG;
 
-//         $thumburl = 'http://api.webthumbnail.org?width=320&height=240&screen=1024&url='.$url;
-
-//         return \html_writer::empty_tag('img', array(
-//             'src' => $thumburl
-//         ));
-
         $fr = (object)array(
             'contextid' => $this->ke->context->id,
             'component' => ke::COMPONENT,
             'filearea' => block::FILE_AREA,
             'itemid' => $this->block->id,
             'filepath' => '/',
-            'filename' => 'thumb.jpg'
+            'filename' => self::THUMBNAIL_FILE
         );
 
         $fs = get_file_storage();
@@ -121,24 +119,30 @@ class block_page extends block {
 
             chdir($tmpdir);
 
-            $cmd = implode(' ', array_map('escapeshellarg', array(
-                $this->ke->config->wkhtmltoimage,
+            $cmd = implode(' ', array(
+                escapeshellarg($this->ke->config->wkhtmltoimage),
                 '--crop-h',
-                '1024',
-                $url,
-                'out.jpg'
-            )));
+                self::CROP_HEIGHT,
+                escapeshellarg($url),
+                self::OUTPUT_FILE
+            ));
+//             echo $cmd;die;
 
             exec($cmd, $out, $ret);
 
-            if (!$ret)
-                $this->resize_image('out.jpg', 'resize.jpg', self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT);
+            error_log(print_r($out,1));
+            error_log($ret);
+
+            if (file_exists(self::OUTPUT_FILE))
+                $this->resize_image(self::OUTPUT_FILE, self::THUMBNAIL_FILE,
+                    self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT);
             else
-                $this->create_dummy_image('resize.jpg', self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT);
+                $this->create_dummy_image(self::THUMBNAIL_FILE,
+                    self::THUMBNAIL_WIDTH, self::THUMBNAIL_HEIGHT);
 
-            $fs->create_file_from_pathname($fr, 'resize.jpg');
+            $fs->create_file_from_pathname($fr, self::THUMBNAIL_FILE);
 
-            fulldelete($tmpdir);
+//             fulldelete($tmpdir);
         }
 
         $thumburl = \moodle_url::make_pluginfile_url($fr->contextid, $fr->component, $fr->filearea,
@@ -147,53 +151,6 @@ class block_page extends block {
         return \html_writer::empty_tag('img', array(
             'src' => $thumburl->out(false)
         ));
-    }
-
-    private function make_thumbnail($url) {
-        return $this->make_thumbnail_wkhtmltoimage($url);
-    }
-
-    private function make_thumbnail_wkhtmltoimage($url) {
-        global $CFG;
-
-        $tmpdir = $CFG->tempdir . '/kakiemon/page';
-
-        if (!file_exists($tmpdir))
-            mkdir($tmpdir, 0777, true);
-
-        chdir($tmpdir);
-
-        $cmd = implode(' ', array_map('escapeshellarg', array(
-            $CFG->wkhtmltoimage,
-            '--crop-h',
-            '1024',
-            $url,
-            'out.jpg'
-        )));
-
-        exec($cmd);
-
-        $this->resize_image('out.jpg', 'resize.jpg', 200, 200);
-    }
-
-    private function make_thumbnail_thumbalizr($url) {
-        $api = new \moodle_url(self::THUMBNAIL_API_THUMBALIZR, array(
-                'url' => $url,
-                'width' => self::THUMBNAIL_WIDTH
-        ));
-        $ch = curl_init($api->out(false));
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $data = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            return false;
-        }
-
-        curl_close($ch);
-
-        return $data;
     }
 
     private function resize_image($src, $dst, $width, $height) {
@@ -205,7 +162,7 @@ class block_page extends block {
         imagefill($imdst, 0, 0, $bg);
 
         imagecopyresampled($imdst, $imsrc, 0, 0, 0, 0, $width,
-            $orgheight * self::THUMBNAIL_HEIGHT / 1024, $orgwidth, $orgheight);
+            $orgheight * self::THUMBNAIL_HEIGHT / self::CROP_HEIGHT, $orgwidth, $orgheight);
         imagejpeg($imdst, $dst);
     }
 

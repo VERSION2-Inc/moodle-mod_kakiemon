@@ -104,7 +104,7 @@ class page_block_edit extends page {
             $block->height = $data->height;
             $DB->update_record(ke::TABLE_BLOCKS, $block);
         } else {
-            $pageid=required_param('page', PARAM_INT);
+            $pageid = required_param('page', PARAM_INT);
             $block = (object)array(
                 'kakiemon' => $this->kakiemon->instance,
                 'page' => $pageid,
@@ -189,6 +189,9 @@ class page_block_edit extends page {
 }
 
 class form_block_edit extends \moodleform {
+    public $defwidth = 300;
+    public $defheight = 0;
+
     protected function definition() {
         $f = $this->_form;
         /* @var $kakiemon ke */
@@ -229,10 +232,12 @@ class form_block_edit extends \moodleform {
         $f->addElement('text', 'width', ke::str('width'), array('size' => 5));
         $f->setType('width', PARAM_INT);
         $f->addHelpButton('width', 'width', ke::COMPONENT);
+        $f->setDefault('width', $this->defwidth);
 
         $f->addElement('text', 'height', ke::str('height'), array('size' => 5));
         $f->setType('height', PARAM_INT);
         $f->addHelpButton('height', 'height', ke::COMPONENT);
+        $f->setDefault('height', $this->defheight);
 
         //格納、自動格納
         //ファイル

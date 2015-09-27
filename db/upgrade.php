@@ -308,5 +308,35 @@ function xmldb_kakiemon_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2014090200, 'kakiemon');
     }
 
+    if ($oldversion < 2015092800) {
+
+        // Define table kakiemon_page_keys to be created.
+        $table = new xmldb_table('kakiemon_page_keys');
+
+        // Adding fields to table kakiemon_page_keys.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('kakiemon', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('page', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('keystring', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('expires', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table kakiemon_page_keys.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('kakiemon', XMLDB_KEY_FOREIGN, array('kakiemon'), 'kakiemon', array('id'));
+        $table->add_key('page', XMLDB_KEY_FOREIGN, array('page'), 'kakiemon_pages', array('id'));
+
+        // Adding indexes to table kakiemon_page_keys.
+        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+
+        // Conditionally launch create table for kakiemon_page_keys.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Kakiemon savepoint reached.
+        upgrade_mod_savepoint(true, 2015092800, 'kakiemon');
+    }
+
     return true;
 }

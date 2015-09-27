@@ -35,6 +35,11 @@ class page_page_view extends page {
 
         parent::__construct($url);
 
+//         if (!optional_param('pdf',0,PARAM_BOOL)) {
+//             print_r($_GET);
+//             die;
+//         }
+
         $this->page = new ke_page_cls($this->ke, required_param('page', PARAM_INT));
     }
 
@@ -73,12 +78,13 @@ class page_page_view extends page {
 
         $pageid = required_param('page', PARAM_INT);
 
+        $this->url->param('page', $pageid);
+
         $this->page = new ke_page_cls($this->ke, $pageid);
         $opage = $this->page;
 
-        if (!$opage->is_viewable()) {
-            print_error('cantviewpage', ke::COMPONENT);
-        }
+        if (!$opage->is_viewable())
+            throw new \moodle_exception('cantviewpage', ke::COMPONENT);
 
         if (!ke::is_page_editable($pageid)) {
             $SESSION->kakiemon_editing = false;
@@ -128,12 +134,15 @@ class page_page_view extends page {
         $this->add_navbar($title);
 
         if ($download) {
+            // HTML ダウンロード
             $filename = $page->name.'.html';
             if (check_browser_version('MSIE')) {
                 $filename = rawurlencode($filename);
             }
             header('Content-Disposition: attachment; filename="'.$filename.'"');
+
         } else if ($pdf) {
+            // PDF ダウンロード
 //             $filename = $page->name.'.pdf';
 //             if (check_browser_version('MSIE')) {
 //                 $filename = rawurlencode($filename);
@@ -141,6 +150,10 @@ class page_page_view extends page {
 //             header('Content-Disposition: attachment; filename="'.$filename.'"');
 
             $PAGE->force_theme('base');
+
+            $this->output_pdf($title);
+            die;
+
 
             ob_start();
         }
@@ -153,28 +166,32 @@ class page_page_view extends page {
         $user = $DB->get_record('user', array('id' => $page->userid));
         echo $this->output->container($user->idnumber.' '.fullname($user),
                 'page-author');
-        echo \html_writer::start_tag('div', array('class' => 'page-infolinks'));
-        if ($this->ke->options->showtracks && $page->userid == $userid) {
+
+        if (!$pdf) {
+            echo \html_writer::start_tag('div', array('class' => 'page-infolinks'));
+            if ($this->ke->options->showtracks && $page->userid == $userid) {
+                echo \html_writer::start_tag('div');
+                echo $this->output->action_link($this->ke->url('accesses', array('page' => $pageid)),
+                        ke::str('viewaccesses'));
+                echo \html_writer::end_tag('div');
+            }
+            if (has_capability('mod/kakiemon:grade', $this->ke->context)) {
+                echo \html_writer::start_tag('div');
+                echo $this->output->action_link($this->ke->url('page_grade',
+                        array('page' => $pageid)), ke::str('gradepage'));
+                echo \html_writer::end_tag('div');
+            }
             echo \html_writer::start_tag('div');
-            echo $this->output->action_link($this->ke->url('accesses', array('page' => $pageid)),
-                    ke::str('viewaccesses'));
+            echo $this->output->action_link($this->ke->url('page_view',
+                    array('page' => $pageid, 'download' => 1)), ke::str('downloadhtml'));
+            echo \html_writer::end_tag('div');
+            echo \html_writer::start_tag('div');
+            echo $this->output->action_link($this->ke->url('page_view',
+                array('page' => $pageid, 'pdf' => 1)), ke::str('downloadpdf'),
+                null, array('target' => '_blank'));
+            echo \html_writer::end_tag('div');
             echo \html_writer::end_tag('div');
         }
-        if (has_capability('mod/kakiemon:grade', $this->ke->context)) {
-            echo \html_writer::start_tag('div');
-            echo $this->output->action_link($this->ke->url('page_grade',
-                    array('page' => $pageid)), ke::str('gradepage'));
-            echo \html_writer::end_tag('div');
-        }
-        echo \html_writer::start_tag('div');
-        echo $this->output->action_link($this->ke->url('page_view',
-                array('page' => $pageid, 'download' => 1)), ke::str('downloadhtml'));
-        echo \html_writer::end_tag('div');
-        echo \html_writer::start_tag('div');
-        echo $this->output->action_link($this->ke->url('page_view',
-                array('page' => $pageid, 'pdf' => 1)), ke::str('downloadpdf'));
-        echo \html_writer::end_tag('div');
-        echo \html_writer::end_tag('div');
 
         echo $this->output->container_start('likebuttons');
         $likeelement = 'span';

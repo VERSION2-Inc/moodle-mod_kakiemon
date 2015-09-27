@@ -46,6 +46,8 @@ function kakiemon_delete_instance($id) {
     $DB->delete_records('kakiemon_blocks', array('kakiemon' => $id));
     $DB->delete_records('kakiemon_likes', array('kakiemon' => $id));
     $DB->delete_records('kakiemon_accesses', array('kakiemon' => $id));
+    $DB->delete_records('kakiemon_mobile_keys', array('kakiemon' => $id));
+    $DB->delete_records('kakiemon_page_keys', array('kakiemon' => $id));
 
     return true;
 }
@@ -101,8 +103,12 @@ function kakiemon_update_grades($ke, $userid = 0, $nullifnone = true) {
 }
 
 function kakiemon_cron() {
+    global $DB;
+
     mtrace(ke::str('deletingoldkeys'));
     mobile_key::delete_expired();
+
+    $DB->delete_records_select(ke::TABLE_PAGE_KEYS, 'expires <= :now', array('now' => time()));
 }
 
 /**
