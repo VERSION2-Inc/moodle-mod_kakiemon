@@ -80,7 +80,7 @@ class block {
     }
 
     protected function is_output_pdf() {
-        return optional_param('pdf', 0, PARAM_BOOL);
+        return ke::is_output_pdf();
     }
 
     protected function add_embed_help(\MoodleQuickForm $f, $identifier) {

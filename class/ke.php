@@ -347,4 +347,10 @@ class ke {
                 'now' => time()
             ));
     }
+
+    public static function is_output_pdf() {
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'wkhtmlto') !== false)
+            return true;
+        return false;
+    }
 }
