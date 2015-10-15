@@ -72,4 +72,37 @@ class util {
 
         return $OUTPUT->action_icon($url, $icon, $action);
     }
+
+    public static function fix_jpeg_orientation($path) {
+        if (!class_exists('Imagick')) {
+            return false;
+        }
+
+        $im = new \Imagick;
+
+        $im->readImage($path);
+
+        if (strtolower($im->getImageFormat()) != 'jpeg') {
+            return false;
+        }
+
+        $orientation = $im->getImageOrientation();
+        $rotated = false;
+        if ($orientation == \Imagick::ORIENTATION_RIGHTTOP) {
+            $im->rotateImage('none', 90);
+            $rotated = true;
+        } elseif ($orientation == \Imagick::ORIENTATION_BOTTOMRIGHT) {
+            $im->rotateImage('none', 180);
+            $rotated = true;
+        } elseif ($orientation == \Imagick::ORIENTATION_LEFTBOTTOM) {
+            $im->rotateImage('none', 270);
+            $rotated = true;
+        }
+        if ($rotated) {
+            $im->setImageOrientation(\Imagick::ORIENTATION_TOPLEFT);
+            $im->writeImage();
+            return true;
+        }
+        return false;
+    }
 }

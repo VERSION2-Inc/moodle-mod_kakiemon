@@ -33,6 +33,29 @@ class block_image extends block {
         file_save_draft_area_files($data->file, $this->ke->context->id, ke::COMPONENT,
                 'blockfile', $block->id);
 
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($this->ke->context->id, ke::COMPONENT, ke::FILE_AREA_BLOCK,
+            $block->id, 'itemid, filepath, filename', false);
+        if ($files) {
+            /* @var $file \stored_file */
+            $file = reset($files);
+
+            $path = $file->copy_content_to_temp();
+
+            if (util::fix_jpeg_orientation($path)) {
+                $file->delete();
+
+                $fs->create_file_from_pathname(array(
+                    'contextid' => $this->ke->context->id,
+                    'component' => ke::COMPONENT,
+                    'filearea' => ke::FILE_AREA_BLOCK,
+                    'itemid' => $block->id,
+                    'filepath' => $file->get_filepath(),
+                    'filename' => $file->get_filename()
+                ), $path);
+            }
+        }
+
         $data = (object)array();
 
         return serialize($data);

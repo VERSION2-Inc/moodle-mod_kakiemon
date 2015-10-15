@@ -30,6 +30,8 @@ class ke {
     const SHARE_LOGIN = 'login';
     const SHARE_PUBLIC = 'public';
 
+    const FILE_AREA_BLOCK = 'blockfile';
+
     /**
      *
      * @var \stdClass
