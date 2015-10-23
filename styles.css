@@ -36,14 +36,12 @@
       height: 94%; }
   .path-mod-kakiemon .kaki-block .block-image {
     max-width: 96%;
-    max-height: 94%;
     margin: auto;
     display: block; }
   .path-mod-kakiemon .kaki-block .mediaplugin object, .path-mod-kakiemon .kaki-block .mediaplugin video {
     width: auto;
     height: auto;
-    max-width: 96%;
-    max-height: 94%; }
+    max-width: 96%; }
 .path-mod-kakiemon .editbutton, .path-mod-kakiemon .blockeditbutton {
   float: right; }
 .path-mod-kakiemon .blockeditbuttons {

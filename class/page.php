@@ -154,8 +154,6 @@ abstract class page {
             . ' ' . escapeshellarg($url->out(false))
             . ' ' . escapeshellarg($pdfpath);
 
-//         echo $cmd;die;
-
         exec($cmd);
 
         if (!file_exists($pdfpath)) {
