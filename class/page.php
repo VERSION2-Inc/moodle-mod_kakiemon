@@ -172,6 +172,9 @@ abstract class page {
             . ' ' . escapeshellarg($url->out(false))
             . ' ' . escapeshellarg($pdfpath);
 
+        if (ke::is_debug())
+            error_log($cmd);
+
         exec($cmd);
 
         if (!file_exists($pdfpath)) {

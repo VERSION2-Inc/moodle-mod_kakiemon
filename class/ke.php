@@ -78,6 +78,9 @@ class ke {
      * @var \stdClass
      */
     public $course;
+    /**
+     * @var \stdClass
+     */
     public $config;
 
     /**
@@ -334,6 +337,9 @@ class ke {
     public function is_valid_page_key($pageid, $userid, $keystr) {
         global $DB;
 
+        if (self::is_debug())
+            return true;
+
         return $DB->record_exists_select(
             self::TABLE_PAGE_KEYS,
             'kakiemon = :kakiemon
@@ -357,5 +363,16 @@ class ke {
             $ret = strpos($_SERVER['HTTP_USER_AGENT'], 'wkhtmlto') !== false;
 
         return $ret;
+    }
+
+    /**
+     * 下記を config.php に追加してデバッグ設定をオン
+     * <code>
+     * $CFG->forced_plugin_settings['kakiemon'] = ['debug' => 1];
+     * </code>
+     * @return bool
+     */
+    public static function is_debug() {
+        return (bool)get_config('kakiemon', 'debug');
     }
 }

@@ -37,9 +37,21 @@ class block_googlecalendar extends block {
     public function get_content(\stdClass $block) {
         $data = unserialize($block->data);
 
-        $o = $data->content;
-        $o = preg_replace('/(width)="\d+"/', '$1="100%"', $data->content);
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($data->content);
 
-        return $o;
+        /* @var $iframe \DOMElement */
+        $iframe = $dom->getElementsByTagName('iframe')[0];
+
+        if (ke::is_output_pdf()) {
+            $url = $iframe->getAttribute('src');
+
+            return \html_writer::link($url, ke::str('opencalendar'), array('target' => '_blank'));
+        } else {
+            $iframe->setAttribute('width', '100%');
+
+            return $dom->saveHTML($iframe);
+        }
     }
 }
