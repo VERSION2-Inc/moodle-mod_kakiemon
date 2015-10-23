@@ -351,8 +351,11 @@ class ke {
     }
 
     public static function is_output_pdf() {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'wkhtmlto') !== false)
-            return true;
-        return false;
+        static $ret;
+
+        if ($ret === null)
+            $ret = strpos($_SERVER['HTTP_USER_AGENT'], 'wkhtmlto') !== false;
+
+        return $ret;
     }
 }

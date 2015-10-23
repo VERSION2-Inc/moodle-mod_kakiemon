@@ -100,6 +100,24 @@ abstract class page {
 
     /**
      *
+     * @param string $file
+     */
+    public static function execute_new($file) {
+        global $CFG;
+
+        if (strpos($file, $CFG->dirroot) !== 0)
+            throw new \moodle_exception('cantexecutepage', ke::COMPONENT);
+
+        $url = substr($file, strlen($CFG->dirroot));
+        if ($CFG->ostype == 'WINDOWS') {
+            $url = str_replace('\\', '/', $url);
+        }
+        $page = new static($url);
+        $page->execute();
+    }
+
+    /**
+     *
      * @param string $html
      * @param string $format
      */
@@ -162,23 +180,5 @@ abstract class page {
         }
 
         send_file($pdfpath, $title.'.pdf', 0);
-    }
-
-    /**
-     *
-     * @param string $file
-     */
-    public static function execute_new($file) {
-        global $CFG;
-
-        if (strpos($file, $CFG->dirroot) !== 0)
-            throw new \moodle_exception('cantexecutepage', ke::COMPONENT);
-
-        $url = substr($file, strlen($CFG->dirroot));
-        if ($CFG->ostype == 'WINDOWS') {
-            $url = str_replace('\\', '/', $url);
-        }
-        $page = new static($url);
-        $page->execute();
     }
 }

@@ -94,3 +94,10 @@
   margin: auto; }
   .path-mod-kakiemon .accesses td {
     vertical-align: middle; }
+.path-mod-kakiemon.pdf .logininfo,
+.path-mod-kakiemon.pdf .page-infolinks,
+.path-mod-kakiemon.pdf #rating .singleselect,
+.path-mod-kakiemon.pdf .editbutton,
+.path-mod-kakiemon.pdf #showfeedbackform,
+.path-mod-kakiemon.pdf #page-footer {
+  display: none; }
