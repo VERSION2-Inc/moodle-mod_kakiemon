@@ -42,7 +42,7 @@ class block_googlecalendar extends block {
         $dom->loadHTML($data->content);
 
         /* @var $iframe \DOMElement */
-        $iframe = $dom->getElementsByTagName('iframe')[0];
+        $iframe = $dom->getElementsByTagName('iframe')->item(0);
 
         if (ke::is_output_pdf()) {
             $url = $iframe->getAttribute('src');

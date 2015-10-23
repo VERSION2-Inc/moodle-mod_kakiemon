@@ -98,6 +98,7 @@
 .path-mod-kakiemon.pdf .page-infolinks,
 .path-mod-kakiemon.pdf #rating .singleselect,
 .path-mod-kakiemon.pdf .editbutton,
+.path-mod-kakiemon.pdf .feedback .actionicons,
 .path-mod-kakiemon.pdf #showfeedbackform,
 .path-mod-kakiemon.pdf #page-footer {
   display: none; }
