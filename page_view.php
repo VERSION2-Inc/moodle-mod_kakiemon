@@ -82,7 +82,7 @@ class page_page_view extends page {
         $this->page = new ke_page_cls($this->ke, $pageid);
         $opage = $this->page;
 
-        if (!$opage->is_viewable())
+        if (!$this->ke->can_view_page() || !$opage->is_viewable())
             throw new \moodle_exception('cantviewpage', ke::COMPONENT);
 
         if (!ke::is_page_editable($pageid)) {

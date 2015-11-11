@@ -20,6 +20,9 @@ class page_view extends page {
 
         $userid = $USER->id;
 
+        if (!$this->ke->can_view_page())
+            throw new \moodle_exception('cantviewpage', ke::COMPONENT);
+
         echo $this->output->header();
 
         echo $this->output->box_start();

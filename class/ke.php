@@ -21,6 +21,7 @@ class ke {
 
     const CAP_VIEW = 'mod/kakiemon:view';
     const CAP_CREATE_TEMPLATE = 'mod/kakiemon:createtemplate';
+    const CAP_GRADE = 'mod/kakiemon:grade';
 
     const FILE_ICON_SIZE = 24;
 
@@ -63,14 +64,12 @@ class ke {
      */
     private $db;
     /**
-     *
      * @var \stdClass
-     * @deprecated
      */
     public $options;
     /**
-     *
      * @var \stdClass
+     * @deprecated
      */
     public $data;
     /**
@@ -293,7 +292,8 @@ class ke {
      * @return boolean
      */
     public function can_view_page() {
-        return $this->is_in_period($this->options->viewstartdate, $this->options->viewenddate);
+        return $this->has_capability(self::CAP_GRADE)
+            || $this->is_in_period($this->options->viewstartdate, $this->options->viewenddate);
     }
 
     /**
