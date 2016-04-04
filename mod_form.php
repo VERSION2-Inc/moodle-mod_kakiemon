@@ -17,7 +17,7 @@ class mod_kakiemon_mod_form extends moodleform_mod {
         $f->setType('name', PARAM_TEXT);
         $f->addRule('name', null, 'required', null, 'client');
 
-        $this->add_intro_editor();
+        $this->standard_intro_elements();
 
         $f->addElement('header', 'timelimit', ke::str('timelimit'));
         $f->addElement('date_time_selector', 'createstartdate', ke::str('createstartdate'),
